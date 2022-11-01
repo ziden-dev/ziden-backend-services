@@ -7,7 +7,7 @@ import { SchemaService } from "../services/SchemaService";
 import { ISchema } from "../models/Schema";
 
 export class SchemaResponse {
-    public data: any;
+    public data: any
 }
 
 @JsonController('/schemas')
@@ -15,6 +15,18 @@ export class SchemaController {
     constructor(
         private schemaService: SchemaService
     ){}
+    
+    @Post('/')
+    @ResponseSchema(SchemaResponse)
+    public registerSchema(@Body() schema: ISchema): Promise<ISchema> {
+        return this.schemaService.save(schema);
+    }
+
+    @Get('/')
+    @ResponseSchema(SchemaResponse)
+    public findAllSchemas(): Promise<ISchema[] | undefined> {
+        return this.schemaService.findAll();
+    }
 
     @Get('/:schemaHash')
     @ResponseSchema(SchemaResponse)

@@ -3,6 +3,7 @@ import { model, Schema } from "mongoose";
 export interface IClaimProperty {
     propertyName: string,
     propertyType: 'number' | 'string',
+    displayName: string,
     slot: 0 | 1,
     begin: number,
     end: number
@@ -14,8 +15,8 @@ export interface IClaimProperties {
 }
 
 export interface ISchema {
-    _id: String,
-    schemaHash: string,
+    _id?: string,
+    schemaHash?: string,
     name: string,
     properties: IClaimProperties
 }
@@ -23,12 +24,14 @@ export interface ISchema {
 const ClaimPropertySchema = new Schema<IClaimProperty>({
     propertyName: { type: String, required: true },
     propertyType: { type: String, required: true },
+    displayName: { type: String, required: true },
     slot: { type: Number, required: true},
     begin: { type: Number, required: true },
     end: { type: Number, required: true },   
 }, {
     strict: true,
-    timestamps: false
+    timestamps: false,
+    _id: false
 });
 
 const ClaimPropertiesSchema = new Schema<IClaimProperties>({
@@ -36,7 +39,8 @@ const ClaimPropertiesSchema = new Schema<IClaimProperties>({
     value: { type: [ClaimPropertySchema], required: true }
 }, {
     strict: true,
-    timestamps: false
+    timestamps: false,
+    _id: false
 });
 
 const SchemaSchema = new Schema<ISchema>({
