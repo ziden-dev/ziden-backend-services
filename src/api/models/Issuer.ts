@@ -1,10 +1,10 @@
 import { model, Schema } from 'mongoose';
 
 export interface IIssuer {
-    _id: String,            // Ziden ID
-    endpointUrl: String,
-    revocationTreeDb: String,
-    rootsTreeDb: String
+    _id: string,            // Ziden ID
+    endpointUrl: string,
+    revocationTreeDb: string,
+    rootsTreeDb: string
 }
 
 const IssuerSchema = new Schema<IIssuer>({
