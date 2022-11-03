@@ -72,10 +72,14 @@ export class ProofController {
 
     @Post('/submit')
     public async submitProof(
-        @Body() zkProof: Proof
+        @Body() zkProofs: Proof[]
     ): Promise<any> {
-        if (!zkProof.proof || !zkProof.publicSignals) throw new BadRequestError();
-        return this.proofService.verifyProof(zkProof.proof, zkProof.publicSignals);
+        const verifyResult = zkProofs.map(p => {
+            if (!p.proof || !p.publicSignals) throw new BadRequestError();
+            return this.proofService.verifyProof(p.proof, p.publicSignals);
+        })
+        
+        return Promise.all(verifyResult);
     }
 
 }
