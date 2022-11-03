@@ -9,6 +9,9 @@ export enum Circuit {
 
 export interface IQuery {
     propertyName: string,
+    slotIndex: number,
+    from: number,
+    to: number,
     operator: OPERATOR,
     value: number
 }
@@ -30,6 +33,9 @@ export interface IService {
 
 const QuerySchema = new Schema<IQuery>({
     propertyName: { type: String, required: true },
+    slotIndex: { type: Number, required: true },
+    from: { type: Number, required: true },
+    to: { type: Number, required: true },
     operator: { type: Number, required: true },
     value: { type: Number, required: true }
 }, {
