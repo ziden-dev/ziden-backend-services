@@ -1,7 +1,7 @@
-import { model, Schema } from "mongoose";
+import { model, Schema } from 'mongoose';
 
 export interface ISchemaRegistry {
-    _id: string,
+    _id?: string,
     schemaHash: string,
     issuerId: string,
     description: string,
@@ -22,6 +22,7 @@ const SchemaRegistrySchema = new Schema<ISchemaRegistry>({
     endpointUrl: { type: String, required: true },
 }, {
     strict: true,
+    strictQuery: false,
     timestamps: true
 });
 

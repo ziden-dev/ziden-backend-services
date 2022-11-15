@@ -1,29 +1,27 @@
-import { Model } from "mongoose";
-import { Inject, Service } from "typedi";
+import Verifier, { IVerifier } from "../models/Verifier";
 
-import { IVerifier } from "../models/Verifier";
-
-@Service()
 export class VerifierService {
 
-    constructor(
-        @Inject('Verifier') private Verifier: Model<IVerifier>
-    ) { }
+    constructor(){ }
 
     public async findOne(issuerId: string): Promise<IVerifier | undefined> {
-        return (await this.Verifier.findById(issuerId))?.toObject();
+        return (await Verifier.findById(issuerId))?.toObject();
     }
 
     public async findAll(): Promise<IVerifier[]> {
-        return (await this.Verifier.find()).map(e => e.toObject());
+        return (await Verifier.find()).map(e => e.toObject());
+    }
+
+    public async findByProvider(providerId: string): Promise<IVerifier[]> {
+        return (await Verifier.find({ 'providerId': providerId })).map(e => e.toObject());
     }
 
     public async save(issuer: IVerifier): Promise<IVerifier> {
-        return (await this.Verifier.findByIdAndUpdate(
+        return (await Verifier.findByIdAndUpdate(
             issuer._id,
             issuer,
             {upsert: true, new: true}
-        )).toObject()
+        )).toObject();
     }
 
 }

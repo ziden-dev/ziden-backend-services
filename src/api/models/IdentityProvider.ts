@@ -1,13 +1,12 @@
 import { model, Schema } from 'mongoose';
 
 export interface IIdentityProvider {
-    _id: String,            // uuid
-    name: String,
-    description: String,
-    contact: String,
-    website: String,
-    logoUrl: String,
-    issuers: String[]       // Ziden IDs
+    _id?: string,
+    name: string,
+    description: string,
+    contact: string,
+    website: string,
+    logoUrl: string
 }
 
 const IdentityProviderSchema = new Schema<IIdentityProvider>({
@@ -16,10 +15,10 @@ const IdentityProviderSchema = new Schema<IIdentityProvider>({
     description: { type: String, required: true },
     contact: { type: String, required: true },
     website: { type: String, required: true },
-    logoUrl: { type: String, required: true },
-    issuers: { type: [String], required: true },
+    logoUrl: { type: String, required: true }
 }, {
     strict: true,
+    strictQuery: false,
     timestamps: true
 });
 

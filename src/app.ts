@@ -1,108 +1,103 @@
-import 'reflect-metadata';
+// import 'reflect-metadata';
 import glob from 'glob';
 import mongoose from 'mongoose';
-import { Container } from 'typedi';
-import e, { Application } from 'express';
-import { createExpressServer, getMetadataArgsStorage, useContainer as routingUseContainer } from 'routing-controllers';
-import { routingControllersToSpec } from 'routing-controllers-openapi';
+import express, { Application } from 'express';
+import bodyParser from 'body-parser';
+import compression from 'compression';
+import cors from 'cors';
 import * as swaggerUi from 'swagger-ui-express';
+import swaggerJsdoc from 'swagger-jsdoc';
 
+import { Routers } from './api/routers/Router';
 import env from './lib/env';
 import logger from './lib/logger';
+import * as db from './database';
 
-/**
- * Initialize server
- */
-async function initialize() {
+export class App {
 
-    /* ----- MongoDB ----- */
+    public app!: Application;
 
-    const MONGODB_URL = `mongodb://${env.db.username}:${env.db.password}@${env.db.host}:${env.db.port}/${env.db.database}`;
+    constructor () {
+        this.initialize()
+        .then(() => {
+            this.app = this.createServer();
+            this.configSwagger();
+            this.startServer();
+        }).catch(error => {
+            logger.error('Server crashed: ' + error)
+        })
+    }
 
-    const createConnection = async(url: string) => {
-        logger.info('Connecting to MongoDB...')
-        try {
-            await mongoose.connect(url, {
-                socketTimeoutMS: 30000,
-                keepAlive: true
-            });
-            logger.info('Connected to ' + url);
-        } catch (err) {
-            logger.error('Failed to connect to MongoDB');
-            throw (err);
+    public async initialize() {
+        logger.info('Initializing...')
+        await this.connectDatabase('mongo');
+    }
+
+    private async connectDatabase(database: string) {
+        switch (database) {
+            case db.DB.MONGODB:
+                const MONGODB_URL = `mongodb://${env.db.username}:${env.db.password}@${env.db.host}:${env.db.port}/${env.db.database}`;
+                try {
+                    const dbConnection = new db.Mongo()
+                    await dbConnection.init(MONGODB_URL, {});
+                } catch(err) {
+                    throw err;
+                }
+                break;
+            case db.DB.LEVELDB:
+                break;
+            case db.DB.REDIS:
+                break;
+            default:
+                throw ('Database not supported');
         }
     }
-    
-    await createConnection(MONGODB_URL);
 
+    private async globalVars() {}
 
-    /* ----- IoC ----- */
-    
-    Container.set('logger', logger);
-    routingUseContainer(Container);
+    private async configSwagger() {
+        if (env.swagger.enabled) {
+            const options = {
+                failOnErrors: true, // Whether or not to throw when parsing errors. Defaults to false.
+                definition: {
+                    openapi: '3.0.0',
+                    info: {
+                        title: env.app.name,
+                        description: env.app.description,
+                        version: env.app.version
+                    },
+                    host: `${env.app.host}:${env.app.port}`,
 
-    env.app.dirs.models.map((pattern) => {
-        const modelFiles = glob.sync(pattern);
-        modelFiles.map((file: string) => {
-            Container.set(
-                file.split('/').splice(-1)[0].replace(/.ts/g, ''),
-                require(file).default
-            )
-            // console.log(
-            //     file.split('/').splice(-1)[0].replace(/.ts/g, ''),
-            //     require(file).default
-            // )
-        });
-    });
-
-
-    /* ----- Express app ----- */
-    
-    const app: Application = createExpressServer({
-        cors: true,
-        classTransformer: true,
-        routePrefix: env.app.routePrefix,
-        // defaultErrorHandler: false,
-        controllers: env.app.dirs.controllers,
-        middlewares: env.app.dirs.middlewares
-    });
-
-    if (!env.isTest) {
-        app.listen(env.app.port, () => {
-            logger.info('Server is running on port ' + env.app.port);
-        });
+                },
+                apis: ['./src/api/routers/*.ts'],
+                basePath: env.app.routePrefix
+            };
+            const swaggerSpec = swaggerJsdoc(options);
+            this.app.use(`${env.swagger.route}`, swaggerUi.serve, swaggerUi.setup(swaggerSpec));
+            logger.info('Swagger UI is enabled')
+        }
     }
 
-    /* ----- Swagger ----- */
-    if (env.swagger.enabled) {
-        const swaggerFile = routingControllersToSpec(
-            getMetadataArgsStorage(),
-            {},
-            {}
-        );
+    private createServer() {
+        const expressApp = express();
         
-        swaggerFile.info = {
-            title: env.app.name,
-            description: env.app.description,
-            version: env.app.version
-        }
-
-        swaggerFile.servers = [
-            {
-                url: `http://${env.app.host}:${env.app.port}${env.app.routePrefix}`
-            }
-        ]
-
-        app.use(
-            env.swagger.route,
-            (_req: any, _res: any, next: () => any) => next(),
-            swaggerUi.serve,
-            swaggerUi.setup(swaggerFile)
-        )
-        logger.info('Swagger UI is enabled')
+        expressApp.use(bodyParser.json())
+        expressApp.use(bodyParser.urlencoded({ extended: true }));
+        expressApp.use(compression())
+        expressApp.use(cors())
+        expressApp.use(env.app.routePrefix, new Routers().router);
+        
+        return expressApp;
     }
+
+    private startServer() {
+        if (!env.isTest) {
+            this.app.listen(env.app.port, () => {
+                logger.info('Server is running on port ' + env.app.port);
+            });
+        }
+    }
+
 }
 
-initialize()
-.then()
-.catch(error => logger.error('Server crashed: ' + error))
+const app = new App();

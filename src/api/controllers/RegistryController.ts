@@ -1,93 +1,135 @@
-import { BadRequestError, Body, BodyParam, Delete, Get, JsonController, NotFoundError, OnUndefined, Param, Post, Put, Req, Res } from "routing-controllers";
-import { OpenAPI, ResponseSchema } from "routing-controllers-openapi";
+import { Request, Response } from 'express';
 
-import { SchemaResponse } from "./SchemaController";
-import { SchemaService } from "../services/SchemaService";
-import { RegistryService } from "../services/RegistryService";
-import { ISchema } from "../models/Schema";
-import { ISchemaRegistry } from "../models/SchemaRegistry";
-import { IService } from "../models/Service";
+import { SchemaService } from '../services/SchemaService';
+import { RegistryService } from '../services/RegistryService';
+import { ISchema } from '../models/Schema';
+import { ISchemaRegistry } from '../models/SchemaRegistry';
+import { IService } from '../models/Service';
+import { BadRequestError } from '../errors/http/BadRequestError';
+import logger from '../../lib/logger';
+import { NotFoundError } from '../errors/http/NotFoundError';
 
 export class SchemaRegistryResponse {
     public data: any;
 }
 
-@JsonController('/registries')
 export class RegistryController {
 
-    constructor(
-        private schemaService: SchemaService,
-        private registryService: RegistryService
-    ) { }
+    schemaService: SchemaService;
+    registryService: RegistryService;
 
-    private resolveRegistryId(registryId: string): any {
-        let resolved = registryId.split('-');
-        if (resolved.length != 2) throw new BadRequestError('Incorrect registry ID');
-        return {
-            schemaHash: resolved[0],
-            issuerId: resolved[1]
+    constructor() {
+        this.schemaService = new SchemaService();
+        this.registryService = new RegistryService();
+
+        this.registerSchema = this.registerSchema.bind(this);
+        this.findAllSchemaRegistries = this.findAllSchemaRegistries.bind(this);
+        this.findOneSchemaRegistry = this.findOneSchemaRegistry.bind(this);
+        this.registerService = this.registerService.bind(this);
+        this.findAllServices = this.findAllServices.bind(this);
+        this.findOneService = this.findOneService.bind(this);
+    }
+
+    public async registerSchema(req: Request, res: Response) {
+        try {
+            if (req.body.newSchema === undefined) throw new BadRequestError('Missing newSchema property in request body');
+            let schema: ISchema;
+            if (req.body.newSchema) {
+                if (req.body.schema === undefined) throw new BadRequestError('Missing schema property in request body');
+                schema = await this.schemaService.save(req.body.schema as ISchema);
+            } else {
+                if (req.body.schemaHash === undefined) throw new BadRequestError('Missing schemaHash property in request body');
+                const newSchema = await this.schemaService.findOne(req.body.schemaHash);
+                if (newSchema === undefined) throw new NotFoundError('Schema does not exist');
+                schema = newSchema;
+            }
+            const registry = req.body.registry;
+            const schemaRegistry: ISchemaRegistry = {
+                schemaHash: schema.schemaHash!,
+                issuerId: registry.issuerId,
+                description: registry.description,
+                expiration: registry.expiration,
+                updatable: registry.updatable,
+                network: registry.network,
+                endpointUrl: registry.endpointUrl
+            }
+
+            const newSchemaRegistry = await this.registryService.saveSchemaRegistry(schemaRegistry);
+            res.send({
+                'registry': newSchemaRegistry,
+                'schema': schema
+            });
+        } catch (error: any) {
+            res.status(error.httpCode ?? 500).send(error);
         }
-    }
-
-    @Post('/schemas')
-    public async registerSchema(
-        @BodyParam('registry', {required: true}) registry: ISchemaRegistry,
-        @BodyParam('schema', {required: false}) schema: ISchema
-    ): Promise<{ 
-        schema: ISchema,
-        registry: ISchemaRegistry
-    }> {
-        if (!registry.schemaHash && schema) {
-            let newSchema = await this.schemaService.save(schema);
-            let newRegistry = await this.registryService.save(registry);
-            return Promise.resolve({
-                schema: newSchema,
-                registry: newRegistry
-            })
-        } else {
-            let existedSchema = await this.schemaService.findOne(registry.schemaHash);
-            if (existedSchema === undefined) throw new NotFoundError();
-            return Promise.resolve({
-                schema: existedSchema,
-                registry: await this.registryService.save(registry)
-            })
-        }
-    }
-    
-    @Get('/schemas')
-    public findAllSchemas(): Promise<ISchema[]> {
-        return this.schemaService.findAll();
-    }
-
-    @Get('/schemas/:registryId')
-    public async findOneSchema(@Param('registryId') registryId: string): Promise<{ 
-        registry: ISchemaRegistry | undefined,
-        schema: ISchema | undefined
-    }> {
-        return Promise.resolve({
-            registry: await this.registryService.findOneSchema(registryId),
-            schema: await this.schemaService.findOne(this.resolveRegistryId(registryId).schemaHash)
-        })
-    }
-
-    @Put('/schemas/:registryId')
-    public updateSchema(registry: ISchemaRegistry): any {
-
-    }
-
-
-    @Get('/services')
-    public findAllServices(): any {
-
-    }
-
-    @Get('/services/:serviceId')
-    public findOneService(@Param('serviceId') serviceId: string): Promise<IService | undefined> {
-        return this.registryService.findOneService(serviceId);
-    }
-
-    @Put('/services/:serviceId')
-    public updateService(service: IService): any {
         
     }
+    
+    public async findAllSchemaRegistries(req: Request, res: Response) {
+        try {
+            res.send({
+                'registries': await this.registryService.findAllSchemaRegistries()
+            });
+        } catch (error: any) {
+            res.status(error.httpCode ?? 500).send(error);
+        }
+    }
+
+    public async findOneSchemaRegistry(req: Request, res: Response) {
+        try {
+            if (!req.params.registryId) throw new BadRequestError('Missing registryId in request param');
+            const registry = await this.registryService.findOneSchemaRegistry(req.params.registryId);
+            if (registry === undefined) throw new NotFoundError('Schema registry does not exist');
+            const schema = await this.schemaService.findOne(registry.schemaHash);
+            console.log(schema);
+            res.send({
+                'registry': registry,
+                'schema': schema
+            })
+        } catch (error: any) {
+            res.status(error.httpCode ?? 500).send(error);
+        }
+    }
+
+    // public updateSchemaRegistry(registry: ISchemaRegistry): any {
+
+    // }
+
+    public async registerService(req: Request, res: Response) {
+        try {
+            if (!req.body.service) throw new BadRequestError('Missing service property in request body');
+            res.send({
+                'newService': await this.registryService.saveService(req.body.service as IService)
+            })
+        } catch (error: any) {
+            res.status(error.httpCode ?? 500).send(error);
+        }
+    }
+
+    public async findAllServices(req: Request, res: Response) {
+        try {
+            res.send({
+                'services': await this.registryService.findAllServices()
+            })
+        } catch (error: any) {
+            res.status(error.httpCode ?? 500).send(error);
+        }
+    }
+
+    public async findOneService(req: Request, res: Response) {
+        try {
+            if (!req.params.serviceId) throw new BadRequestError('Missing serviceId in request param');
+            const service = await this.registryService.findOneService(req.params.serviceId);
+            if (service === undefined) throw new NotFoundError('Service does not exist');
+            res.send({
+                'service': service
+            })
+        } catch (error: any) {
+            res.status(error.httpCode ?? 500).send(error);
+        }
+    }
+
+    // public updateService(service: IService): any {
+        
+    // }
 }

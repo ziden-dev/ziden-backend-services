@@ -1,13 +1,12 @@
-import { model, Schema } from "mongoose";
+import { model, Schema } from 'mongoose'
 
 export interface IServiceProvider {
-    _id: String,            // uuid
-    name: String,
-    description: String,
-    contact: String,
-    website: String,
-    logoUrl: String,
-    verifiers: String[]     // Ziden IDs
+    _id: string,            // uuid
+    name: string,
+    description: string,
+    contact: string,
+    website: string,
+    logoUrl: string
 }
 
 const ServiceProviderSchema = new Schema<IServiceProvider>({
@@ -16,6 +15,11 @@ const ServiceProviderSchema = new Schema<IServiceProvider>({
     description: { type: String, required: true },
     contact: { type: String, required: true },
     website: { type: String, required: true },
-    logoUrl: { type: String, required: true },
-    verifiers: { type: [String], required: true },
-})
+    logoUrl: { type: String, required: true }
+}, {
+    strict: true,
+    strictQuery: false,
+    timestamps: true
+});
+
+export default model<IServiceProvider>('ServiceProvider', ServiceProviderSchema);

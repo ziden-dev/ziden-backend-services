@@ -9,9 +9,6 @@ export enum Circuit {
 
 export interface IQuery {
     propertyName: string,
-    slotIndex: number,
-    from: number,
-    to: number,
     operator: OPERATOR,
     value: number
 }
@@ -23,19 +20,15 @@ export interface IRequirement {
     query: IQuery
 }
 
-export interface IService {
+export type IService = {
     _id: string,
     verifierId: string,
     description: string,
-    message: string,
     requirements: IRequirement[]
 }
 
 const QuerySchema = new Schema<IQuery>({
     propertyName: { type: String, required: true },
-    slotIndex: { type: Number, required: true },
-    from: { type: Number, required: true },
-    to: { type: Number, required: true },
     operator: { type: Number, required: true },
     value: { type: Number, required: true }
 }, {
@@ -59,10 +52,10 @@ const ServiceSchema = new Schema<IService>({
     _id: { type: String, required: true },
     verifierId: { type: String, required: true },
     description: { type: String, required: true },
-    message: { type: String, required: true },
     requirements: { type: [RequirementSchema], required: true },
 }, {
     strict: true,
+    strictQuery: false,
     timestamps: true
 })
 

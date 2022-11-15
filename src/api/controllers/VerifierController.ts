@@ -1,24 +1,55 @@
-import { BadRequestError, Body, Delete, Get, JsonController, NotFoundError, OnUndefined, Param, Post, Put, Req, Res } from "routing-controllers";
-import { OpenAPI, ResponseSchema } from "routing-controllers-openapi";
+import { Request, Response } from "express";
 
 import { VerifierService } from "../services/VerifierService";
 import { IVerifier } from "../models/Verifier";
+import { NotFoundError } from "../errors/http/NotFoundError";
+import { BadRequestError } from "../errors/http/BadRequestError";
+import logger from "../../lib/logger";
 
-@JsonController('/verifiers')
 export class VerifierController {
 
-    constructor(
-        private verifierService: VerifierService
-    ) { }
+    verifierService: VerifierService;
+    
+    constructor() {
+        this.verifierService = new VerifierService();
 
-    @Get('/')
-    public findAllIssuers(): Promise<IVerifier[]> {
-        return this.verifierService.findAll();
+        this.findAllVerifiers = this.findAllVerifiers.bind(this);
+        this.findOneVerifier = this.findOneVerifier.bind(this);
+        this.createVerifier = this.createVerifier.bind(this);
     }
 
-    @Get('/:verifierId')
-    public findOneIssuer(@Param('verifierId') verifierId: string): Promise<IVerifier | undefined> {
-        return this.verifierService.findOne(verifierId);
+    public async findAllVerifiers(req: Request, res: Response) {
+        try {
+            res.send({
+                'verifiers': await this.verifierService.findAll()
+            })
+        } catch (error: any) {
+            res.status(error.httpCode ?? 500).send(error);
+        }
     }
 
+    public async findOneVerifier(req: Request, res: Response) {
+        try {
+            if (!req.params.verifierId) throw new BadRequestError('Missing verifierId in request param');
+            const verifier = await this.verifierService.findOne(req.params.verifierId);
+            if (verifier === undefined) throw new NotFoundError('Verifier is not registered');
+            res.send({
+                'verifier': verifier
+            })
+        } catch (error: any) {
+            res.status(error.httpCode ?? 500).send(error);
+        }
+    }
+
+    public async createVerifier(req: Request, res: Response) {
+        try {
+            if (!req.body.verifier) throw new BadRequestError('Missing verifier property in request body')
+            res.send({
+                'newVerifier': await this.verifierService.save(req.body.verifier as IVerifier)
+            })
+        } catch (error: any) {
+            logger.error(error)
+            res.status(error.httpCode ?? 500).send(error);
+        }
+    }
 }

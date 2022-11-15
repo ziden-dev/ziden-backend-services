@@ -1,26 +1,38 @@
-import { Model } from "mongoose";
-import { Inject, Service } from "typedi";
+import { v4 as uuidV4 } from 'uuid';
 
-import { ISchema } from "../models/Schema";
+import Schema, { ISchema } from '../models/Schema';
+import { InternalServerError } from '../errors/http/InternalServerError';
 
-@Service()
 export class SchemaService {
     
-    constructor(
-        @Inject('Schema') private Schema: Model<ISchema>
-    ) { }
+    constructor() { }
     
     public async findOne(schemaHash: string): Promise<ISchema | undefined> {
-        return (await this.Schema.findById(schemaHash))?.toObject();
+        return (await Schema.findById(schemaHash))?.toObject();
     }
 
     public async findAll(): Promise<ISchema[]> {
-        return (await this.Schema.find()).map(e => e.toObject());
+        return (await Schema.find()).map(e => e.toObject());
+    }
+
+    public async findMany(schemaHashes: string[]): Promise<ISchema[]> {
+        return (await Schema.find({
+            _id: { $in: schemaHashes }
+        })).map(e => e.toObject());
     }
 
     public async save(schema: ISchema): Promise<ISchema> {
-        schema._id = schema.schemaHash;
-        return (await this.Schema.findByIdAndUpdate(
+        if (!schema.schemaHash) {
+            // const schemaHash = utils.hashSchema(schema);
+            const schemaHash = uuidV4(); //FIXME
+            Object.assign(schema, {schemaHash: schemaHash});
+
+            if (!schema._id || !(schema._id === schemaHash)) {
+                Object.assign(schema, {_id: schemaHash});
+            }
+        }
+
+        return (await Schema.findByIdAndUpdate(
             schema._id,
             schema,
             {upsert: true, new: true}

@@ -1,44 +1,25 @@
-import { model, Schema } from "mongoose";
+import mongoose, { model, Schema } from 'mongoose';
 
 export interface IClaimProperty {
-    propertyName: string,
-    propertyType: 'number' | 'string',
-    displayName: string,
-    slot: 0 | 1,
-    begin: number,
-    end: number
-}
-
-export interface IClaimProperties {
-    index: IClaimProperty[],
-    value: IClaimProperty[]
+    title: string,
+    type: 'string' | 'integer' | 'double' | 'date' | 'datetime' | 'boolean'
 }
 
 export interface ISchema {
     _id?: string,
     schemaHash?: string,
-    name: string,
-    properties: IClaimProperties
+    title: string,
+    properties: {[key: string]: IClaimProperty}
+    index: string[],
+    value: string[],
+    required: string[]
 }
 
 const ClaimPropertySchema = new Schema<IClaimProperty>({
-    propertyName: { type: String, required: true },
-    propertyType: { type: String, required: true },
-    displayName: { type: String, required: true },
-    slot: { type: Number, required: true},
-    begin: { type: Number, required: true },
-    end: { type: Number, required: true },   
+    title: { type: String, required: true },
+    type: { type: String, required: true }
 }, {
-    strict: true,
-    timestamps: false,
-    _id: false
-});
-
-const ClaimPropertiesSchema = new Schema<IClaimProperties>({
-    index: { type: [ClaimPropertySchema], required: true },
-    value: { type: [ClaimPropertySchema], required: true }
-}, {
-    strict: true,
+    strict: false,
     timestamps: false,
     _id: false
 });
@@ -46,10 +27,14 @@ const ClaimPropertiesSchema = new Schema<IClaimProperties>({
 const SchemaSchema = new Schema<ISchema>({
     _id: { type: String, required: true },
     schemaHash: { type: String, required: true },
-    name: { type: String, required: true },
-    properties: { type: ClaimPropertiesSchema, required: true }
+    title: { type: String, required: true },
+    properties: { type: Object, of: ClaimPropertySchema, required: true },
+    index: { type: [String], required: true },
+    value: { type: [String], required: true },
+    required: { type: [String], required: true },
 }, {
     strict: true,
+    strictQuery: false,
     timestamps: true
 });
 
