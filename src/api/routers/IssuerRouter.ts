@@ -102,10 +102,10 @@ export class IssuerRouter {
          *         content:
          *           application/json:
          *             schema:
-         *             type: object
-         *             properties:
-         *               issuer:
-         *                 $ref: '#/components/schemas/Issuer'
+         *               type: object
+         *               properties:
+         *                 issuer:
+         *                   $ref: '#/components/schemas/Issuer'
          */
         this.router.get('/:issuerId', (new IssuerController()).findOneIssuer);
 

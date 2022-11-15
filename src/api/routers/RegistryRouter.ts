@@ -15,50 +15,6 @@ export class RegistryRouter {
          * @swagger
          * components:
          *   schemas:
-         *     Schema:
-         *       properties:
-         *         _id:
-         *           type: string
-         *           example: 8077d5cb0c7bfbcff2197d3b1f651901
-         *         schemaHash:
-         *           type: string
-         *           example: 8077d5cb0c7bfbcff2197d3b1f651901
-         *         title:
-         *           type: string
-         *           example: Demo Schema
-         *         properties:
-         *           type: object
-         *         index:
-         *           type: array
-         *           items:
-         *             type: string
-         *         value:
-         *           type: array
-         *           items:
-         *             type: string
-         *         required:
-         *           type: array
-         *           items:
-         *             type: string
-         *     SchemaForm:
-         *       properties:
-         *         title:
-         *           type: string
-         *           example: Demo Schema
-         *         properties:
-         *           type: object
-         *         index:
-         *           type: array
-         *           items:
-         *             type: string
-         *         value:
-         *           type: array
-         *           items:
-         *             type: string
-         *         required:
-         *           type: array
-         *           items:
-         *             type: string
          *     SchemaRegistry:
          *       properties:
          *         _id:
