@@ -6,8 +6,8 @@ import { ISchema } from '../models/Schema';
 import { ISchemaRegistry } from '../models/SchemaRegistry';
 import { IService } from '../models/Service';
 import { BadRequestError } from '../errors/http/BadRequestError';
-import logger from '../../lib/logger';
 import { NotFoundError } from '../errors/http/NotFoundError';
+import logger from '../../lib/logger';
 
 export class SchemaRegistryResponse {
     public data: any;

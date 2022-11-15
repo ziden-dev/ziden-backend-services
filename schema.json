@@ -1,0 +1,94 @@
+[
+    {
+        "title": "US Identity Document Claim",
+        "properties": {
+            "documentId": {
+                "title": "Document ID",
+                "type": "string"
+            },
+            "documentType": {
+                "title": "Document Type",
+                "type": "string"
+            },
+            "name": {
+                "title": "Full Name",
+                "type": "string"
+            },
+            "dateOfBirth": {
+                "title": "Date Of Birth",
+                "type": "date"
+            },
+            "nationality": {
+                "title": "Nationality",
+                "type": "integer",
+                "minimum": "0",
+                "maximum": "10000"
+            },
+            "countryOfResidence": {
+                "title": "Country Of Residence",
+                "type": "integer",
+                "minimum": "0",
+                "maximum": "10000"
+            },
+            "address": {
+                "title": "Address",
+                "type": "string"
+            },
+            "zipCode5": {
+                "title": "ZIP code 5",
+                "type": "integer",
+                "minimum": "0",
+                "maximum": "99999"
+            },
+            "zipCodePlus4": {
+                "title": "ZIP code +4",
+                "type": "integer",
+                "minimum": "0",
+                "maximum": "9999"
+            }
+        },
+        "index": ["documentId", "documentType"],
+        "value": ["name", "dateOfBirth", "nationality", "countryOfResidence", "address", "zipCode5", "zipCodePlus4"],
+        "required": ["documentId", "documentType", "name", "dateOfBirth", "nationality", "countryOfResidence", "address", "zipCode5"]
+    },
+    {
+        "title": "Public Demo Identity Document Claim",
+        "properties": {
+            "documentId": {
+                "title": "Document ID",
+                "type": "string"
+            },
+            "documentType": {
+                "title": "Document Type",
+                "type": "string"
+            },
+            "name": {
+                "title": "Full Name",
+                "type": "string"
+            },
+            "dateOfBirth": {
+                "title": "Date Of Birth",
+                "type": "date"
+            },
+            "nationality": {
+                "title": "Nationality",
+                "type": "integer",
+                "minimum": "0",
+                "maximum": "10000"
+            },
+            "countryOfResidence": {
+                "title": "Country Of Residence",
+                "type": "integer",
+                "minimum": "0",
+                "maximum": "10000"
+            },
+            "address": {
+                "title": "Address",
+                "type": "string"
+            }
+        },
+        "index": ["documentId", "documentType"],
+        "value": ["name", "dateOfBirth", "nationality", "countryOfResidence", "address"],
+        "required": ["documentId", "documentType", "name", "dateOfBirth", "nationality", "countryOfResidence"]
+    }
+]
