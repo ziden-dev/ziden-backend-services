@@ -10,6 +10,7 @@ export interface IIssuer {
 
 const IssuerSchema = new Schema<IIssuer>({
     _id: { type: String, required: true },
+    providerId: { type: String, required: true },
     endpointUrl: { type: String, required: true },
     revocationTreeDb: { type: String, required: true },
     rootsTreeDb: { type: String, required: true }
