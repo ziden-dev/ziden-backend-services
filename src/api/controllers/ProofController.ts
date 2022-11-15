@@ -1,5 +1,4 @@
-import { BadRequestError, BaseDriver, Body, Delete, Get, JsonController, NotFoundError, OnUndefined, Param, Post, Put, QueryParam, QueryParams, Req, Res } from "routing-controllers";
-import { OpenAPI, ResponseSchema } from "routing-controllers-openapi";
+import { Request, Response } from 'express';
 import axios from 'axios';
 
 import { KYCQueryMTPInput, KYCNonRevQueryMTPInput } from "zidenjs/build/witnesses/queryMTP";
@@ -8,6 +7,8 @@ import { IQuery } from "../models/Service";
 import { RegistryService } from "../services/RegistryService";
 import { IssuerService } from "../services/IssuerService";
 import { ProofService } from "../services/ProofService";
+import { BadRequestError } from '../errors/http/BadRequestError';
+import { NotFoundError } from '../errors/http/NotFoundError';
 
 export interface ProofRequest {
     verifierId: string,
@@ -31,55 +32,72 @@ export interface Proof {
     publicSignals: any
 }
 
-@JsonController('/proofs')
 export class ProofController {
 
-    constructor(
-        private registryService: RegistryService,
-        private issuerService: IssuerService,
-        private proofService: ProofService
-    ) { }
+    registryService: RegistryService;
+    issuerService: IssuerService;
+    proofService: ProofService;
 
-    @Get('/requests/:serviceId')
-    public async getProofRequest(
-        @Param('serviceId') serviceId: string
-    ): Promise<ProofRequest> {
-        let service = await this.registryService.findOneService(serviceId);
-        if (!service) throw new BadRequestError();
-        let request: ProofRequest = {
-            verifierId: service.verifierId,
-            message: 'Sign this message to access Ziden service',
-            requirements: service.requirements.map((req) => {
-                return {
-                    schemaHash: req.schemaHash,
-                    circuitId: req.circuitId,
-                    query: req.query
+    constructor() {
+        this.registryService = new RegistryService();
+        this.issuerService = new IssuerService();
+        this.proofService = new ProofService();
+    }
+
+    public async getProofRequest(req: Request, res: Response){
+        try {
+            if (!req.params.serviceId) throw new BadRequestError('Missing serviceId in request param');
+            const service = await this.registryService.findOneService(req.params.serviceId);
+            if (service === undefined) throw new NotFoundError('Service does not exist');
+            res.send({
+                'request': {
+                    verifierId: service.verifierId,
+                    message: 'Sign this message to access Ziden service',
+                    requirements: service.requirements.map((req) => {
+                        return {
+                            schemaHash: req.schemaHash,
+                            circuitId: req.circuitId,
+                            query: req.query
+                        }
+                    })
                 }
+            });
+
+        } catch (error: any) {
+            res.status(error.httpCode ?? 500).send(error);
+        }
+    }
+
+    public async getProofPublicData(req: Request, res: Response) {
+        try {
+            if (!req.query.issuerId) throw new BadRequestError('Missing issuerId in request param');
+            if (!req.query.claimId) throw new BadRequestError('Missing claimId in request param');
+
+            const issuer = await this.issuerService.findOne(req.params.issuerId);
+            if(issuer === undefined) throw new NotFoundError();
+
+            res.send({
+                'public': (await axios.get(`${issuer.endpointUrl}/claims/${req.params.claimId}/proof`, {params: {type: 'nonRevMtp'}})).data
+            }) 
+        } catch (error: any) {
+            res.status(error.httpCode ?? 500).send(error);
+        } 
+    }
+
+    public async submitProofs(req: Request, res: Response) {
+        try {
+            if (!req.body.zkProofs) throw new BadRequestError('Missing zkProofs in request param');
+            const verifications = req.body.zkProofs.map((p: Proof) => {
+                if (!p.proof || !p.publicSignals) throw new BadRequestError();
+                return this.proofService.verifyProof(p.proof, p.publicSignals);
             })
-        };
-        return request;
-    }
 
-    @Get('/public')
-    public async getProofPublicData(
-        @QueryParam('claimId') claimId: string,
-        @QueryParam('issuerId') issuerId: string
-    ): Promise<ProofData> {
-        let issuer = await this.issuerService.findOne(issuerId);
-        if(!issuer || !issuer.endpointUrl) throw new NotFoundError();
-        return (await axios.get(`${issuer.endpointUrl}/claims/${claimId}/proof`, {params: {type: 'nonRevMtp'}})).data;
-    }
-
-    @Post('/submit')
-    public async submitProof(
-        @Body() zkProofs: Proof[]
-    ): Promise<any> {
-        const verifyResult = zkProofs.map(p => {
-            if (!p.proof || !p.publicSignals) throw new BadRequestError();
-            return this.proofService.verifyProof(p.proof, p.publicSignals);
-        })
-        
-        return Promise.all(verifyResult);
+            res.send({
+                'results': await Promise.all(verifications)
+            });
+        } catch (error: any) {
+            res.status(error.httpCode ?? 500).send(error);
+        }
     }
 
 }

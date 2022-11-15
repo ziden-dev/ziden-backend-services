@@ -1,9 +1,7 @@
-import { Inject, Service } from "typedi";
 import * as ethers from 'ethers';
 
 import abi from "../../static/abi";
 
-@Service()
 export class ProofService {
 
     constructor(){}
