@@ -69,14 +69,24 @@ export class RegistryController {
         } catch (error: any) {
             res.status(error.httpCode ?? 500).send(error);
         }
-        
     }
     
     public async findAllSchemaRegistries(req: Request, res: Response) {
         try {
-            res.send({
-                'registries': await this.registryService.findAllSchemaRegistries()
-            });
+            if (!req.query.schemaHash || !req.query.issuerId) {
+                res.send({
+                    'registries': await this.registryService.findAllSchemaRegistries()
+                });
+            } else {
+                const [registry, schema] = await Promise.all([
+                    this.registryService.findBySchemaAndIssuer(req.query.schemaHash as string, req.query.issuerId as string),
+                    this.schemaService.findOne(req.query.schemaHash as string)
+                ]);
+                res.send({
+                    'registry': registry,
+                    'schema': schema
+                });
+            }
         } catch (error: any) {
             res.status(error.httpCode ?? 500).send(error);
         }

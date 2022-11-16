@@ -21,6 +21,13 @@ export class RegistryService {
         })).map(e => e.toObject());
     }
 
+    public async findBySchemaAndIssuer(schemaHash: string, issuerId: string): Promise<ISchemaRegistry | undefined> {
+        return (await SchemaRegistry.findOne({
+            schemaHash: schemaHash,
+            issuerId: issuerId
+        }))?.toObject();
+    }
+
     public async saveSchemaRegistry(registry: ISchemaRegistry): Promise<ISchemaRegistry> {
         if (!registry._id) Object.assign(registry, {_id: uuidV4()});
 
