@@ -161,10 +161,21 @@ export class RegistryRouter {
          * @swagger
          * /api/registries/schemas:
          *   get:
-         *     summary: Find all Schema Registry
-         *     description: Get all registered Schema Registry
+         *     summary: Find many Schema Registry
+         *     description: Get many registered Schema Registry
          *     tags:
          *       - Registry
+         *     parameters:
+         *       - in: query
+         *         name: schemaHash
+         *         schema:
+         *           type: string
+         *         description: Hash of Schema
+         *       - in: query
+         *         name: issuerId
+         *         schema:
+         *           type: string
+         *         description: DID of Issuer
          *     responses:
          *       200:
          *         description: A JSON array of Schema Registry
@@ -300,16 +311,21 @@ export class RegistryRouter {
          *             schema:
          *               type: object
          *               properties:
-         *                 service:
+         *                 services:
          *                   type: array
          *                   items:
          *                     $ref: '#/components/schemas/Service'
+         *                 logos:
+         *                   type: array
+         *                   items:
+         *                     type: string
+         *                     example: 'https://example.logo.com'
          */
         this.router.get('/services', (new RegistryController()).findAllServices);
 
         /**
          * @swagger
-         * /api/registries/service/{serviceId}:
+         * /api/registries/services/{serviceId}:
          *   get:
          *     summary: Find one Service
          *     description: Query an registered Service by unique ID

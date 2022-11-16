@@ -14,6 +14,8 @@ export interface IQuery {
 }
 
 export interface IRequirement {
+    title: string,
+    attestation: string,
     allowedIssuers: string[],
     schemaHash: string,
     circuitId: Circuit,
@@ -22,6 +24,7 @@ export interface IRequirement {
 
 export type IService = {
     _id: string,
+    title: string,
     verifierId: string,
     description: string,
     requirements: IRequirement[]
@@ -38,6 +41,8 @@ const QuerySchema = new Schema<IQuery>({
 });
 
 const RequirementSchema = new Schema<IRequirement>({
+    title: { type: String, required: true },
+    attestation: { type: String, required: true },
     allowedIssuers: { type: [String], required: true },
     schemaHash: { type: String, required: true },
     circuitId: { type: String, required: true },
@@ -50,6 +55,7 @@ const RequirementSchema = new Schema<IRequirement>({
 
 const ServiceSchema = new Schema<IService>({
     _id: { type: String, required: true },
+    title: { type: String, required: true },
     verifierId: { type: String, required: true },
     description: { type: String, required: true },
     requirements: { type: [RequirementSchema], required: true },

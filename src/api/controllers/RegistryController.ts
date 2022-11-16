@@ -10,6 +10,8 @@ import { IService } from '../models/Service';
 import { BadRequestError } from '../errors/http/BadRequestError';
 import { NotFoundError } from '../errors/http/NotFoundError';
 import logger from '../../lib/logger';
+import { ServiceProviderService } from '../services/ServiceProviderService';
+import { VerifierService } from '../services/VerifierService';
 
 export class SchemaRegistryResponse {
     public data: any;
@@ -20,13 +22,17 @@ export class RegistryController {
     schemaService: SchemaService;
     registryService: RegistryService;
     issuerService: IssuerService;
+    verifierService: VerifierService;
     identityProviderService: IdentityProviderService;
+    serviceProviderService: ServiceProviderService;
 
     constructor() {
         this.schemaService = new SchemaService();
         this.registryService = new RegistryService();
         this.issuerService = new IssuerService();
+        this.verifierService = new VerifierService();
         this.identityProviderService = new IdentityProviderService();
+        this.serviceProviderService = new ServiceProviderService();
 
         this.registerSchema = this.registerSchema.bind(this);
         this.findAllSchemaRegistries = this.findAllSchemaRegistries.bind(this);
@@ -148,9 +154,13 @@ export class RegistryController {
 
     public async findAllServices(req: Request, res: Response) {
         try {
+            const services = await this.registryService.findAllServices();
+            const verifiers = await Promise.all(services.map(async service => this.verifierService.findOne(service.verifierId)));
+            const providers = await Promise.all(verifiers.map(async verifier => await this.serviceProviderService.findOne(verifier!.providerId)));
             res.send({
-                'services': await this.registryService.findAllServices()
-            })
+                'services': services,
+                'providers': providers
+            });
         } catch (error: any) {
             res.status(error.httpCode ?? 500).send(error);
         }
@@ -161,9 +171,13 @@ export class RegistryController {
             if (!req.params.serviceId) throw new BadRequestError('Missing serviceId in request param');
             const service = await this.registryService.findOneService(req.params.serviceId);
             if (service === undefined) throw new NotFoundError('Service does not exist');
+            const verifier = await this.verifierService.findOne(service.verifierId);
+            const provider = await this.serviceProviderService.findOne(verifier!.providerId);
             res.send({
-                'service': service
-            })
+                'service': service,
+                'verifier': verifier,
+                'provider': provider
+            });
         } catch (error: any) {
             res.status(error.httpCode ?? 500).send(error);
         }
