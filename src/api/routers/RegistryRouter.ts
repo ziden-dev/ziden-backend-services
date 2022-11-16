@@ -215,6 +215,47 @@ export class RegistryRouter {
 
         /**
          * @swagger
+         * /api/registries/schemas/{registryId}/request:
+         *   get:
+         *     summary: Fetch data for request page
+         *     description: Fetch data for request page
+         *     tags:
+         *       - Registry
+         *     parameters:
+         *       - in: path
+         *         name: registryId
+         *         schema:
+         *           type: string
+         *         required: true
+         *         description: Unique ID of Schema Registry
+         *     responses:
+         *       200:
+         *         description: A JSON object
+         *         content:
+         *           application/json:
+         *             schema:
+         *             type: object
+         *             properties:
+         *               title:
+         *                 type: string
+         *                 example: 'Demo Schema'
+         *               provider:
+         *                 type: string
+         *                 example: 'Ziden Demo'
+         *               description:
+         *                 type: string
+         *                 example: 'This is a mock request page'
+         *               logoUrl:
+         *                 type: string
+         *                 example: 'https://example.logo'
+         *               endpointUrl:
+         *                 type: string
+         *                 example: 'https://exapmle.endpoint.com'
+         */
+        this.router.get('/schemas/:registryId/request', (new RegistryController()).fetchRegistryRequestPage);
+
+        /**
+         * @swagger
          * /api/registries/services:
          *   post:
          *     summary: Register new Service

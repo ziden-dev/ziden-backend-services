@@ -2,6 +2,8 @@ import { Request, Response } from 'express';
 
 import { SchemaService } from '../services/SchemaService';
 import { RegistryService } from '../services/RegistryService';
+import { IssuerService } from '../services/IssuerService';
+import { IdentityProviderService } from '../services/IdentityProviderService';
 import { ISchema } from '../models/Schema';
 import { ISchemaRegistry } from '../models/SchemaRegistry';
 import { IService } from '../models/Service';
@@ -17,10 +19,14 @@ export class RegistryController {
 
     schemaService: SchemaService;
     registryService: RegistryService;
+    issuerService: IssuerService;
+    identityProviderService: IdentityProviderService;
 
     constructor() {
         this.schemaService = new SchemaService();
         this.registryService = new RegistryService();
+        this.issuerService = new IssuerService();
+        this.identityProviderService = new IdentityProviderService();
 
         this.registerSchema = this.registerSchema.bind(this);
         this.findAllSchemaRegistries = this.findAllSchemaRegistries.bind(this);
@@ -28,6 +34,7 @@ export class RegistryController {
         this.registerService = this.registerService.bind(this);
         this.findAllServices = this.findAllServices.bind(this);
         this.findOneService = this.findOneService.bind(this);
+        this.fetchRegistryRequestPage = this.fetchRegistryRequestPage.bind(this);
     }
 
     public async registerSchema(req: Request, res: Response) {
@@ -94,6 +101,29 @@ export class RegistryController {
     // public updateSchemaRegistry(registry: ISchemaRegistry): any {
 
     // }
+
+    public async fetchRegistryRequestPage(req: Request, res: Response) {
+        try {
+            if (!req.params.registryId) throw new BadRequestError('Missing registryId in request param');
+            const registry = await this.registryService.findOneSchemaRegistry(req.params.registryId);
+            if (registry === undefined) throw new NotFoundError('Schema registry does not exist');
+            const [schema, issuer] = await Promise.all([
+                this.schemaService.findOne(registry.schemaHash),
+                this.issuerService.findOne(registry.issuerId)
+            ]);
+            const provider = await this.identityProviderService.findOne(issuer!.providerId);
+            res.send({
+                'title': schema!.title,
+                'provider': provider!.name,
+                'description': registry.description,
+                'logoUrl': provider!.logoUrl,
+                'endpointUrl': registry.endpointUrl
+            })
+        } catch (error: any) {
+            logger.error(error)
+            res.status(error.httpCode ?? 500).send(error);
+        }
+    }
 
     public async registerService(req: Request, res: Response) {
         try {
