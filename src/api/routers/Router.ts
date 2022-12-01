@@ -7,6 +7,7 @@ import { VerifierRouter } from './VerifierRouter';
 import { IdentityProviderRouter } from './IdentityProviderRouter';
 import { ServiceProviderRouter } from './ServiceProviderRouter';
 import { ClaimRouter } from './ClaimRouter';
+import { ProofRouter } from './ProofRouter';
 
 export class Routers {
     public router: Router;
@@ -24,5 +25,6 @@ export class Routers {
         this.router.use('/identityProviders', new LogMiddleware().use, new IdentityProviderRouter().router);
         this.router.use('/serviceProviders', new LogMiddleware().use, new ServiceProviderRouter().router);
         this.router.use('/claims', new LogMiddleware().use, new ClaimRouter().router);
+        this.router.use('/proofs', new LogMiddleware().use, new ProofRouter().router);
     }
 }
