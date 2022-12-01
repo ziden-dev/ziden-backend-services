@@ -29,7 +29,7 @@ export interface ProofData {
 
 export interface Proof {
     proof: any,
-    publicSignals: any
+    publicData: any
 }
 
 export class ProofController {
@@ -88,8 +88,9 @@ export class ProofController {
         try {
             if (!req.body.zkProofs) throw new BadRequestError('Missing zkProofs in request param');
             const verifications = req.body.zkProofs.map((p: Proof) => {
-                if (!p.proof || !p.publicSignals) throw new BadRequestError();
-                return this.proofService.verifyProof(p.proof, p.publicSignals);
+                console.log(p);
+                if (!p.proof || !p.publicData) throw new BadRequestError();
+                return this.proofService.verifyProof(p.proof, p.publicData);
             })
 
             res.send({
