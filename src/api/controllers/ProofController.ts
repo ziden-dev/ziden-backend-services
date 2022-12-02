@@ -42,6 +42,10 @@ export class ProofController {
         this.registryService = new RegistryService();
         this.issuerService = new IssuerService();
         this.proofService = new ProofService();
+        
+        this.getProofRequest = this.getProofRequest.bind(this);
+        this.getProofPublicData = this.getProofPublicData.bind(this);
+        this.submitProofs = this.submitProofs.bind(this);
     }
 
     public async getProofRequest(req: Request, res: Response){
@@ -88,7 +92,6 @@ export class ProofController {
         try {
             if (!req.body.zkProofs) throw new BadRequestError('Missing zkProofs in request param');
             const verifications = req.body.zkProofs.map((p: Proof) => {
-                console.log(p);
                 if (!p.proof || !p.publicData) throw new BadRequestError();
                 return this.proofService.verifyProof(p.proof, p.publicData);
             })
@@ -97,6 +100,7 @@ export class ProofController {
                 'results': await Promise.all(verifications)
             });
         } catch (error: any) {
+            console.error(error)
             res.status(error.httpCode ?? 500).send(error);
         }
     }
