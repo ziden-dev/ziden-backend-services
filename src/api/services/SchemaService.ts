@@ -23,8 +23,8 @@ export class SchemaService {
 
     public async save(schema: ISchema): Promise<ISchema> {
         if (!schema.schemaHash) {
-            // const schemaHash = hashSchema(schema); //FIXME
-            const schemaHash = '34026444997966407455173871616257787521361155617631575393219926927966991955994';//FIXME
+            const schemaHash = uuidV4(); //FIXME
+            // const schemaHash = '34026444997966407455173871616257787521361155617631575393219926927966991955994';//FIXME
             Object.assign(schema, {schemaHash: schemaHash});
 
             if (!schema._id || !(schema._id === schemaHash)) {

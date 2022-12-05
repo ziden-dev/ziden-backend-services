@@ -33,8 +33,12 @@ export class ClaimController {
             ])
 
             if (schema === undefined || issuer === undefined) throw new NotFoundError();
-
-            const provider = await this.identityProviderService.findOne(issuer.providerId);
+            
+            const [provider, status] = await Promise.all([
+                this.identityProviderService.findOne(issuer.providerId),
+                axios.get(`${issuer.endpointUrl}/claims/${req.query.claimId}/status`)
+            ]);
+            // const provider = await this.identityProviderService.findOne(issuer.providerId);
 
             res.send({
                 'schema': {
@@ -47,7 +51,8 @@ export class ClaimController {
                 },
                 'provider': {
                     'name': provider!.name
-                }
+                },
+                'status': status
             })
         } catch (error: any) {
             res.status(error.httpCode ?? 500).send(error);
