@@ -10,7 +10,7 @@ export enum Circuit {
 export interface IQuery {
     propertyName: string,
     operator: OPERATOR,
-    value: number
+    value: number[]
 }
 
 export interface IRequirement {
@@ -33,7 +33,7 @@ export type IService = {
 const QuerySchema = new Schema<IQuery>({
     propertyName: { type: String, required: true },
     operator: { type: Number, required: true },
-    value: { type: Number, required: true }
+    value: { type: [Number], required: true }
 }, {
     strict: true,
     timestamps: false,
