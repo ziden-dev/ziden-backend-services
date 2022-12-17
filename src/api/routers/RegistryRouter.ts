@@ -344,10 +344,10 @@ export class RegistryRouter {
          *         content:
          *           application/json:
          *             schema:
-         *             type: object
-         *             properties:
-         *               service:
-         *                 $ref: '#/components/schemas/Service'
+         *               type: object
+         *               properties:
+         *                 service:
+         *                   $ref: '#/components/schemas/Service'
          */
         this.router.get('/services/:serviceId', (new RegistryController()).findOneService);
 

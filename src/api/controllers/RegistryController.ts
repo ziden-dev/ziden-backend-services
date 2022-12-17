@@ -171,12 +171,19 @@ export class RegistryController {
             if (!req.params.serviceId) throw new BadRequestError('Missing serviceId in request param');
             const service = await this.registryService.findOneService(req.params.serviceId);
             if (service === undefined) throw new NotFoundError('Service does not exist');
-            const verifier = await this.verifierService.findOne(service.verifierId);
+            const issuerIds = [...new Set(service.requirements.map(req => req.allowedIssuers).flat())];
+            const [verifier, ...issuers] = await Promise.all([
+                this.verifierService.findOne(service.verifierId),
+                ...issuerIds.map(issuerId => this.issuerService.findOne(issuerId))
+            ]);
             const provider = await this.serviceProviderService.findOne(verifier!.providerId);
             res.send({
                 'service': service,
                 'verifier': verifier,
-                'provider': provider
+                'provider': provider,
+                'issuersEndpointUrl': issuers.map(e => {
+                    return {[e?._id!]: e?.endpointUrl}    
+                })
             });
         } catch (error: any) {
             res.status(error.httpCode ?? 500).send(error);

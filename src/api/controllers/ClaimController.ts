@@ -6,6 +6,7 @@ import { IssuerService } from '../services/IssuerService';
 import { IdentityProviderService } from '../services/IdentityProviderService';
 import { BadRequestError } from '../errors/http/BadRequestError';
 import { NotFoundError } from '../errors/http/NotFoundError';
+import logger from '../../lib/logger';
 
 export class ClaimController {
 
@@ -38,7 +39,6 @@ export class ClaimController {
                 this.identityProviderService.findOne(issuer.providerId),
                 axios.get(`${issuer.endpointUrl}/claims/${req.query.claimId}/status`)
             ]);
-            // const provider = await this.identityProviderService.findOne(issuer.providerId);
 
             res.send({
                 'schema': {
@@ -52,9 +52,10 @@ export class ClaimController {
                 'provider': {
                     'name': provider!.name
                 },
-                'status': status
+                'status': status.data.data.status ?? 'UNKNOWN'
             })
         } catch (error: any) {
+            logger.error(error);
             res.status(error.httpCode ?? 500).send(error);
         }
     }
