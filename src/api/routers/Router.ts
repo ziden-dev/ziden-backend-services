@@ -1,13 +1,13 @@
 import { Router } from 'express';
-import { LogMiddleware } from '../middlewares/LogMiddleware';
-import { RegistryRouter } from './RegistryRouter';
-import { SchemaRouter } from './SchemaRouter';
-import { IssuerRouter } from './IssuerRouter';
-import { VerifierRouter } from './VerifierRouter';
-import { IdentityProviderRouter } from './IdentityProviderRouter';
-import { ServiceProviderRouter } from './ServiceProviderRouter';
-import { ClaimRouter } from './ClaimRouter';
-import { ProofRouter } from './ProofRouter';
+import { LogMiddleware } from '../middlewares/LogMiddleware.js';
+import { RegistryRouter } from './RegistryRouter.js';
+import { SchemaRouter } from './SchemaRouter.js';
+import { IssuerRouter } from './IssuerRouter.js';
+import { VerifierRouter } from './VerifierRouter.js';
+import { IdentityProviderRouter } from './IdentityProviderRouter.js';
+import { ServiceProviderRouter } from './ServiceProviderRouter.js';
+import { ClaimRouter } from './ClaimRouter.js';
+import { ProofRouter } from './ProofRouter.js';
 
 export class Routers {
     public router: Router;

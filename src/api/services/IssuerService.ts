@@ -1,4 +1,4 @@
-import Issuer, { IIssuer } from "../models/Issuer";
+import Issuer, { IIssuer } from '../models/Issuer.js';
 
 export class IssuerService {
 

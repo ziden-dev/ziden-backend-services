@@ -1,10 +1,10 @@
 import { Request, Response } from "express";
 
-import { ServiceProviderService } from "../services/ServiceProviderService";
-import { VerifierService } from "../services/VerifierService";
-import { RegistryService } from "../services/RegistryService";
-import { NotFoundError } from "../errors/http/NotFoundError";
-import { BadRequestError } from "../errors/http/BadRequestError";
+import { ServiceProviderService } from "../services/ServiceProviderService.js";
+import { VerifierService } from "../services/VerifierService.js";
+import { RegistryService } from "../services/RegistryService.js";
+import { NotFoundError } from "../errors/http/NotFoundError.js";
+import { BadRequestError } from "../errors/http/BadRequestError.js";
 
 export class ServiceProviderController {
 

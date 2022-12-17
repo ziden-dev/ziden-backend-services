@@ -1,7 +1,7 @@
 import { v4 as uuidV4 } from 'uuid'; 
 
-import SchemaRegistry, { ISchemaRegistry } from "../models/SchemaRegistry";
-import Service, { IService } from "../models/Service";
+import SchemaRegistry, { ISchemaRegistry } from '../models/SchemaRegistry.js';
+import Service, { IService } from '../models/Service.js';
 
 export class RegistryService {
 

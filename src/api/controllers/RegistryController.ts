@@ -1,17 +1,17 @@
 import { Request, Response } from 'express';
 
-import { SchemaService } from '../services/SchemaService';
-import { RegistryService } from '../services/RegistryService';
-import { IssuerService } from '../services/IssuerService';
-import { IdentityProviderService } from '../services/IdentityProviderService';
-import { ISchema } from '../models/Schema';
-import { ISchemaRegistry } from '../models/SchemaRegistry';
-import { IService } from '../models/Service';
-import { BadRequestError } from '../errors/http/BadRequestError';
-import { NotFoundError } from '../errors/http/NotFoundError';
-import logger from '../../lib/logger';
-import { ServiceProviderService } from '../services/ServiceProviderService';
-import { VerifierService } from '../services/VerifierService';
+import { SchemaService } from '../services/SchemaService.js';
+import { RegistryService } from '../services/RegistryService.js';
+import { IssuerService } from '../services/IssuerService.js';
+import { IdentityProviderService } from '../services/IdentityProviderService.js';
+import { ISchema } from '../models/Schema.js';
+import { ISchemaRegistry } from '../models/SchemaRegistry.js';
+import { IService } from '../models/Service.js';
+import { BadRequestError } from '../errors/http/BadRequestError.js';
+import { NotFoundError } from '../errors/http/NotFoundError.js';
+import logger from '../../lib/logger/index.js';
+import { ServiceProviderService } from '../services/ServiceProviderService.js';
+import { VerifierService } from '../services/VerifierService.js';
 
 export class SchemaRegistryResponse {
     public data: any;

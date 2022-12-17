@@ -1,6 +1,6 @@
 import { v4 as uuidV4 } from 'uuid';
 
-import IdentityProvider, { IIdentityProvider } from "../models/IdentityProvider";
+import IdentityProvider, { IIdentityProvider } from '../models/IdentityProvider.js';
 
 export class IdentityProviderService {
 

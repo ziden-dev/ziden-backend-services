@@ -1,5 +1,5 @@
 import { Router } from 'express';
-import { IdentityProviderController } from '../controllers/IdentityProviderController';
+import { IdentityProviderController } from '../controllers/IdentityProviderController.js';
 
 export class IdentityProviderRouter {
     public router: Router;

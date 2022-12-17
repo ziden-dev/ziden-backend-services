@@ -1,5 +1,5 @@
 import mongoose from "mongoose";
-import logger from "../lib/logger";
+import logger from "../lib/logger/index.js";
 
 export class Mongo {
     constructor() { }

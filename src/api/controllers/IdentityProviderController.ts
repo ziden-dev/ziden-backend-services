@@ -1,13 +1,13 @@
 import { Request, Response } from "express";
 
-import { IdentityProviderService } from "../services/IdentityProviderService";
-import { IssuerService } from "../services/IssuerService";
-import { RegistryService } from "../services/RegistryService";
-import { SchemaService } from "../services/SchemaService";
-import { IIdentityProvider } from "../models/IdentityProvider";
-import { NotFoundError } from "../errors/http/NotFoundError";
-import { BadRequestError } from "../errors/http/BadRequestError";
-import logger from "../../lib/logger";
+import { IdentityProviderService } from "../services/IdentityProviderService.js";
+import { IssuerService } from "../services/IssuerService.js";
+import { RegistryService } from "../services/RegistryService.js";
+import { SchemaService } from "../services/SchemaService.js";
+import { IIdentityProvider } from "../models/IdentityProvider.js";
+import { NotFoundError } from "../errors/http/NotFoundError.js";
+import { BadRequestError } from "../errors/http/BadRequestError.js";
+import logger from "../../lib/logger/index.js";
 
 export class IdentityProviderController {
 

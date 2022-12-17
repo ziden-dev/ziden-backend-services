@@ -1,8 +1,8 @@
 import { NextFunction, Request, Response } from 'express';
 import morgan from 'morgan';
 
-import env from '../../lib/env';
-import logger from '../../lib/logger';
+import env from '../../lib/env/index.js';
+import logger from '../../lib/logger/index.js';
 
 export class LogMiddleware {
 

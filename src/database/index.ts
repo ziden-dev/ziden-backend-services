@@ -1,4 +1,4 @@
-export * from './mongo';
+export * from './mongo.js';
 
 export enum DB {
     MONGODB = 'mongo',

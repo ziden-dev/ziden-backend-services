@@ -1,5 +1,5 @@
 import { Router } from 'express';
-import { VerifierController } from '../controllers/VerifierController';
+import { VerifierController } from '../controllers/VerifierController.js';
 
 export class VerifierRouter {
     public router: Router;

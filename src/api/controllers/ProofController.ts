@@ -1,14 +1,14 @@
 import { Request, Response } from 'express';
 import axios from 'axios';
 
-import { KYCQueryMTPInput, KYCNonRevQueryMTPInput } from "zidenjs/build/witnesses/queryMTP";
-import { KYCQuerySigInput, KYCQuerySigNonRevInput } from "zidenjs/build/witnesses/querySig";
-import { IQuery } from "../models/Service";
-import { RegistryService } from "../services/RegistryService";
-import { IssuerService } from "../services/IssuerService";
-import { ProofService } from "../services/ProofService";
-import { BadRequestError } from '../errors/http/BadRequestError';
-import { NotFoundError } from '../errors/http/NotFoundError';
+import { KYCQueryMTPInput, KYCNonRevQueryMTPInput } from "zidenjs/build/witnesses/queryMTP.js";
+import { KYCQuerySigInput, KYCQuerySigNonRevInput } from "zidenjs/build/witnesses/querySig.js";
+import { IQuery } from "../models/Service.js";
+import { RegistryService } from "../services/RegistryService.js";
+import { IssuerService } from "../services/IssuerService.js";
+import { ProofService } from "../services/ProofService.js";
+import { BadRequestError } from '../errors/http/BadRequestError.js';
+import { NotFoundError } from '../errors/http/NotFoundError.js';
 
 export interface ProofRequest {
     verifierId: string,

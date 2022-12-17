@@ -1,4 +1,4 @@
-import { HttpError } from "./HttpError";
+import { HttpError } from './HttpError.js';
 
 export class BadRequestError extends HttpError {
     name = 'BadRequestError';

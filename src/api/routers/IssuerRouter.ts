@@ -1,5 +1,5 @@
 import { Router } from 'express';
-import { IssuerController } from '../controllers/IssuerController';
+import { IssuerController } from '../controllers/IssuerController.js';
 
 export class IssuerRouter {
     public router: Router;

@@ -4,6 +4,7 @@
   "description": "Backend services for Ziden platform",
   "author": "Ziden",
   "main": "src/app.ts",
+  "type": "module",
   "scripts": {
     "start": "nodemon src/app.ts"
   },

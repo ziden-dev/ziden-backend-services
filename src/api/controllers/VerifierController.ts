@@ -1,10 +1,10 @@
 import { Request, Response } from "express";
 
-import { VerifierService } from "../services/VerifierService";
-import { IVerifier } from "../models/Verifier";
-import { NotFoundError } from "../errors/http/NotFoundError";
-import { BadRequestError } from "../errors/http/BadRequestError";
-import logger from "../../lib/logger";
+import { VerifierService } from "../services/VerifierService.js";
+import { IVerifier } from "../models/Verifier.js";
+import { NotFoundError } from "../errors/http/NotFoundError.js";
+import { BadRequestError } from "../errors/http/BadRequestError.js";
+import logger from "../../lib/logger/index.js";
 
 export class VerifierController {
 

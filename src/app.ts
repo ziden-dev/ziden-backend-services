@@ -8,10 +8,10 @@ import cors from 'cors';
 import * as swaggerUi from 'swagger-ui-express';
 import swaggerJsdoc from 'swagger-jsdoc';
 
-import { Routers } from './api/routers/Router';
-import env from './lib/env';
-import logger from './lib/logger';
-import * as db from './database';
+import { Routers } from './api/routers/Router.js';
+import env from './lib/env/index.js';
+import logger from './lib/logger/index.js';
+import * as db from './database/index.js';
 
 export class App {
 

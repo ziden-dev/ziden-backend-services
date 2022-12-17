@@ -1,5 +1,5 @@
 import { Router } from 'express';
-import { ProofController } from '../controllers/ProofController';
+import { ProofController } from '../controllers/ProofController.js';
 
 export class ProofRouter {
     public router: Router;

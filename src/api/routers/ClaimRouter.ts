@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { ClaimController } from "../controllers/ClaimController";
+import { ClaimController } from "../controllers/ClaimController.js";
 
 export class ClaimRouter {
     public router: Router;

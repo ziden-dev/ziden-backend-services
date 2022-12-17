@@ -1,8 +1,8 @@
 import { Request, Response } from 'express';
 
-import { SchemaService } from '../services/SchemaService';
-import { BadRequestError } from '../errors/http/BadRequestError';
-import { NotFoundError } from '../errors/http/NotFoundError';
+import { SchemaService } from '../services/SchemaService.js';
+import { BadRequestError } from '../errors/http/BadRequestError.js';
+import { NotFoundError } from '../errors/http/NotFoundError.js';
 
 export class SchemaController {
     
@@ -33,6 +33,14 @@ export class SchemaController {
             res.send({
                 'schema': schema
             });
+        } catch (error: any) {
+            res.status(error.httpCode ?? 500).send(error);
+        }
+    }
+
+    public async findSchemaContexts(req: Request, res: Response) {
+        try {
+            if (!req.params.schemaHash) throw new BadRequestError('Missing schemaHash in request params');
         } catch (error: any) {
             res.status(error.httpCode ?? 500).send(error);
         }

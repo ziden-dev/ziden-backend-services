@@ -1,6 +1,6 @@
 import { v4 as uuidV4 } from 'uuid';
 
-import ServiceProvider, { IServiceProvider } from '../models/ServiceProvider';
+import ServiceProvider, { IServiceProvider } from '../models/ServiceProvider.js';
 
 export class ServiceProviderService {
 

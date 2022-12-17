@@ -1,6 +1,6 @@
 import * as ethers from 'ethers';
 
-import abi from "../../static/abi";
+import abi from '../../static/abi.js';
 
 function p256(n: any) {
     let nstr = Buffer.from(n, 'utf-8').toString();

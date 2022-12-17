@@ -1,4 +1,4 @@
-import Verifier, { IVerifier } from "../models/Verifier";
+import Verifier, { IVerifier } from '../models/Verifier.js';
 
 export class VerifierService {
 

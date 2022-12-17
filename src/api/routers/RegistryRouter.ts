@@ -1,5 +1,5 @@
 import { Router } from 'express';
-import { RegistryController } from '../controllers/RegistryController';
+import { RegistryController } from '../controllers/RegistryController.js';
 
 export class RegistryRouter {
     public router: Router;

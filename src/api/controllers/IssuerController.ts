@@ -1,8 +1,8 @@
 import { Request, Response } from "express";
 
-import { IssuerService } from "../services/IssuerService";
-import logger from "../../lib/logger";
-import { NotFoundError } from "../errors/http/NotFoundError";
+import { IssuerService } from "../services/IssuerService.js";
+import logger from "../../lib/logger/index.js";
+import { NotFoundError } from "../errors/http/NotFoundError.js";
 
 export class IssuerController {
     

@@ -1,6 +1,8 @@
 import { v4 as uuidV4 } from 'uuid';
 
-import Schema, { ISchema } from '../models/Schema';
+import Schema, { ISchema } from '../models/Schema.js';
+import Context, { IContext } from '../models/Context.js';
+
 // import { hashSchema } from '../../utils';
 
 export class SchemaService {
@@ -35,6 +37,20 @@ export class SchemaService {
         return (await Schema.findByIdAndUpdate(
             schema._id,
             schema,
+            {upsert: true, new: true}
+        )).toObject();
+    }
+
+    public async findSchemaContext(schemaHash: String): Promise<IContext | undefined> {
+        return (await Context.findById(schemaHash))?.toObject();
+    }
+
+    public async saveContext(context: IContext): Promise<IContext> {
+        context._id = context.schemaHash;
+
+        return (await Context.findByIdAndUpdate(
+            context._id,
+            context,
             {upsert: true, new: true}
         )).toObject();
     }

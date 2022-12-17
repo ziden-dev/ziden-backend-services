@@ -1,5 +1,5 @@
 import { Router } from 'express';
-import { SchemaController } from '../controllers/SchemaController';
+import { SchemaController } from '../controllers/SchemaController.js';
 
 export class SchemaRouter {
     public router: Router;
@@ -111,5 +111,7 @@ export class SchemaRouter {
          *                   $ref: '#/components/schemas/Schema'
          */
         this.router.get('/:schemaHash', (new SchemaController()).fineOneSchema);
+
+        this.router.get('/:schemaHash/contexts')
     }
 }

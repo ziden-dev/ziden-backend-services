@@ -1,12 +1,12 @@
 import { Request, Response } from 'express';
 import axios from 'axios';
 
-import { SchemaService } from '../services/SchemaService';
-import { IssuerService } from '../services/IssuerService';
-import { IdentityProviderService } from '../services/IdentityProviderService';
-import { BadRequestError } from '../errors/http/BadRequestError';
-import { NotFoundError } from '../errors/http/NotFoundError';
-import logger from '../../lib/logger';
+import { SchemaService } from '../services/SchemaService.js';
+import { IssuerService } from '../services/IssuerService.js';
+import { IdentityProviderService } from '../services/IdentityProviderService.js';
+import { BadRequestError } from '../errors/http/BadRequestError.js';
+import { NotFoundError } from '../errors/http/NotFoundError.js';
+import logger from '../../lib/logger/index.js';
 
 export class ClaimController {
 

@@ -1,5 +1,5 @@
 import { Router } from 'express';
-import { ServiceProviderController } from '../controllers/ServiceProviderController';
+import { ServiceProviderController } from '../controllers/ServiceProviderController.js';
 
 export class ServiceProviderRouter {
     public router: Router;
