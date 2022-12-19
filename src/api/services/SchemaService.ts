@@ -1,7 +1,9 @@
 import { v4 as uuidV4 } from 'uuid';
+import { schema as zidenSchema } from 'zidenjs';
 
 import Schema, { ISchema } from '../models/Schema.js';
 import Context, { IContext } from '../models/Context.js';
+
 
 // import { hashSchema } from '../../utils';
 
@@ -24,9 +26,8 @@ export class SchemaService {
     }
 
     public async save(schema: ISchema): Promise<ISchema> {
-        if (!schema.schemaHash) {
-            const schemaHash = uuidV4(); //FIXME
-            // const schemaHash = '34026444997966407455173871616257787521361155617631575393219926927966991955994';//FIXME
+        if (!schema._id && !schema.schemaHash) {
+            const schemaHash = zidenSchema.getSchemaHashFromSchema(schema);
             Object.assign(schema, {schemaHash: schemaHash});
 
             if (!schema._id || !(schema._id === schemaHash)) {

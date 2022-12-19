@@ -1,6 +1,6 @@
 import * as dotenv from 'dotenv';
 import * as path from 'path';
-import * as pkg from '../../../package.json';
+import * as pkg from '../../../package.json' assert { type: "json" };
 
 import {
     getOsEnv, getOsEnvOptional, getOsPath, getOsPaths, normalizePort, toBool, toNumber

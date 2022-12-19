@@ -12,6 +12,7 @@ import { Routers } from './api/routers/Router.js';
 import env from './lib/env/index.js';
 import logger from './lib/logger/index.js';
 import * as db from './database/index.js';
+import { GlobalVariables } from './lib/global/index.js';
 
 export class App {
 
@@ -24,13 +25,15 @@ export class App {
             this.configSwagger();
             this.startServer();
         }).catch(error => {
-            logger.error('Server crashed: ' + error)
+            logger.error('Server crashed: ' + error);
+            process.exit(1);
         })
     }
 
     public async initialize() {
         logger.info('Initializing...')
         await this.connectDatabase('mongo');
+        await this.setupGlobalVars();
     }
 
     private async connectDatabase(database: string) {
@@ -53,7 +56,10 @@ export class App {
         }
     }
 
-    private async globalVars() {}
+    private async setupGlobalVars() {
+        const globalVars = await GlobalVariables.getInstance();
+        if (globalVars === undefined) throw ('Setup global variables failed');
+    }
 
     private async configSwagger() {
         if (env.swagger.enabled) {
@@ -74,7 +80,7 @@ export class App {
             };
             const swaggerSpec = swaggerJsdoc(options);
             this.app.use(`${env.swagger.route}`, swaggerUi.serve, swaggerUi.setup(swaggerSpec));
-            logger.info('Swagger UI is enabled')
+            logger.info('Swagger UI is enabled');
         }
     }
 
@@ -97,7 +103,6 @@ export class App {
             });
         }
     }
-
 }
 
 const app = new App();

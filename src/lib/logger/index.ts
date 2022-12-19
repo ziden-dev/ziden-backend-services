@@ -1,5 +1,5 @@
 import winston from "winston";
-import env from "../env";
+import env from "../env/index.js";
 
 // const colors = {
 //     error: 'red',
@@ -17,9 +17,13 @@ const logger = winston.createLogger({
     format: winston.format.combine(
         winston.format.timestamp({ format: 'YYYY-MM-DD HH:mm:ss:ms' }),
         winston.format.colorize({ all: true }),
-        winston.format.printf(
-            (info) => `${info.timestamp} ${info.level}: ${info.message}`,
-        ),
+        winston.format.printf(({ level, message, timestamp, stack }) => {
+            if (stack) {
+                // print log trace
+                return `${timestamp} ${level}: ${message}\n${stack}`;
+            }
+            return `${timestamp} ${level}: ${message}`;
+        })
     ),
     transports: env.isProduction ? [
         new winston.transports.Console(),

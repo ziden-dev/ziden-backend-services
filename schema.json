@@ -19,13 +19,13 @@
                 "type": "date"
             },
             "nationality": {
-                "title": "Nationality",
+                "title": "Nationality (ISO 3166)",
                 "type": "integer",
                 "minimum": "0",
                 "maximum": "10000"
             },
             "countryOfResidence": {
-                "title": "Country Of Residence",
+                "title": "Country Of Residence (ISO 3166)",
                 "type": "integer",
                 "minimum": "0",
                 "maximum": "10000"
@@ -33,6 +33,12 @@
             "address": {
                 "title": "Address",
                 "type": "string"
+            },
+            "stateOfResidence": {
+                "title": "State Of Residence (US)",
+                "type": "integer",
+                "minimum": "6565",
+                "maximum": "9090"
             },
             "zipCode5": {
                 "title": "ZIP code 5",
@@ -48,8 +54,8 @@
             }
         },
         "index": ["documentId", "documentType"],
-        "value": ["name", "dateOfBirth", "nationality", "countryOfResidence", "address", "zipCode5", "zipCodePlus4"],
-        "required": ["documentId", "documentType", "name", "dateOfBirth", "nationality", "countryOfResidence", "address", "zipCode5"]
+        "value": ["name", "dateOfBirth", "nationality", "countryOfResidence", "address", "stateOfResidence", "zipCode5", "zipCodePlus4"],
+        "required": ["documentId", "documentType", "name", "dateOfBirth", "nationality", "countryOfResidence", "address", "stateOfResidence", "zipCode5"]
     },
     {
         "title": "Public Demo Identity Document Claim",
