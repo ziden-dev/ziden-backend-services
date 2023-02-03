@@ -1,4 +1,4 @@
-import { model, Schema } from 'mongoose';
+import { Date, model, Schema } from 'mongoose';
 
 export interface ISchemaRegistry {
     _id?: string,
@@ -8,7 +8,9 @@ export interface ISchemaRegistry {
     expiration: number,
     updatable: boolean,
     network: string,
-    endpointUrl: string
+    endpointUrl: string,
+    active: boolean,
+    createdAt: Date
 }
 
 const SchemaRegistrySchema = new Schema<ISchemaRegistry>({
@@ -20,6 +22,7 @@ const SchemaRegistrySchema = new Schema<ISchemaRegistry>({
     updatable: { type: Boolean, required: true },
     network: { type: String, required: true },
     endpointUrl: { type: String, required: true },
+    active: { type: Boolean, required: true, default: true }
 }, {
     strict: true,
     strictQuery: false,

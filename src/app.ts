@@ -1,6 +1,3 @@
-// import 'reflect-metadata';
-import glob from 'glob';
-import mongoose from 'mongoose';
 import express, { Application } from 'express';
 import bodyParser from 'body-parser';
 import compression from 'compression';
@@ -9,13 +6,14 @@ import * as swaggerUi from 'swagger-ui-express';
 import swaggerJsdoc from 'swagger-jsdoc';
 
 import { Routers } from './api/routers/Router.js';
+import { LogMiddleware } from './api/middlewares/LogMiddleware.js';
 import env from './lib/env/index.js';
 import logger from './lib/logger/index.js';
-import * as db from './database/index.js';
 import { GlobalVariables } from './lib/global/index.js';
+import * as db from './database/index.js';
 
 export class App {
-
+    
     public app!: Application;
 
     constructor () {
@@ -91,7 +89,8 @@ export class App {
         expressApp.use(bodyParser.urlencoded({ extended: true }));
         expressApp.use(compression())
         expressApp.use(cors())
-        expressApp.use(env.app.routePrefix, new Routers().router);
+        expressApp.use(express.static('public'));
+        expressApp.use(env.app.routePrefix, new LogMiddleware().use, new Routers().router);
         
         return expressApp;
     }

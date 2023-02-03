@@ -14,7 +14,7 @@ export class ProofService {
 
     public async verifyProof(proof: any, publicSignals: any): Promise<any> {
         
-        const address = "0x536B473Ee5490AbCF0064C4ce3D96Eb31Bd5a5BC";
+        const address = "0x19C1F35cB4faFDbFAAC4833407eC96ef24A42140";
         const jsonProviderUrl: string = "https://data-seed-prebsc-1-s1.binance.org:8545/";
         
         let queryMTP = new ethers.Contract(
@@ -23,9 +23,12 @@ export class ProofService {
             new ethers.providers['JsonRpcProvider'](jsonProviderUrl)
         );
 
+        let input = publicSignals[6];
+        let queryCompactInput = BigInt("0b" + BigInt(input).toString(2).padStart(198, "0").slice(64, 198)).toString();
+
         const circuitQuery = {
-            deterministicValue: publicSignals[6],
-            compactInput: publicSignals[7],
+            deterministicValue: publicSignals[7],
+            compactInput: queryCompactInput,
             mask: publicSignals[8],
             circuitId: 'credentialAtomicQuery'
         }

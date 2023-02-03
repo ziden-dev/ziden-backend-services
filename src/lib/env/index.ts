@@ -50,6 +50,9 @@ const env = {
         route: getOsEnv('SWAGGER_ROUTE'),
         username: getOsEnv('SWAGGER_USERNAME'),
         password: getOsEnv('SWAGGER_PASSWORD'),
+    },
+    uploads: {
+        multerStorageDest: getOsEnvOptional('MULTER_STORAGE_DEST') ?? '/publics/uploads'
     }
 };
 

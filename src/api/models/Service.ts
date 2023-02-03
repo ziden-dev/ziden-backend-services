@@ -27,7 +27,9 @@ export type IService = {
     title: string,
     verifierId: string,
     description: string,
-    requirements: IRequirement[]
+    requirements: IRequirement[],
+    active: boolean,
+    network: string
 }
 
 const QuerySchema = new Schema<IQuery>({
@@ -59,6 +61,8 @@ const ServiceSchema = new Schema<IService>({
     verifierId: { type: String, required: true },
     description: { type: String, required: true },
     requirements: { type: [RequirementSchema], required: true },
+    active: { type: Boolean, required: true },
+    network: { type: String, required: true }
 }, {
     strict: true,
     strictQuery: false,

@@ -35,70 +35,58 @@ export class RegistryController {
         this.serviceProviderService = new ServiceProviderService();
 
         this.registerSchema = this.registerSchema.bind(this);
-        this.findAllSchemaRegistries = this.findAllSchemaRegistries.bind(this);
-        this.findOneSchemaRegistry = this.findOneSchemaRegistry.bind(this);
+        this.findSchemaRegistries = this.findSchemaRegistries.bind(this);
+        this.findSchemaRegistryById = this.findSchemaRegistryById.bind(this);
+        this.updateSchemaRegistry = this.updateSchemaRegistry.bind(this);
+        this.toggleSchemaRegistryActive = this.toggleSchemaRegistryActive.bind(this);
         this.registerService = this.registerService.bind(this);
         this.findAllServices = this.findAllServices.bind(this);
         this.findOneService = this.findOneService.bind(this);
         this.fetchRegistryRequestPage = this.fetchRegistryRequestPage.bind(this);
+        this.updateService = this.updateService.bind(this);
+        this.toggleServiceActive = this.toggleServiceActive.bind(this);
     }
 
     public async registerSchema(req: Request, res: Response) {
         try {
-            if (req.body.newSchema === undefined) throw new BadRequestError('Missing newSchema property in request body');
-            let schema: ISchema;
-            if (req.body.newSchema) {
-                if (req.body.schema === undefined) throw new BadRequestError('Missing schema property in request body');
-                schema = await this.schemaService.save(req.body.schema as ISchema);
-            } else {
-                if (req.body.schemaHash === undefined) throw new BadRequestError('Missing schemaHash property in request body');
-                const newSchema = await this.schemaService.findOne(req.body.schemaHash);
-                if (newSchema === undefined) throw new NotFoundError('Schema does not exist');
-                schema = newSchema;
-            }
-            const registry = req.body.registry;
-            const schemaRegistry: ISchemaRegistry = {
-                schemaHash: schema.schemaHash!,
-                issuerId: registry.issuerId,
-                description: registry.description,
-                expiration: registry.expiration,
-                updatable: registry.updatable,
-                network: registry.network,
-                endpointUrl: registry.endpointUrl
-            }
+            if (!req.body.registry) throw new BadRequestError('Missing registry property in request body');
+            if (!req.body.schema) throw new BadRequestError('Missing schema property in request body');
 
+            const newSchema = await this.schemaService.save(req.body.schema);
+            const schemaRegistry: ISchemaRegistry = {
+                schemaHash: newSchema.schemaHash!,
+                ...req.body.registry
+            }
             const newSchemaRegistry = await this.registryService.saveSchemaRegistry(schemaRegistry);
+
             res.send({
                 'registry': newSchemaRegistry,
-                'schema': schema
+                'schema': newSchema
             });
         } catch (error: any) {
             res.status(error.httpCode ?? 500).send(error);
         }
     }
     
-    public async findAllSchemaRegistries(req: Request, res: Response) {
+    public async findSchemaRegistries(req: Request, res: Response) {
         try {
-            if (!req.query.schemaHash || !req.query.issuerId) {
-                res.send({
-                    'registries': await this.registryService.findAllSchemaRegistries()
-                });
-            } else {
-                const [registry, schema] = await Promise.all([
-                    this.registryService.findBySchemaAndIssuer(req.query.schemaHash as string, req.query.issuerId as string),
-                    this.schemaService.findOne(req.query.schemaHash as string)
-                ]);
-                res.send({
-                    'registry': registry,
-                    'schema': schema
-                });
-            }
+            const schemaHash = (req.query.schemaHash ?? '').toString();
+            const issuerId = (req.query.issuerId ?? '').toString();
+            const registries = await this.registryService.findRegistriesBySchemaAndIssuer(schemaHash, issuerId);
+            await Promise.all(registries.map(async registry => {
+                Object.assign(registry, {
+                    schema: await this.schemaService.findOne(registry.schemaHash)
+                })
+            }));
+            res.send({
+                'registries': registries
+            });
         } catch (error: any) {
             res.status(error.httpCode ?? 500).send(error);
         }
     }
 
-    public async findOneSchemaRegistry(req: Request, res: Response) {
+    public async findSchemaRegistryById(req: Request, res: Response) {
         try {
             if (!req.params.registryId) throw new BadRequestError('Missing registryId in request param');
             const registry = await this.registryService.findOneSchemaRegistry(req.params.registryId);
@@ -114,9 +102,29 @@ export class RegistryController {
         }
     }
 
-    // public updateSchemaRegistry(registry: ISchemaRegistry): any {
+    public updateSchemaRegistry(req: Request, res: Response) {
 
-    // }
+    }
+
+    public async toggleSchemaRegistryActive(req: Request, res: Response) {
+        try {
+            if (!req.params.registryId) throw new BadRequestError('Missing registryId in request param');
+            const registry = await this.registryService.findOneSchemaRegistry(req.params.registryId);
+            if (registry === undefined) throw new NotFoundError('Schema registry does not exist');
+
+            registry.active = !registry.active;
+            await this.registryService.saveSchemaRegistry(registry);
+            
+            res.send({
+                'registryId': registry._id,
+                'active': registry.active
+            })
+
+        } catch (error: any) {
+            logger.error(error)
+            res.status(error.httpCode ?? 500).send(error);
+        }
+    }
 
     public async fetchRegistryRequestPage(req: Request, res: Response) {
         try {
@@ -190,7 +198,33 @@ export class RegistryController {
         }
     }
 
-    // public updateService(service: IService): any {
-        
-    // }
+    public async updateService(req: Request, res: Response) {
+        try {
+
+        } catch (error: any) {
+            logger.error(error)
+            res.status(error.httpCode ?? 500).send(error);
+        }
+    }
+
+    public async toggleServiceActive(req: Request, res: Response) {
+        try {
+            if (!req.params.serviceId) throw new BadRequestError('Missing serviceId in request param');
+            const service = await this.registryService.findOneService(req.params.serviceId);
+            if (service === undefined) throw new NotFoundError('Service does not exist');
+
+            service.active = !service.active;
+            await this.registryService.saveService(service);
+            
+            res.send({
+                'serviceId': service._id,
+                'active': service.active
+            })
+
+        } catch (error: any) {
+            logger.error(error)
+            res.status(error.httpCode ?? 500).send(error);
+        }
+    }
+
 }

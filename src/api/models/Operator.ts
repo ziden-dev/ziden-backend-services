@@ -1,15 +1,22 @@
 import { model, Schema } from 'mongoose';
 
+export enum Platform {
+    ISSUER = 'issuer',
+    VERIFIER = 'verifier'
+}
+
 export interface IOperator {
     _id: String,
-    holderId: String,
-    issuerId: String
+    operatorId: String,
+    adminId: String,
+    platform: Platform
 }
 
 const OperatorSchema = new Schema<IOperator>({
     _id: { type: String, required: true },
-    holderId: { type: String, required: true },
-    issuerId: { type: String, required: true }
+    operatorId: { type: String, required: true },
+    adminId: { type: String, required: true },
+    platform: { type: String, required: true, enum: Platform }
 }, {
     strict: false,
     strictQuery: false,

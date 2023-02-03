@@ -1,8 +1,17 @@
 import mongoose, { model, Schema } from 'mongoose';
 
+export enum PropertyTypes {
+    STRING = 'string',
+    INTEGER = 'integer',
+    DOUBLE = 'double',
+    DATE = 'date',
+    DATE_TIME = 'datetime',
+    BOOLEAN = 'boolean'
+}
+
 export interface IClaimProperty {
     title: string,
-    type: 'string' | 'integer' | 'double' | 'date' | 'datetime' | 'boolean'
+    type: PropertyTypes
 }
 
 export interface ISchema {

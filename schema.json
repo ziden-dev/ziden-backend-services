@@ -77,13 +77,13 @@
                 "type": "date"
             },
             "nationality": {
-                "title": "Nationality",
+                "title": "Nationality (ISO 3166)",
                 "type": "integer",
                 "minimum": "0",
                 "maximum": "10000"
             },
             "countryOfResidence": {
-                "title": "Country Of Residence",
+                "title": "Country Of Residence (ISO 3166)",
                 "type": "integer",
                 "minimum": "0",
                 "maximum": "10000"

@@ -3,6 +3,7 @@ import { Request, Response } from 'express';
 import { SchemaService } from '../services/SchemaService.js';
 import { BadRequestError } from '../errors/http/BadRequestError.js';
 import { NotFoundError } from '../errors/http/NotFoundError.js';
+import logger from '../../lib/logger/index.js';
 
 export class SchemaController {
     
@@ -13,6 +14,7 @@ export class SchemaController {
 
         this.findAllSchemas = this.findAllSchemas.bind(this);
         this.fineOneSchema = this.fineOneSchema.bind(this);
+        this.getAllDataTypes = this.getAllDataTypes.bind(this);
     }
 
     public async findAllSchemas(req: Request, res: Response) {
@@ -42,6 +44,27 @@ export class SchemaController {
         try {
             if (!req.params.schemaHash) throw new BadRequestError('Missing schemaHash in request params');
         } catch (error: any) {
+            res.status(error.httpCode ?? 500).send(error);
+        }
+    }
+
+    public async getAllSchemasTitle(req: Request, res: Response) {
+        try {
+            res.send({
+                'titles': (await this.schemaService.findAll())?.map(e => e.title)
+            })
+        } catch (error: any) {
+            res.status(error.httpCode ?? 500).send(error);
+        }
+    }
+
+    public async getAllDataTypes(req: Request, res: Response) {
+        try {
+            res.send({
+                'dataTypes': this.schemaService.getSupportedDataTypes()
+            })
+        } catch (error: any) {
+            logger.error(error)
             res.status(error.httpCode ?? 500).send(error);
         }
     }

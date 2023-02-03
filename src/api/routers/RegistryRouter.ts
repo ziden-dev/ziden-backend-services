@@ -69,6 +69,9 @@ export class RegistryRouter {
          *         _id:
          *           type: string
          *           example: 66555d65-1e87-4428-86c1-35f0e23480f4
+         *         title:
+         *           type: String
+         *           example: Service's Title
          *         verifierId:
          *           type: string
          *           example: 8077d5cb0c7bfbcff2197d3b1f651901
@@ -79,8 +82,17 @@ export class RegistryRouter {
          *           type: array
          *           items:
          *             $ref: '#/components/schemas/Requirement'
+         *         active:
+         *           type: boolean
+         *           default: true
+         *         network:
+         *           type: string
+         *           example: 56
          *     ServiceForm:
          *       properties:
+         *         title:
+         *           type: String
+         *           example: Service's Title
          *         verifierId:
          *           type: string
          *           example: 8077d5cb0c7bfbcff2197d3b1f651901
@@ -91,8 +103,20 @@ export class RegistryRouter {
          *           type: array
          *           items:
          *             $ref: '#/components/schemas/Requirement'
+         *         active:
+         *           type: boolean
+         *           default: true
+         *         network:
+         *           type: string
+         *           example: 56
          *     Requirement:
          *       properties:
+         *         title:
+         *           type: string
+         *           example: Age Restriction
+         *         attestation:
+         *           type: string
+         *           example: Born before 01/01/2001
          *         allowedIssuers:
          *           type: array
          *           items:
@@ -113,8 +137,10 @@ export class RegistryRouter {
          *               type: number
          *               example: 2
          *             value:
-         *               type: number
-         *               example: 20222202
+         *               type: array
+         *               items:
+         *                 type: number
+         *                 example: 20010101
          */
 
         /**
@@ -132,16 +158,12 @@ export class RegistryRouter {
          *           schema:
          *             type: object
          *             properties:
-         *               newSchema:
-         *                 type: boolean
-         *                 required: true
          *               registry:
          *                 $ref: '#/components/schemas/SchemaRegistryForm'
-         *               schemaHash:
-         *                 type: string
-         *                 required: false
+         *                 required: true
          *               schema:
          *                 $ref: '#/components/schemas/SchemaForm'
+         *                 required: true
          *     responses:
          *       '200':
          *         description: A JSON object of Schema Registry & Schema
@@ -189,7 +211,7 @@ export class RegistryRouter {
          *                   items:
          *                     $ref: '#/components/schemas/SchemaRegistry'
          */
-        this.router.get('/schemas', (new RegistryController()).findAllSchemaRegistries);
+        this.router.get('/schemas', (new RegistryController()).findSchemaRegistries);
 
         /**
          * @swagger
@@ -219,10 +241,39 @@ export class RegistryRouter {
          *               schema:
          *                 $ref: '#/components/schemas/Schema'
          */
-        this.router.get('/schemas/:registryId', (new RegistryController()).findOneSchemaRegistry);
+        this.router.get('/schemas/:registryId', (new RegistryController()).findSchemaRegistryById);
 
+        this.router.put('/schemas/:registryId', (new RegistryController()).updateSchemaRegistry);
 
-        // this.router.put('/schemas/:registryId', );
+        /**
+         * @swagger
+         * /api/registries/schemas/{registryId}/active:
+         *   put:
+         *     summary: Activate/Deactivate Schema Registry
+         *     description: Toggle active status of a schema registry
+         *     tags:
+         *       - Registry
+         *     parameters:
+         *       - in: path
+         *         name: registryId
+         *         schema:
+         *           type: string
+         *         required: true
+         *         description: Unique ID of Schema Registry
+         *     responses:
+         *       200:
+         *         description: A JSON object of update result
+         *         content:
+         *           application/json:
+         *             schema:
+         *             type: object
+         *             properties:
+         *               registryId:
+         *                 type: string
+         *               active:
+         *                 type: boolean
+         */
+        this.router.put('/schemas/:registryId/active', (new RegistryController()).toggleSchemaRegistryActive);
 
         /**
          * @swagger
@@ -351,7 +402,36 @@ export class RegistryRouter {
          */
         this.router.get('/services/:serviceId', (new RegistryController()).findOneService);
 
+        this.router.put('/services/:serviceId', (new RegistryController()).updateService);
 
-        // this.router.put('/services/:serviceId', );
+        /**
+         * @swagger
+         * /api/registries/services/{serviceId}/active:
+         *   put:
+         *     summary: Activate/Deactivate Service
+         *     description: Toggle active status of a service
+         *     tags:
+         *       - Registry
+         *     parameters:
+         *       - in: path
+         *         name: serviceId
+         *         schema:
+         *           type: string
+         *         required: true
+         *         description: Unique ID of Service
+         *     responses:
+         *       200:
+         *         description: A JSON object of update result
+         *         content:
+         *           application/json:
+         *             schema:
+         *             type: object
+         *             properties:
+         *               serviceId:
+         *                 type: string
+         *               active:
+         *                 type: boolean
+         */
+        this.router.put('/services/:serviceId/active', (new RegistryController()).toggleServiceActive);
     }
 }

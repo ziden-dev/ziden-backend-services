@@ -1,7 +1,7 @@
 import { v4 as uuidV4 } from 'uuid';
 import { schema as zidenSchema } from 'zidenjs';
 
-import Schema, { ISchema } from '../models/Schema.js';
+import Schema, { ISchema, PropertyTypes } from '../models/Schema.js';
 import Context, { IContext } from '../models/Context.js';
 
 
@@ -26,14 +26,11 @@ export class SchemaService {
     }
 
     public async save(schema: ISchema): Promise<ISchema> {
-        if (!schema._id && !schema.schemaHash) {
-            const schemaHash = zidenSchema.getSchemaHashFromSchema(schema);
-            Object.assign(schema, {schemaHash: schemaHash});
-
-            if (!schema._id || !(schema._id === schemaHash)) {
-                Object.assign(schema, {_id: schemaHash});
-            }
-        }
+        const schemaHash = this.hashSchema(schema);
+        Object.assign(schema, {
+            _id: schemaHash,
+            schemaHash: schemaHash
+        });
 
         return (await Schema.findByIdAndUpdate(
             schema._id,
@@ -42,7 +39,19 @@ export class SchemaService {
         )).toObject();
     }
 
-    public async findSchemaContext(schemaHash: String): Promise<IContext | undefined> {
+    public hashSchema(schema: ISchema): string {
+        const cleanSchema: ISchema = {
+            'title': schema.title,
+            'properties': schema.properties,
+            'index': schema.index,
+            'value': schema.value,
+            'required': schema.required
+        };
+        
+        return zidenSchema.getSchemaHashFromSchema(cleanSchema);
+    }
+
+    public async findSchemaContext(schemaHash: string): Promise<IContext | undefined> {
         return (await Context.findById(schemaHash))?.toObject();
     }
 
@@ -54,5 +63,9 @@ export class SchemaService {
             context,
             {upsert: true, new: true}
         )).toObject();
+    }
+
+    public getSupportedDataTypes(): string[] {
+        return Object.values(PropertyTypes);
     }
 }

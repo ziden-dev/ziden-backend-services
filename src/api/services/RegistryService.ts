@@ -15,17 +15,29 @@ export class RegistryService {
         return (await SchemaRegistry.find()).map(e => e.toObject());
     }
 
-    public async findSchemaRegistriesByIssuers(issuerIds: string[]): Promise<ISchemaRegistry[]> {
+    public async findRegistriesByIssuers(issuerIds: string[]): Promise<ISchemaRegistry[]> {
         return (await SchemaRegistry.find({
             issuerId: { $in: issuerIds }
         })).map(e => e.toObject());
     }
 
-    public async findBySchemaAndIssuer(schemaHash: string, issuerId: string): Promise<ISchemaRegistry | undefined> {
-        return (await SchemaRegistry.findOne({
-            schemaHash: schemaHash,
-            issuerId: issuerId
-        }))?.toObject();
+    public async findRegistriesBySchemaAndIssuer(schemaHash: string, issuerId: string): Promise<ISchemaRegistry[]> {
+        if (schemaHash == '' && issuerId == '') {
+            return await this.findAllSchemaRegistries();
+        } else if (schemaHash == '') {
+            return (await SchemaRegistry.find({
+                issuerId: issuerId
+            })).map(e => e.toObject());
+        } else if (issuerId == '') {
+            return (await SchemaRegistry.find({
+                schemaHash: schemaHash
+            })).map(e => e.toObject());
+        } else {
+            return (await SchemaRegistry.find({
+                schemaHash: schemaHash,
+                issuerId: issuerId
+            })).map(e => e.toObject());
+        }
     }
 
     public async saveSchemaRegistry(registry: ISchemaRegistry): Promise<ISchemaRegistry> {

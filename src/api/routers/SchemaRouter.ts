@@ -86,6 +86,29 @@ export class SchemaRouter {
 
         /**
          * @swagger
+         * /api/schemas/dataTypes:
+         *   get:
+         *     summary: Find all supported data types
+         *     description: Get all supported data types for a schema's property
+         *     tags:
+         *       - Schema
+         *     responses:
+         *       200:
+         *         description: A JSON array of string
+         *         content:
+         *           application/json:
+         *             schema:
+         *               type: object
+         *               properties:
+         *                 dataTypes:
+         *                   type: array
+         *                   items:
+         *                     type: string
+         */
+        this.router.get('/dataTypes', (new SchemaController()).getAllDataTypes);
+
+        /**
+         * @swagger
          * /api/schemas/{schemaHash}:
          *   get:
          *     summary: Find one Schema
@@ -112,6 +135,8 @@ export class SchemaRouter {
          */
         this.router.get('/:schemaHash', (new SchemaController()).fineOneSchema);
 
-        this.router.get('/:schemaHash/contexts')
+        this.router.get('/:schemaHash/contexts');
+
+        this.router
     }
 }

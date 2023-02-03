@@ -67,7 +67,7 @@ export class IdentityProviderController {
         try {
             if (!req.params.providerId) throw new BadRequestError('Missing providerId in request param');
             const issuerIds = (await this.issuerService.findByProvider(req.params.providerId)).map(issuer => issuer._id!);
-            const registries = await this.registryService.findSchemaRegistriesByIssuers(issuerIds);
+            const registries = await this.registryService.findRegistriesByIssuers(issuerIds);
             await Promise.all(registries.map(async (registry) => Object.assign(registry, {
                 name: (await this.schemaService.findOne(registry.schemaHash))!.title
             })));

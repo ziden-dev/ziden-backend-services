@@ -1,7 +1,7 @@
 import { model, Schema } from 'mongoose'
 
 export interface IServiceProvider {
-    _id: string,            // uuid
+    _id?: string,            // uuid
     name: string,
     description: string,
     contact: string,
