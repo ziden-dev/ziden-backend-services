@@ -45,8 +45,7 @@ http[s]:<hostname>[:<port>]/api-docs
 | **dist/**                         | Compiled source files will be placed here |
 | **src/**                          | Source files |
 | **src/api/controllers/**          | REST API Controllers |
-| **src/api/controllers/requests**  | Request classes with validation rules if the body is not equal with a model |
-| **src/api/controllers/responses** | Response classes or interfaces to type json response bodies  |
+| **src/api/responses**             | Build response for REST API  |
 | **src/api/errors/**               | Custom HttpErrors like 404 NotFound |
 | **src/api/middlewares/**          | Express Middlewares like morgan log |
 | **src/api/models/**               | Mongoose Models |
