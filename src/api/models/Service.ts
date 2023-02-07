@@ -1,15 +1,9 @@
 import { model, Schema } from 'mongoose';
-import { OPERATOR } from 'zidenjs/build/witnesses/query';
-
-export enum Circuit {
-    QUERY_MTP = 'credentialAtomicQueryMTP',
-    QUERY_SIG = 'credentialAtomicQuerySig',
-    QUERY_MTP_RELAY = 'credentialAtomicQueryMTPWithRelay'
-}
+import { ZkCircuit, ZkOperator } from '../../lib/constants';
 
 export interface IQuery {
     propertyName: string,
-    operator: OPERATOR,
+    operator: ZkOperator,
     value: number[]
 }
 
@@ -18,18 +12,19 @@ export interface IRequirement {
     attestation: string,
     allowedIssuers: string[],
     schemaHash: string,
-    circuitId: Circuit,
+    circuitId: ZkCircuit,
     query: IQuery
 }
 
 export type IService = {
-    _id: string,
-    title: string,
+    _id?: string,
+    name: string,
     verifierId: string,
     description: string,
+    networkId: string,
     requirements: IRequirement[],
-    active: boolean,
-    network: string
+    endpointUrl: string,
+    active: boolean
 }
 
 const QuerySchema = new Schema<IQuery>({
@@ -57,12 +52,13 @@ const RequirementSchema = new Schema<IRequirement>({
 
 const ServiceSchema = new Schema<IService>({
     _id: { type: String, required: true },
-    title: { type: String, required: true },
+    name: { type: String, required: true },
     verifierId: { type: String, required: true },
     description: { type: String, required: true },
+    networkId: { type: String, required: true },
     requirements: { type: [RequirementSchema], required: true },
-    active: { type: Boolean, required: true },
-    network: { type: String, required: true }
+    endpointUrl: { type: String, required: true },
+    active: { type: Boolean, required: true, default: true }
 }, {
     strict: true,
     strictQuery: false,

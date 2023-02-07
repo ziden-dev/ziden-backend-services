@@ -52,7 +52,7 @@ const env = {
         password: getOsEnv('SWAGGER_PASSWORD'),
     },
     uploads: {
-        multerStorageDest: getOsEnvOptional('MULTER_STORAGE_DEST') ?? '/publics/uploads'
+        multerStorageDest: getOsEnvOptional('MULTER_STORAGE_DESTINATION') ?? '/public/uploads'
     }
 };
 

@@ -1,7 +1,6 @@
 import { Router } from 'express';
-import { ServiceProviderController } from '../controllers/ServiceProviderController.js';
 
-export class ServiceProviderRouter {
+export class ServiceRouter {
     public router: Router;
 
     constructor() {
@@ -82,7 +81,7 @@ export class ServiceProviderRouter {
          *               newProvider:
          *                 $ref: '#/components/schemas/ServiceProvider'
          */
-        this.router.post('/', (new ServiceProviderController()).registerServiceProvider);
+        // this.router.post('/', (new ServiceProviderController()).registerServiceProvider);
 
         /**
          * @swagger
@@ -105,7 +104,7 @@ export class ServiceProviderRouter {
          *                   items:
          *                     $ref: '#/components/schemas/ServiceProvider'
          */
-        this.router.get('/', (new ServiceProviderController()).findAllProviders);
+        // this.router.get('/', (new ServiceProviderController()).findAllProviders);
 
         /**
          * @swagger
@@ -133,7 +132,7 @@ export class ServiceProviderRouter {
          *               provider:
          *                 $ref: '#/components/schemas/ServiceProvider'
          */
-        this.router.get('/:providerId', (new ServiceProviderController()).findOneProvider);
+        // this.router.get('/:providerId', (new ServiceProviderController()).findOneProvider);
 
         /**
          * @swagger
@@ -163,7 +162,7 @@ export class ServiceProviderRouter {
          *                   items:
          *                     $ref: '#/components/schemas/Service'
          */
-        this.router.get('/:providerId/services', (new ServiceProviderController()).findAllServicesOfProvider);
+        // this.router.get('/:providerId/services', (new ServiceProviderController()).findAllServicesOfProvider);
 
         /**
          * @swagger
@@ -193,6 +192,6 @@ export class ServiceProviderRouter {
          *                   items:
          *                     $ref: '#/components/schemas/Service'
          */
-        this.router.get('/:providerId/verifiers', (new ServiceProviderController()).findAllVerifiersOfProvider);
+        // this.router.get('/:providerId/verifiers', (new ServiceProviderController()).findAllVerifiersOfProvider);
     }
 }

@@ -1,24 +1,26 @@
 import { model, Schema } from 'mongoose';
-
-export enum Platform {
-    ISSUER = 'issuer',
-    VERIFIER = 'verifier'
-}
+import { OperatorRole, Portal } from '../../lib/constants';
 
 export interface IOperator {
-    _id: String,
-    operatorId: String,
-    adminId: String,
-    platform: Platform
+    _id?: string,
+    userId: string,
+    issuerId: string,
+    role: string,
+    claimId: string,
+    activate: boolean,
+    portal: Portal
 }
 
 const OperatorSchema = new Schema<IOperator>({
     _id: { type: String, required: true },
-    operatorId: { type: String, required: true },
-    adminId: { type: String, required: true },
-    platform: { type: String, required: true, enum: Platform }
+    userId: { type: String, required: true },
+    issuerId: { type: String, required: true },
+    role: { type: String, required: true, enum: OperatorRole },
+    claimId: { type: String, required: true },
+    activate: { type: Boolean, required: true },
+    portal: { type: String, required: true, enum: Portal }
 }, {
-    strict: false,
+    strict: true,
     strictQuery: false,
     timestamps: true
 });

@@ -177,7 +177,7 @@ export class RegistryRouter {
          *                 schema:
          *                   $ref: '#/components/schemas/Schema'
          */
-        this.router.post('/schemas', (new RegistryController()).registerSchema);
+        // this.router.post('/schemas', (new RegistryController()).registerSchema);
 
         /**
          * @swagger
@@ -211,7 +211,7 @@ export class RegistryRouter {
          *                   items:
          *                     $ref: '#/components/schemas/SchemaRegistry'
          */
-        this.router.get('/schemas', (new RegistryController()).findSchemaRegistries);
+        // this.router.get('/schemas', (new RegistryController()).findSchemaRegistries);
 
         /**
          * @swagger
@@ -241,9 +241,9 @@ export class RegistryRouter {
          *               schema:
          *                 $ref: '#/components/schemas/Schema'
          */
-        this.router.get('/schemas/:registryId', (new RegistryController()).findSchemaRegistryById);
+        // this.router.get('/schemas/:registryId', (new RegistryController()).findSchemaRegistryById);
 
-        this.router.put('/schemas/:registryId', (new RegistryController()).updateSchemaRegistry);
+        // this.router.put('/schemas/:registryId', (new RegistryController()).updateSchemaRegistry);
 
         /**
          * @swagger
@@ -273,7 +273,7 @@ export class RegistryRouter {
          *               active:
          *                 type: boolean
          */
-        this.router.put('/schemas/:registryId/active', (new RegistryController()).toggleSchemaRegistryActive);
+        // this.router.put('/schemas/:registryId/active', (new RegistryController()).toggleSchemaRegistryActive);
 
         /**
          * @swagger
@@ -314,7 +314,7 @@ export class RegistryRouter {
          *                 type: string
          *                 example: 'https://exapmle.endpoint.com'
          */
-        this.router.get('/schemas/:registryId/request', (new RegistryController()).fetchRegistryRequestPage);
+        // this.router.get('/schemas/:registryId/request', (new RegistryController()).fetchRegistryRequestPage);
 
         /**
          * @swagger
@@ -344,7 +344,7 @@ export class RegistryRouter {
          *                 newService:
          *                   $ref: '#/components/schemas/Service'
          */
-        this.router.post('/services', (new RegistryController()).registerService);
+        // this.router.post('/services', (new RegistryController()).registerService);
 
         /**
          * @swagger
@@ -372,7 +372,7 @@ export class RegistryRouter {
          *                     type: string
          *                     example: 'https://example.logo.com'
          */
-        this.router.get('/services', (new RegistryController()).findAllServices);
+        // this.router.get('/services', (new RegistryController()).findAllServices);
 
         /**
          * @swagger
@@ -400,9 +400,9 @@ export class RegistryRouter {
          *                 service:
          *                   $ref: '#/components/schemas/Service'
          */
-        this.router.get('/services/:serviceId', (new RegistryController()).findOneService);
+        // this.router.get('/services/:serviceId', (new RegistryController()).findOneService);
 
-        this.router.put('/services/:serviceId', (new RegistryController()).updateService);
+        // this.router.put('/services/:serviceId', (new RegistryController()).updateService);
 
         /**
          * @swagger
@@ -432,6 +432,6 @@ export class RegistryRouter {
          *               active:
          *                 type: boolean
          */
-        this.router.put('/services/:serviceId/active', (new RegistryController()).toggleServiceActive);
+        // this.router.put('/services/:serviceId/active', (new RegistryController()).toggleServiceActive);
     }
 }

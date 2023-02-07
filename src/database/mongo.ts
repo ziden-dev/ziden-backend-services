@@ -9,7 +9,7 @@ export class Mongo {
             await mongoose.connect(mongoUrl, options);
             logger.info('Connected to ' + mongoUrl);
         } catch(err) {
-            logger.error('Failed to connect to MongoDB');
+            logger.error(`Failed to connect to MongoDB at ${mongoUrl}`);
             throw (err);
         }
     }

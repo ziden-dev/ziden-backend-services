@@ -57,7 +57,7 @@ export class ProofRouter {
          *                 items:
          *                   type: boolean
          */
-        this.router.post('/submit', (new ProofController()).submitProofs);
+        // this.router.post('/submit', (new ProofController()).submitProofs);
 
         /**
          * @swagger
@@ -82,7 +82,7 @@ export class ProofRouter {
          *             schema:
          *               type: object
          */
-        this.router.get('/requests/:serviceId', (new ProofController()).getProofRequest);
+        // this.router.get('/requests/:serviceId', (new ProofController()).getProofRequest);
 
         /**
          * @swagger
@@ -113,6 +113,6 @@ export class ProofRouter {
          *             schema:
          *               type: object
          */
-        this.router.get('/public', (new ProofController()).getProofPublicData);
+        // this.router.get('/public', (new ProofController()).getProofPublicData);
     }
 }

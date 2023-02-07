@@ -1,6 +1,7 @@
 import { Router } from 'express';
 import multer from 'multer';
 
+import { UploadMiddleWare } from '../middlewares/UploadMiddleware.js';
 import { IssuerController } from '../controllers/IssuerController.js';
 import env from '../../lib/env/index.js';
 
@@ -23,16 +24,49 @@ export class IssuerRouter {
          *         _id:
          *           type: string
          *           example: 82701632f563e84bcb34de9542d0457ff5cfb17bf9703f743afb93ba605cc6
-         *         providerId:
+         *         name:
          *           type: string
-         *           example: 66555d65-1e87-4428-86c1-35f0e23480f4
+         *           example: Issuer's Name
+         *         description:
+         *           type: string
+         *           example: Issuer's Description
+         *         contact:
+         *           type: string
+         *           example: contact@ziden.io
+         *         isVerified:
+         *           type: boolean
+         *         website:
+         *           type: string
+         *           example: https://ziden.io
+         *         logoUrl:
+         *           type: string
+         *           example: https://logo.image.url
          *         endpointUrl:
          *           type: string
-         *           example: https://issuer.endpoint.com/api/registration
-         *         supportedNetworks:
-         *           type: array
-         *           items:
-         *             type: string
+         *           example: https://issuer.endpoint.url/api/v1/registration
+         *     IssuerRegistration:
+         *       properties:
+         *         issuerId:
+         *           type: string
+         *         name:
+         *           type: string
+         *         description:
+         *           type: string
+         *         contact:
+         *           type: string
+         *         website:
+         *           type: string
+         *         issuerLogo:
+         *           type: string
+         *           format: binary
+         *         endpointUrl:
+         *           type: string
+         */
+          
+        /**
+         * swagger // FIXME
+         * components:
+         *   schemas:
          *     IssuerProfile:
          *       properties:
          *         name:
@@ -51,21 +85,6 @@ export class IssuerRouter {
          *           type: string
          *         endpointUrl:
          *           type: string
-         *     IssuerRegistration:
-         *       properties:
-         *         name:
-         *           type: string
-         *         description:
-         *           type: string
-         *         logo:
-         *           type: string
-         *           format: binary
-         *         contact:
-         *           type: string
-         *         website:
-         *           type: string
-         *         endpointUrl:
-         *           type: string
          */
 
         /**
@@ -77,14 +96,14 @@ export class IssuerRouter {
          *     tags:
          *       - Issuer
          *     requestBody:
-         *       description: A full JSON object of Issuer
+         *       description: A full JSON object of Issuer registration data
          *       content:
          *         application/json:
          *           schema:
          *             type: object
          *             properties:
          *               issuer:
-         *                 $ref: '#/components/schemas/Issuer'
+         *                 $ref: '#/components/schemas/IssuerRegistration'
          *     responses:
          *       '200':
          *         description: A JSON object of Issuer
@@ -96,7 +115,7 @@ export class IssuerRouter {
          *               newIssuer:
          *                 $ref: '#/components/schemas/Issuer'
          */
-        this.router.post('/', (new IssuerController()).createIssuer);
+        this.router.post('/', new UploadMiddleWare().use, (new IssuerController()).createIssuer);
 
         /**
          * @swagger
@@ -134,10 +153,10 @@ export class IssuerRouter {
          *                   items:
          *                     $ref: '#/components/schemas/Issuer'
          */
-        this.router.get('/', (new IssuerController()).findAllIssuers);
+        this.router.get('/', (new IssuerController()).findIssuers);
 
         /**
-         * @swagger
+         * swagger // FIXME
          * /api/issuers/{issuerId}:
          *   get:
          *     summary: Find one Issuer
@@ -162,77 +181,11 @@ export class IssuerRouter {
          *                 issuer:
          *                   $ref: '#/components/schemas/Issuer'
          */
-        this.router.get('/:issuerId', (new IssuerController()).findOneIssuer);
+        // this.router.get('/:issuerId', (new IssuerController()).findOneIssuer);
 
         /**
-         * @swagger
-         * /api/issuers/{issuerId}/schemas:
-         *   get:
-         *     summary: Find Issuer's Schemas
-         *     description: Query all registered schemas of an Issuer
-         *     tags:
-         *       - Issuer
-         *     parameters:
-         *       - in: path
-         *         name: issuerId
-         *         schema:
-         *           type: string
-         *         required: true
-         *         description: DID of Issuer
-         *     responses:
-         *       200:
-         *         description: A JSON object of Schemas
-         *         content:
-         *           application/json:
-         *             schema:
-         *               type: object
-         *               properties:
-         *                 registryId:
-         *                   type: string
-         *                 title:
-         *                   type: string
-         *                 schemaHash:
-         *                   type: string
-         *                 numPublishedClaims:
-         *                   type: string
-         *                 createdAt:
-         *                   type: string
-         *                 active:
-         *                   type: string
-         */
-        this.router.get('/:issuerId/schemas', (new IssuerController()).findIssuerSchemas);
-
-        /**
-         * @swagger
-         * /api/issuers/{issuerId}/profile:
-         *   get:
-         *     summary: Find Issuer's Profile
-         *     description: Query profile of an Issuer
-         *     tags:
-         *       - Issuer
-         *     parameters:
-         *       - in: path
-         *         name: issuerId
-         *         schema:
-         *           type: string
-         *         required: true
-         *         description: DID of Issuer
-         *     responses:
-         *       200:
-         *         description: A JSON object
-         *         content:
-         *           application/json:
-         *             schema:
-         *               type: object
-         *               properties:
-         *                 profile:
-         *                   $ref: '#/components/schemas/IssuerProfile'
-         */
-        this.router.get('/:issuerId/profile', (new IssuerController()).getIssuerProfile);
-
-        /**
-         * @swagger
-         * /api/issuers/{issuerId}/profile:
+         * swagger // FIMXE
+         * /api/issuers/{issuerId}:
          *   put:
          *     summary: Update Issuer's Profile
          *     description: Update profile of an Issuer
@@ -271,168 +224,6 @@ export class IssuerRouter {
          *                     update:
          *                       type: object
          */
-        this.router.put('/:issuerId/profile', (new IssuerController()).updateIssuerProfile);
-        
-        /**
-         * @swagger
-         * /api/issuers/{issuerId}/operators:
-         *   post:
-         *     summary: Add a Operator
-         *     description: Add new Operator for an Issuer
-         *     tags:
-         *       - Issuer
-         *     parameters:
-         *       - in: path
-         *         name: issuerId
-         *         schema:
-         *           type: string
-         *         required: true
-         *         description: DID of Issuer
-         *     requestBody:
-         *       description: DID of Operator
-         *       content:
-         *         application/json:
-         *           schema:
-         *             type: object
-         *             properties:
-         *               operatorId:
-         *                 type: string
-         *     responses:
-         *       200:
-         *         description: A JSON object of Operator
-         *         content:
-         *           application/json:
-         *             schema:
-         *               type: object
-         *               properties:
-         *                 operatorId:
-         *                   type: string
-         *                 createdAt:
-         *                   type: string
-         *                   format: date
-         */
-        this.router.post('/:issuerId/operators', (new IssuerController()).addOperator);
-
-        /**
-         * @swagger
-         * /api/issuers/{issuerId}/operators:
-         *   get:
-         *     summary: Find Issuer's Operators
-         *     description: Query all operators of an Issuer
-         *     tags:
-         *       - Issuer
-         *     parameters:
-         *       - in: path
-         *         name: issuerId
-         *         schema:
-         *           type: string
-         *         required: true
-         *         description: DID of Issuer
-         *     responses:
-         *       200:
-         *         description: A JSON object
-         *         content:
-         *           application/json:
-         *             schema:
-         *               type: object
-         *               properties:
-         *                 operators:
-         *                   type: array
-         *                   items:
-         *                     type: object
-         *                     properties:
-         *                       operatorId:
-         *                         type: string
-         *                       createdAt:
-         *                         type: string
-         *                         format: date
-         */
-        this.router.get('/:issuerId/operators', (new IssuerController()).findIssuerOperators);
-
-        /**
-         * @swagger
-         * /api/issuers/{issuerId}/operators/{operatorId}:
-         *   delete:
-         *     summary: Remove a Operator
-         *     description: Remove existing Operator for an Issuer
-         *     tags:
-         *       - Issuer
-         *     parameters:
-         *       - in: path
-         *         name: issuerId
-         *         schema:
-         *           type: string
-         *         required: true
-         *         description: DID of Issuer
-         *       - in: path
-         *         name: operatorId
-         *         schema:
-         *           type: string
-         *         required: true
-         *         description: DID of OperatorId
-         *     responses:
-         *       200:
-         *         description: A JSON object of Operator
-         *         content:
-         *           application/json:
-         *             schema:
-         *               type: object
-         *               properties:
-         *                 operatorId:
-         *                   type: string
-         *                 createdAt:
-         *                   type: string
-         *                   format: date
-         */
-        this.router.delete('/:issuerId/operators/:operatorId', (new IssuerController()).removeOperator);
-        
-        /**
-         * @swagger
-         * /api/issuers/register:
-         *   post:
-         *     summary: Register serverless Issuer
-         *     description: Register serverless Issuer
-         *     tags:
-         *       - Issuer
-         *     requestBody:
-         *       description: Profile of Issuer
-         *       content:
-         *         multipart/form-data:
-         *           schema:
-         *             type: object
-         *             properties:
-         *               issuerId:
-         *                 type: string
-         *               name:
-         *                 type: string
-         *               description:
-         *                 type: string
-         *               logo:
-         *                 type: string
-         *                 format: binary
-         *               contact:
-         *                 type: string
-         *               website:
-         *                 type: string
-         *     responses:
-         *       200:
-         *         description: A JSON object
-         *         content:
-         *           application/json:
-         *             schema:
-         *               type: object
-         */
-        this.router.post(
-            '/register',
-            multer({ 
-                storage: multer.diskStorage({
-                    destination: `.${env.uploads.multerStorageDest}`,
-                    filename: function ( req, file, cb ) {
-                        cb( null, 'issuer-' + Date.now()+".png");
-                    }
-                })
-            }).single('logo'),
-            (new IssuerController()).registration
-        );
+        // this.router.put('/:issuerId', (new IssuerController()).updateIssuer);
     }
 }

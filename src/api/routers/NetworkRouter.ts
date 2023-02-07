@@ -46,7 +46,7 @@ export class NetworkRouter {
          *                   items:
          *                     $ref: '#/components/schemas/Network'
          */
-        this.router.get('/', (new NetworkController()).getAllSupportedNetworks);
+        // this.router.get('/', (new NetworkController()).getAllSupportedNetworks);
 
         /**
          * @swagger
@@ -76,7 +76,7 @@ export class NetworkRouter {
          *                 network:
          *                   $ref: '#/components/schemas/Network'
          */
-        this.router.post('/', (new NetworkController()).registerNetwork);
-        this.router.get('/:chainId', (new NetworkController()).findNetworkById);
+        // this.router.post('/', (new NetworkController()).registerNetwork);
+        // this.router.get('/:chainId', (new NetworkController()).findNetworkById);
     }
 }

@@ -1,4 +1,4 @@
-import express, { Application } from 'express';
+import express, { Application, Request, Response } from 'express';
 import bodyParser from 'body-parser';
 import compression from 'compression';
 import cors from 'cors';
@@ -7,6 +7,7 @@ import swaggerJsdoc from 'swagger-jsdoc';
 
 import { Routers } from './api/routers/Router.js';
 import { LogMiddleware } from './api/middlewares/LogMiddleware.js';
+import { ErrorHandling } from './api/middlewares/ErrorHandling.js';
 import env from './lib/env/index.js';
 import logger from './lib/logger/index.js';
 import { GlobalVariables } from './lib/global/index.js';
@@ -37,7 +38,7 @@ export class App {
     private async connectDatabase(database: string) {
         switch (database) {
             case db.DB.MONGODB:
-                const MONGODB_URL = `mongodb://${env.db.username}:${env.db.password}@${env.db.host}:${env.db.port}/${env.db.database}`;
+                const MONGODB_URL = `mongodb://${env.db.username}:${env.db.password}@${env.db.host}:${env.db.port}/${env.db.database}?authMechanism=DEFAULT&authSource=admin`;
                 try {
                     const dbConnection = new db.Mongo()
                     await dbConnection.init(MONGODB_URL, {});
@@ -85,13 +86,14 @@ export class App {
     private createServer() {
         const expressApp = express();
         
-        expressApp.use(bodyParser.json())
+        expressApp.use(bodyParser.json());
         expressApp.use(bodyParser.urlencoded({ extended: true }));
-        expressApp.use(compression())
-        expressApp.use(cors())
+        expressApp.use(compression());
+        expressApp.use(cors());
         expressApp.use(express.static('public'));
         expressApp.use(env.app.routePrefix, new LogMiddleware().use, new Routers().router);
-        
+        expressApp.use('/', new ErrorHandling().use);
+
         return expressApp;
     }
 

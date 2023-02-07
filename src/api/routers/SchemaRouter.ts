@@ -82,7 +82,7 @@ export class SchemaRouter {
          *                   items:
          *                     $ref: '#/components/schemas/Schema'
          */
-        this.router.get('/', (new SchemaController()).findAllSchemas);
+        // this.router.get('/', (new SchemaController()).findAllSchemas);
 
         /**
          * @swagger
@@ -105,7 +105,7 @@ export class SchemaRouter {
          *                   items:
          *                     type: string
          */
-        this.router.get('/dataTypes', (new SchemaController()).getAllDataTypes);
+        // this.router.get('/dataTypes', (new SchemaController()).getAllDataTypes);
 
         /**
          * @swagger
@@ -133,10 +133,8 @@ export class SchemaRouter {
          *                 schema:
          *                   $ref: '#/components/schemas/Schema'
          */
-        this.router.get('/:schemaHash', (new SchemaController()).fineOneSchema);
+        // this.router.get('/:schemaHash', (new SchemaController()).fineOneSchema);
 
-        this.router.get('/:schemaHash/contexts');
-
-        this.router
+        // this.router.get('/:schemaHash/contexts');
     }
 }
