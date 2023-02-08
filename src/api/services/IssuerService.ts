@@ -2,9 +2,14 @@ import Issuer, { IIssuer } from '../models/Issuer.js';
 
 export class IssuerService {
 
-    constructor(){ }
+    constructor() {
+        this.findOneById = this.findOneById.bind(this);
+        this.findManyByIds = this.findManyByIds.bind(this);
+        this.createIssuer = this.createIssuer.bind(this);
+        this.updateIssuer = this.updateIssuer.bind(this);
+    }
 
-    public async findOne(issuerId: string): Promise<IIssuer | undefined> {
+    public async findOneById(issuerId: string): Promise<IIssuer | undefined> {
         return (await Issuer.findById(issuerId))?.toObject();
     }
 
@@ -12,16 +17,28 @@ export class IssuerService {
         return (await Issuer.find()).map(e => e.toObject());
     }
 
-    public async findByProvider(providerId: string): Promise<IIssuer[]> {
-        return (await Issuer.find({ providerId: providerId })).map(e => e.toObject());
+    public async findManyByIds(issuerIds: string[]): Promise<IIssuer[]> {
+        return (await Issuer.find({
+            issuerId: { $in: issuerIds }
+        })).map(e => e.toObject());
     }
 
-    public async save(issuer: IIssuer): Promise<IIssuer> {
-        return (await Issuer.findByIdAndUpdate(
-            issuer._id,
-            issuer,
-            {upsert: true, new: true}
-        ))
+    public async createIssuer(issuer: IIssuer): Promise<IIssuer | boolean> {
+        if (await this.findOneById(issuer._id)) {
+            return false;
+        }
+        return (await Issuer.create(issuer));
+    }
+
+    public async updateIssuer(issuer: IIssuer): Promise<IIssuer | boolean> {
+        if (await this.findOneById(issuer._id)) {
+            return (await Issuer.findByIdAndUpdate(
+                issuer._id,
+                issuer,
+                {upsert: true, new: true}
+            ));
+        }
+        return false;
     }
 
 }

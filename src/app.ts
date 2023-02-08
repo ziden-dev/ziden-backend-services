@@ -90,7 +90,8 @@ export class App {
         expressApp.use(bodyParser.urlencoded({ extended: true }));
         expressApp.use(compression());
         expressApp.use(cors());
-        expressApp.use(express.static('public'));
+        expressApp.use('/ping', (req: Request, res: Response) => { res.send({'status': 'alive'}) });
+        expressApp.use('/public', express.static('public'));
         expressApp.use(env.app.routePrefix, new LogMiddleware().use, new Routers().router);
         expressApp.use('/', new ErrorHandling().use);
 

@@ -92,8 +92,19 @@ export class VerifierRouter {
          *           schema:
          *             type: object
          *             properties:
-         *               issuer:
-         *                 $ref: '#/components/schemas/VerifierRegistration'
+         *               verifierId:
+         *                 type: string
+         *               name:
+         *                 type: string
+         *               description:
+         *                 type: string
+         *               contact:
+         *                 type: string
+         *               website:
+         *                 type: string
+         *               verifierLogo:
+         *                 type: string
+         *                 format: binary
          *     responses:
          *       '200':
          *         description: A JSON object of Verifier

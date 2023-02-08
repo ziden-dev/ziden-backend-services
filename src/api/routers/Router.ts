@@ -17,7 +17,6 @@ export class Routers {
     }
 
     public route() {
-        this.router.use('/ping', (req: Request, res: Response) => {res.send({'status': 'alive'})});
         this.router.use('/claims', new ClaimRouter().router);
         this.router.use('/issuers', new IssuerRouter().router);
         this.router.use('/verifiers', new VerifierRouter().router);

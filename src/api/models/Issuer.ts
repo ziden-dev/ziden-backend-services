@@ -5,7 +5,7 @@ export interface IIssuer {
     name: string,
     description: string,
     contact: string,
-    isVerified: boolean,
+    isVerified?: boolean,
     website: string,
     logoUrl: string
     endpointUrl: string,

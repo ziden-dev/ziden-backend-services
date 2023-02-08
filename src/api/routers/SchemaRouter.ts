@@ -63,7 +63,7 @@ export class SchemaRouter {
 
         /**
          * @swagger
-         * /api/schemas:
+         * /api/v1/schemas:
          *   get:
          *     summary: Find all Schema
          *     description: Get all registered Schema
@@ -82,7 +82,7 @@ export class SchemaRouter {
          *                   items:
          *                     $ref: '#/components/schemas/Schema'
          */
-        // this.router.get('/', (new SchemaController()).findAllSchemas);
+        this.router.get('/', (new SchemaController()).findAllSchemas);
 
         /**
          * @swagger

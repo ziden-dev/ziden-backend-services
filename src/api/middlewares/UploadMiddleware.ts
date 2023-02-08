@@ -12,14 +12,14 @@ type FilenameCallback = (error: Error | null, filename: string) => void;
 
 export class UploadMiddleWare {
 
-    public use(): any {
+    public use(req: Request, res: Response, next: NextFunction): any {
         const fileStorage = multer.diskStorage({
             destination: (
                 req: Request,
                 file: Express.Multer.File,
                 cb: DestinationCallback
             ): void => {
-                cb(null, env.uploads.multerStorageDest);
+                cb(null, `.${env.uploads.multerStorageDest}`);
             },
             filename: (
                 req: Request,
@@ -56,7 +56,7 @@ export class UploadMiddleWare {
         return multer({ storage: fileStorage, fileFilter: fileFilter }).fields([
             { name: 'issuerLogo', maxCount: 1 },
             { name: 'verifierLogo', maxCount: 1 }
-        ]);
+        ])(req, res, next);
     }
 
 }

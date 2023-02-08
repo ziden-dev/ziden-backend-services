@@ -1,9 +1,7 @@
 import { Router } from 'express';
-import multer from 'multer';
 
 import { UploadMiddleWare } from '../middlewares/UploadMiddleware.js';
 import { IssuerController } from '../controllers/IssuerController.js';
-import env from '../../lib/env/index.js';
 
 export class IssuerRouter {
     public router: Router;
@@ -44,6 +42,7 @@ export class IssuerRouter {
          *         endpointUrl:
          *           type: string
          *           example: https://issuer.endpoint.url/api/v1/registration
+         *     
          *     IssuerRegistration:
          *       properties:
          *         issuerId:
@@ -89,21 +88,41 @@ export class IssuerRouter {
 
         /**
          * @swagger
-         * /api/issuers:
+         * /api/v1/issuers/registration:
          *   post:
          *     summary: Create new Issuer
          *     description: Register new Issuer
          *     tags:
          *       - Issuer
          *     requestBody:
-         *       description: A full JSON object of Issuer registration data
+         *       description: A form data of Issuer registration data
          *       content:
-         *         application/json:
+         *         multipart/form-data:
          *           schema:
-         *             type: object
+         *             type: object       
          *             properties:
-         *               issuer:
-         *                 $ref: '#/components/schemas/IssuerRegistration'
+         *               issuerId:
+         *                 type: string
+         *                 required: true
+         *               name:
+         *                 type: string
+         *                 required: true
+         *               description:
+         *                 type: string
+         *                 required: true
+         *               contact:
+         *                 type: string
+         *                 required: true
+         *               website:
+         *                 type: string
+         *                 required: true
+         *               issuerLogo:
+         *                 type: string
+         *                 format: binary
+         *                 required: true
+         *               endpointUrl:
+         *                 type: string
+         *                 required: true
          *     responses:
          *       '200':
          *         description: A JSON object of Issuer
@@ -113,13 +132,14 @@ export class IssuerRouter {
          *             type: object
          *             properties:
          *               newIssuer:
+         *                 type: object
          *                 $ref: '#/components/schemas/Issuer'
          */
-        this.router.post('/', new UploadMiddleWare().use, (new IssuerController()).createIssuer);
+        this.router.post('/registration', new UploadMiddleWare().use, (new IssuerController()).registration);
 
         /**
          * @swagger
-         * /api/issuers:
+         * /api/v1/issuers:
          *   get:
          *     summary: Find all Issuer
          *     description: Get all registered Issuers

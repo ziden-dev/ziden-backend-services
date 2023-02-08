@@ -14,7 +14,7 @@ export class NetworkService {
         })).map(e => e.toObject());
     }
 
-    public async findNetworkById(chainId: string): Promise<INetwork | undefined> {
+    public async findOneById(chainId: string): Promise<INetwork | undefined> {
         return (await Network.findById(chainId))?.toObject();
     }
 

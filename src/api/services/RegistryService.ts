@@ -16,8 +16,23 @@ export class RegistryService {
     }
 
     public async findRegistriesByIssuers(issuerIds: string[]): Promise<ISchemaRegistry[]> {
+        if (issuerIds.length == 0) return [];
         return (await SchemaRegistry.find({
             issuerId: { $in: issuerIds }
+        })).map(e => e.toObject());
+    }
+
+    public async findRegistriesBySchemas(schemaHashes: string[]): Promise<ISchemaRegistry[]> {
+        if (schemaHashes.length == 0) return [];
+        return (await SchemaRegistry.find({
+            schemaHash: { $in: schemaHashes }
+        })).map(e => e.toObject());
+    }
+
+    public async findRegistriesByNetworks(networkIds: string[]): Promise<ISchemaRegistry[]> {
+        if (networkIds.length == 0) return [];
+        return (await SchemaRegistry.find({
+            networkId: { $in: networkIds }
         })).map(e => e.toObject());
     }
 

@@ -32,6 +32,9 @@ const env = {
             middlewares: getOsPaths('MIDDLEWARES'),
             models: getOsPaths('MODELS'),
         },
+        url: process.env.NODE_ENV === 'production' 
+            ? `https://${getOsEnv('APP_HOST')}`
+            : `http://${getOsEnv('APP_HOST')}:${getOsEnv('APP_PORT')}`
     },
     log: {
         level: getOsEnv('LOG_LEVEL'),
