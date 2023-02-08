@@ -86,7 +86,7 @@ export class SchemaRouter {
 
         /**
          * @swagger
-         * /api/schemas/dataTypes:
+         * /api/v1/schemas/dataTypes:
          *   get:
          *     summary: Find all supported data types
          *     description: Get all supported data types for a schema's property
@@ -109,7 +109,7 @@ export class SchemaRouter {
 
         /**
          * @swagger
-         * /api/schemas/{schemaHash}:
+         * /api/v1/schemas/{schemaHash}:
          *   get:
          *     summary: Find one Schema
          *     description: Query an registered Schema by schemaHash

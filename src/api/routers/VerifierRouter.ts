@@ -79,7 +79,7 @@ export class VerifierRouter {
 
         /**
          * @swagger
-         * /api/verifiers:
+         * /api/v1/verifiers/registration:
          *   post:
          *     summary: Create new Verifier
          *     description: Register new Verifier
@@ -88,7 +88,7 @@ export class VerifierRouter {
          *     requestBody:
          *       description: A full JSON object of Verifier registration data
          *       content:
-         *         application/json:
+         *         multipart/form-data:
          *           schema:
          *             type: object
          *             properties:
@@ -116,11 +116,11 @@ export class VerifierRouter {
          *               newVerifier:
          *                 $ref: '#/components/schemas/Verifier'
          */
-        this.router.post('/', new UploadMiddleWare().use, (new VerifierController()).createVerifier);
+        this.router.post('/', new UploadMiddleWare().use, (new VerifierController()).registration);
 
         /**
          * @swagger
-         * /api/verifiers:
+         * /api/v1/verifiers:
          *   get:
          *     summary: Find all Verifier
          *     description: Get all registered Verifier
@@ -143,7 +143,7 @@ export class VerifierRouter {
 
         /**
          * swagger // FIXME
-         * /api/verifiers/{verifierId}:
+         * /api/v1/verifiers/{verifierId}:
          *   get:
          *     summary: Find one Verifier
          *     description: Query an registered Verifier by DID
@@ -171,7 +171,7 @@ export class VerifierRouter {
 
         /**
          * swagger // FIXME
-         * /api/verifiers/{verifierId}/profile:
+         * /api/v1/verifiers/{verifierId}/profile:
          *   get:
          *     summary: Find Verifier's Profile
          *     description: Query profile of an Verifier
@@ -201,7 +201,7 @@ export class VerifierRouter {
 
         /**
          * swagger // FIXME
-         * /api/verifiers/{verifierId}/operators:
+         * /api/v1/verifiers/{verifierId}/operators:
          *   get:
          *     summary: Find Verifier's Operators
          *     description: Query all operators of an Verifier
@@ -237,7 +237,7 @@ export class VerifierRouter {
 
         /**
          * swagger // FIXME
-         * /api/verifiers/{verifierId}/operators:
+         * /api/v1/verifiers/{verifierId}/operators:
          *   post:
          *     summary: Add a Operator
          *     description: Add new Operator for an Verifier
@@ -277,7 +277,7 @@ export class VerifierRouter {
 
         /**
          * swagger // FIXME
-         * /api/verifiers/{verifierId}/operators/{operatorId}:
+         * /api/v1/verifiers/{verifierId}/operators/{operatorId}:
          *   delete:
          *     summary: Remove a Operator
          *     description: Remove existing Operator for an Verifier

@@ -177,7 +177,7 @@ export class IssuerRouter {
 
         /**
          * swagger // FIXME
-         * /api/issuers/{issuerId}:
+         * /api/v1/issuers/{issuerId}:
          *   get:
          *     summary: Find one Issuer
          *     description: Query an registered Issuer by DID
@@ -205,7 +205,7 @@ export class IssuerRouter {
 
         /**
          * swagger // FIMXE
-         * /api/issuers/{issuerId}:
+         * /api/v1/issuers/{issuerId}:
          *   put:
          *     summary: Update Issuer's Profile
          *     description: Update profile of an Issuer

@@ -27,7 +27,7 @@ export class NetworkRouter {
 
         /**
          * @swagger
-         * /api/networks:
+         * /api/v1/networks:
          *   get:
          *     summary: Supported Networks
          *     description: Get all supported networks information
@@ -50,7 +50,7 @@ export class NetworkRouter {
 
         /**
          * @swagger
-         * /api/networks:
+         * /api/v1/networks:
          *   post:
          *     summary: Register Network
          *     description: Register new network

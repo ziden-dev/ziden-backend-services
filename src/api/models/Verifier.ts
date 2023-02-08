@@ -5,7 +5,7 @@ export interface IVerifier {
     name: string,
     description: string,
     contact: string,
-    isVerified: boolean,
+    isVerified?: boolean,
     website: string,
     logoUrl: string,
     endpointUrl?: string        // Not necessary, might be in the future

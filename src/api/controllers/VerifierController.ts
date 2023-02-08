@@ -22,7 +22,7 @@ export class VerifierController {
         this.operatorService = new OperatorService();
         this.networkService = new NetworkService();
 
-        this.createVerifier = this.createVerifier.bind(this);
+        this.registration = this.registration.bind(this);
         this.findVerifiers = this.findVerifiers.bind(this);
         // this.findOneVerifier = this.findOneVerifier.bind(this);
         // this.getVerifierProfile = this.getVerifierProfile.bind(this);
@@ -34,7 +34,7 @@ export class VerifierController {
         // this.registration = this.registration.bind(this);
     }
 
-    public async createVerifier(req: Request, res: Response) {
+    public async registration(req: Request, res: Response) {
         try {
             if (!req.body.verifier) throw new BadRequestError('Missing verifier property in request body')
             res.send({

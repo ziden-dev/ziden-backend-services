@@ -27,7 +27,7 @@ export class ProofRouter {
 
         /**
          * @swagger
-         * /api/proofs/submit:
+         * /api/v1/proofs/submit:
          *   post:
          *     summary: Submit ZK Proof
          *     description: Submit ZK proofs for verification
@@ -61,7 +61,7 @@ export class ProofRouter {
 
         /**
          * @swagger
-         * /api/proofs/requests/{serviceId}:
+         * /api/v1/proofs/requests/{serviceId}:
          *   get:
          *     summary: Fetch ZK proof request
          *     description: Fetch request for ZK proof generation
@@ -86,7 +86,7 @@ export class ProofRouter {
 
         /**
          * @swagger
-         * /api/proofs/public:
+         * /api/v1/proofs/public:
          *   get:
          *     summary: Fetch public data
          *     description: Fetch necessary public data for ZK proof generation

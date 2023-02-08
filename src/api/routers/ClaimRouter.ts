@@ -13,7 +13,7 @@ export class ClaimRouter {
 
         /**
          * @swagger
-         * /api/claims/metadata:
+         * /api/v1/claims/metadata:
          *   get:
          *     summary: Query claims
          *     description: Fetch claim's data

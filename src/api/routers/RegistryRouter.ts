@@ -145,7 +145,7 @@ export class RegistryRouter {
 
         /**
          * @swagger
-         * /api/registries/schemas:
+         * /api/v1/registries/schemas:
          *   post:
          *     summary: Register new Schema
          *     description: Register new Schema
@@ -181,7 +181,7 @@ export class RegistryRouter {
 
         /**
          * @swagger
-         * /api/registries/schemas:
+         * /api/v1/registries/schemas:
          *   get:
          *     summary: Find many Schema Registry
          *     description: Get many registered Schema Registry
@@ -215,7 +215,7 @@ export class RegistryRouter {
 
         /**
          * @swagger
-         * /api/registries/schemas/{registryId}:
+         * /api/v1/registries/schemas/{registryId}:
          *   get:
          *     summary: Find one Schema Registry
          *     description: Query an registered Schema Registry by unique ID
@@ -247,7 +247,7 @@ export class RegistryRouter {
 
         /**
          * @swagger
-         * /api/registries/schemas/{registryId}/active:
+         * /api/v1/registries/schemas/{registryId}/active:
          *   put:
          *     summary: Activate/Deactivate Schema Registry
          *     description: Toggle active status of a schema registry
@@ -277,7 +277,7 @@ export class RegistryRouter {
 
         /**
          * @swagger
-         * /api/registries/schemas/{registryId}/request:
+         * /api/v1/registries/schemas/{registryId}/request:
          *   get:
          *     summary: Fetch data for request page
          *     description: Fetch data for request page
@@ -318,7 +318,7 @@ export class RegistryRouter {
 
         /**
          * @swagger
-         * /api/registries/services:
+         * /api/v1/registries/services:
          *   post:
          *     summary: Register new Service
          *     description: Register new Service
@@ -348,7 +348,7 @@ export class RegistryRouter {
 
         /**
          * @swagger
-         * /api/registries/services:
+         * /api/v1/registries/services:
          *   get:
          *     summary: Find all Service
          *     description: Get all registered Service
@@ -376,7 +376,7 @@ export class RegistryRouter {
 
         /**
          * @swagger
-         * /api/registries/services/{serviceId}:
+         * /api/v1/registries/services/{serviceId}:
          *   get:
          *     summary: Find one Service
          *     description: Query an registered Service by unique ID
@@ -406,7 +406,7 @@ export class RegistryRouter {
 
         /**
          * @swagger
-         * /api/registries/services/{serviceId}/active:
+         * /api/v1/registries/services/{serviceId}/active:
          *   put:
          *     summary: Activate/Deactivate Service
          *     description: Toggle active status of a service

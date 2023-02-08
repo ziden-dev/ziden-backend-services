@@ -54,7 +54,7 @@ export class ServiceRouter {
 
         /**
          * @swagger
-         * /api/serviceProviders:
+         * /api/v1/serviceProviders:
          *   post:
          *     summary: Create new Service Provider
          *     description: Register new Service Provider
@@ -85,7 +85,7 @@ export class ServiceRouter {
 
         /**
          * @swagger
-         * /api/serviceProviders:
+         * /api/v1/serviceProviders:
          *   get:
          *     summary: Find all Service Provider
          *     description: Get all registered Service Provider
@@ -108,7 +108,7 @@ export class ServiceRouter {
 
         /**
          * @swagger
-         * /api/serviceProviders/{providerId}:
+         * /api/v1/serviceProviders/{providerId}:
          *   get:
          *     summary: Find one Service Provider
          *     description: Query an registered Service Provider by unique ID
@@ -136,7 +136,7 @@ export class ServiceRouter {
 
         /**
          * @swagger
-         * /api/serviceProviders/{providerId}/services:
+         * /api/v1/serviceProviders/{providerId}/services:
          *   get:
          *     summary: Find all schemas of Service Provider
          *     description: Query schemas of an registered Service Provider by unique ID
@@ -166,7 +166,7 @@ export class ServiceRouter {
 
         /**
          * @swagger
-         * /api/serviceProviders/{providerId}/verifiers:
+         * /api/v1/serviceProviders/{providerId}/verifiers:
          *   get:
          *     summary: Find all issuers of Service Provider
          *     description: Query issuers of an registered Service Provider by unique ID
