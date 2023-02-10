@@ -14,7 +14,7 @@ import env from "../../lib/env/index.js";
 import utils from "../utils/index.js";
 
 export class IssuerController {
-    
+
     issuerService: IssuerService;
     registryService: RegistryService;
     schemaService: SchemaService;
@@ -27,7 +27,7 @@ export class IssuerController {
         this.schemaService = new SchemaService();
         this.networkService = new NetworkService();
         this.operatorService = new OperatorService();
-        
+
         this.registration = this.registration.bind(this);
         this.findIssuers = this.findIssuers.bind(this);
         // this.findOneIssuer = this.findOneIssuer.bind(this);
@@ -44,10 +44,9 @@ export class IssuerController {
         try {
             const logoUrl = utils.getLogoUrl(
                 req.files === undefined ?
-                utils.getLogoUrl('') :
-                (req.files as {[fieldname: string]: Express.Multer.File[]})['issuerLogo'][0].filename
+                    '' :
+                    (req.files as { [fieldname: string]: Express.Multer.File[] })['issuerLogo'][0].filename
             );
-
             const issuer = {
                 _id: req.body.issuerId.toString(),
                 name: req.body.name.toString(),
@@ -87,7 +86,7 @@ export class IssuerController {
                     networks = req.query.networks as string[];
                 else
                     networks = [req.query.networks as string];
-                
+
                 // FIXME: fetching supported networks from issuer v1
                 issuers = issuers.filter(issuer => true);
             }
@@ -95,7 +94,7 @@ export class IssuerController {
             const registries = await this.registryService.findRegistriesByIssuers(issuers.map(e => e._id));
             await Promise.all(
                 issuers.map(async (issuer) => Object.assign(issuer, {
-                    'schemaRegistries': registries.map(async(e) => {
+                    'schemaRegistries': registries.map(async (e) => {
                         return {
                             'name': (await this.schemaService.findOneById(e.schemaHash))?.name ?? 'Unknown schema',
                             'hash': e.schemaHash,
@@ -105,7 +104,7 @@ export class IssuerController {
                 }))
             );
             sendRes(res, null, { 'issuers': issuers });
-        } catch(error: any) {
+        } catch (error: any) {
             sendRes(res, error);
         }
     }
@@ -114,13 +113,13 @@ export class IssuerController {
     //     try {
     //         const issuer = await this.issuerService.findOne(req.params.issuerId);
     //         if (issuer === undefined) throw new NotFoundError("Issuer not founded");
-            
+
     //         const networks = await Promise.all(issuer.supportedNetworks.map(async (networkId, index) => 
     //             (await this.networkService.findNetworkById(networkId))?.name ?? 'Unknown'
     //         ));
 
     //         Object.assign(issuer, { 'networks': networks });
-            
+
     //         res.send({ 'issuer': issuer });
     //     } catch(error: any) {
     //         res.status(error.httpCode ?? 500).send(error);
@@ -192,7 +191,7 @@ export class IssuerController {
     //             this.issuerService.findOne(req.params.issuerId)
     //         ]);
     //         const issuerClaims = (await axios.get(`${issuer?.endpointUrl}/claims`))?.data.data || [];
-            
+
     //         const schemas = await Promise.all(schemaRegistries.map(async registry => {
     //             const schema = await this.schemaService.findOne(registry.schemaHash);
     //             const numPublishedClaims = issuerClaims.filter((claim: any) => claim.schemaHash.toString() == registry.schemaHash.toString()).length;
@@ -225,7 +224,7 @@ export class IssuerController {
     //         }
     //         logger.info(identityProvider);
     //         const newProvider = await this.identityProviderService.save(identityProvider);
-            
+
     //         const issuer: IIssuer = {
     //             _id: req.body.issuerId,
     //             providerId: newProvider._id!,

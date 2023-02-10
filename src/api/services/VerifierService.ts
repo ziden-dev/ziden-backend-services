@@ -2,9 +2,9 @@ import Verifier, { IVerifier } from '../models/Verifier.js';
 
 export class VerifierService {
 
-    constructor(){ }
+    constructor() { }
 
-    public async findOne(issuerId: string): Promise<IVerifier | undefined> {
+    public async findOneById(issuerId: string): Promise<IVerifier | undefined> {
         return (await Verifier.findById(issuerId))?.toObject();
     }
 
@@ -20,8 +20,15 @@ export class VerifierService {
         return (await Verifier.findByIdAndUpdate(
             issuer._id,
             issuer,
-            {upsert: true, new: true}
+            { upsert: true, new: true }
         )).toObject();
+    }
+
+    public async createVerifier(verifier: IVerifier): Promise<IVerifier | boolean> {
+        if (await this.findOneById(verifier._id)) {
+            return false;
+        }
+        return (await Verifier.create(verifier));
     }
 
 }

@@ -4,6 +4,7 @@ import multer from 'multer';
 import { UploadMiddleWare } from '../middlewares/UploadMiddleware.js';
 import { VerifierController } from '../controllers/VerifierController.js';
 import env from '../../lib/env/index.js';
+import { OperatorController } from '../controllers/OperatorController.js';
 
 export class VerifierRouter {
     public router: Router;
@@ -14,7 +15,7 @@ export class VerifierRouter {
     }
 
     public route() {
-        
+
         /**
          * @swagger
          * components:
@@ -56,8 +57,8 @@ export class VerifierRouter {
          *         verifierLogo:
          *           type: string
          *           format: binary
-         */ 
-        
+         */
+
         /**
          * swagger // FIXME
          *   schemas:
@@ -103,8 +104,7 @@ export class VerifierRouter {
          *               website:
          *                 type: string
          *               verifierLogo:
-         *                 type: string
-         *                 format: binary
+         *                 type: file
          *     responses:
          *       '200':
          *         description: A JSON object of Verifier
@@ -116,7 +116,7 @@ export class VerifierRouter {
          *               newVerifier:
          *                 $ref: '#/components/schemas/Verifier'
          */
-        this.router.post('/', new UploadMiddleWare().use, (new VerifierController()).registration);
+        this.router.post('/registration', new UploadMiddleWare().use, (new VerifierController()).registration);
 
         /**
          * @swagger
@@ -200,7 +200,7 @@ export class VerifierRouter {
         // this.router.put('/:verifierId/profiles', (new VerifierController()).updateVerifierProfile);
 
         /**
-         * swagger // FIXME
+         * @swagger
          * /api/v1/verifiers/{verifierId}/operators:
          *   get:
          *     summary: Find Verifier's Operators
@@ -233,10 +233,10 @@ export class VerifierRouter {
          *                         type: string
          *                         format: date
          */
-        // this.router.get('/:verifierId/operators', (new VerifierController()).findVerifierOperators);
+        this.router.get('/:verifierId/operators', (new OperatorController()).getAllOperators);
 
         /**
-         * swagger // FIXME
+         * @swagger
          * /api/v1/verifiers/{verifierId}/operators:
          *   post:
          *     summary: Add a Operator
@@ -273,10 +273,10 @@ export class VerifierRouter {
          *                   type: string
          *                   format: date
          */
-        // this.router.post('/:verifierId/operators', (new VerifierController()).addOperator);
+        this.router.post('/:verifierId/operators', (new OperatorController()).createOperator);
 
         /**
-         * swagger // FIXME
+         * @swagger 
          * /api/v1/verifiers/{verifierId}/operators/{operatorId}:
          *   delete:
          *     summary: Remove a Operator
@@ -306,11 +306,8 @@ export class VerifierRouter {
          *               properties:
          *                 operatorId:
          *                   type: string
-         *                 createdAt:
-         *                   type: string
-         *                   format: date
          */
-        // this.router.delete('/:verifierId/operators/:operatorId', (new VerifierController()).removeOperator);
+        this.router.delete('/:verifierId/operators/:operatorId', (new OperatorController()).removeOperator);
 
     }
 }

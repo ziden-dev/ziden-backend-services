@@ -1,8 +1,8 @@
 import { model, Schema } from 'mongoose';
-import { OperatorRole, Portal } from '../../lib/constants';
+import { OperatorRole, Portal } from '../../lib/constants/index.js';
+
 
 export interface IOperator {
-    _id?: string,
     userId: string,
     issuerId: string,
     role: string,
@@ -12,7 +12,6 @@ export interface IOperator {
 }
 
 const OperatorSchema = new Schema<IOperator>({
-    _id: { type: String, required: true },
     userId: { type: String, required: true },
     issuerId: { type: String, required: true },
     role: { type: String, required: true, enum: OperatorRole },
