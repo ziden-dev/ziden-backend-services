@@ -4,7 +4,7 @@ export type ABI = {
 }
 
 export const ABIS: {[key: string] : ABI} = {
-    "QueryMTPValidator": {
+    'QUERY_MTP_VALIDATOR': {
         "address": "",
         "interface": [
             'event Initialized(uint8 version)',

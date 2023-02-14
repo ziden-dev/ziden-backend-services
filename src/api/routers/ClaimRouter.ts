@@ -13,7 +13,7 @@ export class ClaimRouter {
 
         /**
          * @swagger
-         * /api/v1/claims/metadata:
+         * /api/v1/claims:
          *   get:
          *     summary: Query claims
          *     description: Fetch claim's data
@@ -21,25 +21,22 @@ export class ClaimRouter {
          *       - Claim
          *     parameters:
          *       - in: query
+         *         name: holderId
+         *         schema:
+         *           type: string
+         *         description: DID of Holder
+         *       - in: query
          *         name: issuerId
          *         schema:
          *           type: string
          *         description: DID of Issuer
          *       - in: query
-         *         name: claimId
+         *         name: claimIds
          *         schema:
-         *           type: string
-         *         description: Unique ID of a claim
-         *       - in: query
-         *         name: holderId
-         *         schema:
-         *           type: string
-         *         description: Hash of schema
-         *       - in: query
-         *         name: status
-         *         schema:
-         *           type: string
-         *         description: CLAIMED or UNCLAIMED
+         *           type: array
+         *           items:
+         *             type: string
+         *         description: Unique ID of claims
          *     responses:
          *       200:
          *         description: A JSON object
@@ -64,7 +61,7 @@ export class ClaimRouter {
          *                         properties:
          *                           schemaHash:
          *                             type: string
-         *                           title:
+         *                           name:
          *                             type: string
          *                       issuer:
          *                         type: object
