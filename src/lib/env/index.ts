@@ -36,7 +36,7 @@ const env = {
         ? getOsEnv('APP_HOST')
         : `${getOsEnv('APP_HOST')}:${getOsEnv('APP_PORT')}`,
         url: process.env.NODE_ENV === 'production' 
-            ? `https://${getOsEnv('APP_HOST')}`
+            ? `https://${getOsEnv('APP_HOSTNAME')}`
             : `http://${getOsEnv('APP_HOST')}:${getOsEnv('APP_PORT')}`
     },
     backupService: {

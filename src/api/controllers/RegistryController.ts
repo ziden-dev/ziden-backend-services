@@ -73,7 +73,7 @@ export class RegistryController {
 
                 return {
                     registry: {
-                        registryId: registry._id,
+                        registryId: (registry as any).id,
                         description: registry.description,
                         expiration: registry.expiration,
                         updatable: registry.updatable,
