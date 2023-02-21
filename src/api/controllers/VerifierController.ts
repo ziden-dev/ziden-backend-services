@@ -58,6 +58,7 @@ export class VerifierController {
             }
             const newVerifier = await this.verifierService.createVerifier(verifier);
             if (newVerifier === false) throw new BadRequestError('verifier existed');
+            sendRes(res, null, { 'verifier': newVerifier });
 
         } catch (error: any) {
             logger.error(error);
@@ -76,11 +77,22 @@ export class VerifierController {
 
     public async findVerifiers(req: Request, res: Response) {
         try {
-            res.send({
-                'verifiers': await this.verifierService.findAll()
+            sendRes(res, null, {
+                'verifiers': (await this.verifierService.findAll()).map(e => {
+                    return {
+                        '_id': e._id,
+                        'name': e.name,
+                        'description': e.description,
+                        'contact': e.contact,
+                        'isVerified': e.isVerified,
+                        'website': e.website,
+                        'logoUrl': e.logoUrl
+                    }
+                })
             })
         } catch (error: any) {
-            res.status(error.httpCode ?? 500).send(error);
+            logger.error(error);
+            sendRes(res, error);
         }
     }
 

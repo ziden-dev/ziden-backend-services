@@ -2,6 +2,7 @@ import { v4 } from "uuid";
 import Operator, { IOperator } from "../models/Operator.js";
 import { Portal } from "../../lib/constants/index.js";
 import { claim } from "zidenjs";
+import { NotFoundError } from "../errors/http/NotFoundError.js";
 export class OperatorService {
 
     constructor() { }
@@ -14,7 +15,7 @@ export class OperatorService {
     //     })).map(e => e.toObject());
     // }
 
-    public async createOperator(operator: IOperator): Promise<IOperator> {
+    public async createOperator(operator: IOperator) {
         const lastOperator = await Operator.findOne({ userId: operator.userId, issuerId: operator.issuerId });
         if (lastOperator) {
             Object.assign(lastOperator, operator);
@@ -24,19 +25,20 @@ export class OperatorService {
         else return (await Operator.create(operator))?.toObject();
     }
 
-    public async findAllOperators(issuerId: string): Promise<IOperator[]> {
+    public async findAllOperators(issuerId: string) {
         return (await Operator.find({ issuerId })).map(e => e.toObject());
     }
 
 
-    public async disable(userId: string, issuerId: string): Promise<string> {
+    public async disable(userId: string, issuerId: string) {
         const operator = await Operator.findOne({ userId, issuerId });
+        console.log(userId);
         if (operator) {
             operator.activate = false;
             await operator.save();
-            return userId;
+            return operator;
         }
-        else throw ("Operator no exist!")
+        else throw new NotFoundError("Operator does not exist!");
 
     }
     // public async findByVerifier(verifierId: string): Promise<IOperator[]> {

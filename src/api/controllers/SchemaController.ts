@@ -1,9 +1,12 @@
 import { Request, Response } from 'express';
 import axios from 'axios';
 
+import { ISchema } from '../models/Schema.js';
 import { SchemaService } from '../services/SchemaService.js';
 import { BadRequestError } from '../errors/http/BadRequestError.js';
 import { NotFoundError } from '../errors/http/NotFoundError.js';
+import { sendRes } from '../responses/index.js';
+import utils from '../utils/index.js';
 import logger from '../../lib/logger/index.js';
 
 export class SchemaController {
@@ -13,6 +16,7 @@ export class SchemaController {
     constructor(){
         this.schemaService = new SchemaService();
 
+        this.registerSchema = this.registerSchema.bind(this);
         this.findAllSchemas = this.findAllSchemas.bind(this);
         this.fineOneSchema = this.fineOneSchema.bind(this);
         this.getAllDataTypes = this.getAllDataTypes.bind(this);
@@ -20,43 +24,48 @@ export class SchemaController {
 
     public async findAllSchemas(req: Request, res: Response) {
         try {
+            // FIXME: add query
             const schemas = await this.schemaService.findAll();
-            await Promise.all(schemas.map(async (schema) => {
-                schema.jsonSchema = (await axios.get(schema.accessUri)).data
-            }));
-            
-            const fetchContext = async (json: any) => {
-                const contexts = json['@context'];
-                if (contexts === undefined || contexts.length == 0) return;
-                json['@context'] = await Promise.all(contexts.map(async (context: string|object) => {
-                    if (typeof context == 'string') {
-                        return fetchContext((await axios.get(context)).data)
-                    } else if (typeof context == 'object')
-                        return context;
-                }));
-                return json;
-            }
 
-            await Promise.all(schemas.map(async schema => {
-                schema.jsonSchema = await fetchContext(schema.jsonSchema);
-            }));
+            schemas.map(schema => { delete schema._id });
 
-            res.send({ 'schemas': schemas });
+            /* Currently not necessary to retrieve context for all schemas */
+            // await Promise.all(schemas.map(async (schema) => {
+            //     schema.jsonSchema = (await axios.get(schema.accessUri)).data
+            //     delete schema._id;
+            // }));
+            // await Promise.all(schemas.map(async schema => {
+            //     schema.jsonSchema = await utils.fetchSchemaContext(schema.jsonSchema);
+            //     delete schema._id;
+            // }));
+
+            sendRes(res, null, { 'schemas': schemas });
         } catch (error: any) {
-            res.status(error.httpCode ?? 500).send(error);
+            sendRes(res, error);
         }
     }
 
     public async fineOneSchema(req: Request, res: Response) {
         try {
             if (!req.params.schemaHash) throw new BadRequestError('Missing schemaHash in request params');
-            const schema = await this.schemaService.findOneById(req.params.schemaHash);
+            const schema = await this.schemaService.findOneById(req.params.schemaHash as string);
             if (schema === undefined) throw new NotFoundError('Schema does not exist');
-            res.send({
-                'schema': schema
-            });
+            schema.jsonSchema = await utils.fetchSchemaContext((await axios.get(schema.accessUri)).data);
+            sendRes(res, null, { 'schema': schema });
         } catch (error: any) {
-            res.status(error.httpCode ?? 500).send(error);
+            sendRes(res, error);
+        }
+    }
+
+    public async registerSchema(req: Request, res: Response) {
+        try {
+            if (!req.body.schema) throw new BadRequestError('Missing schemaHash in request body');
+            const newSchema = await this.schemaService.createSchema(req.body.schema);
+            if (newSchema === false) throw new BadRequestError('Schema existed');
+            delete (newSchema as ISchema)._id;
+            sendRes(res, null, { 'schema': newSchema })
+        } catch (error: any) {
+            sendRes(res, error);
         }
     }
 

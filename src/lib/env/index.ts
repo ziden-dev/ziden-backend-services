@@ -32,9 +32,18 @@ const env = {
             middlewares: getOsPaths('MIDDLEWARES'),
             models: getOsPaths('MODELS'),
         },
+        hostname: process.env.NODE_ENV === 'production' 
+        ? getOsEnv('APP_HOST')
+        : `${getOsEnv('APP_HOST')}:${getOsEnv('APP_PORT')}`,
         url: process.env.NODE_ENV === 'production' 
-            ? `https://${getOsEnv('APP_HOST')}`
+            ? `https://${getOsEnv('APP_HOSTNAME')}`
             : `http://${getOsEnv('APP_HOST')}:${getOsEnv('APP_PORT')}`
+    },
+    backupService: {
+        url: getOsEnv('BACKUP_SERVICE_URL')
+    },
+    issuerService: {
+        url: getOsEnv('ISSUER_SERVICE_URL')
     },
     log: {
         level: getOsEnv('LOG_LEVEL'),
@@ -56,6 +65,9 @@ const env = {
     },
     uploads: {
         multerStorageDest: getOsEnvOptional('MULTER_STORAGE_DESTINATION') ?? '/public/uploads'
+    },
+    zkProof: {
+        validTime: Number(getOsEnvOptional('PROOF_VALID_TIME') ?? '86400000')
     }
 };
 

@@ -22,7 +22,7 @@ export class Routers {
         this.router.use('/verifiers', new VerifierRouter().router);
         this.router.use('/schemas', new SchemaRouter().router);
         this.router.use('/registries', new RegistryRouter().router);
-        this.router.use('/service', new ServiceRouter().router);
+        this.router.use('/services', new ServiceRouter().router);
         this.router.use('/proofs', new ProofRouter().router);
         this.router.use('/networks', new NetworkRouter().router);
     }

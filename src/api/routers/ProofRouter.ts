@@ -23,6 +23,21 @@ export class ProofRouter {
          *           type: array
          *           items:
          *             type: object
+         *     ProofRequest:
+         *       properties:
+         *         requestId:
+         *           type: string
+         *         serviceId:
+         *           type: string
+         *         message:
+         *           type: string
+         *         validUntil:
+         *           type: string
+         *           format: date-time
+         *         proofs:
+         *           type: array
+         *           items:
+         *             $ref: '#/components/schemas/Proof'
          */
 
         /**
@@ -40,7 +55,9 @@ export class ProofRouter {
          *           schema:
          *             type: object
          *             properties:
-         *               zkProofs:
+         *               requestId:
+         *                 type: string
+         *               proofs:
          *                 type: array
          *                 items:
          *                   $ref: '#/components/schemas/Proof'
@@ -52,28 +69,68 @@ export class ProofRouter {
          *             schema:
          *             type: object
          *             properties:
+         *               isValid:
+         *                 type: boolean
          *               results:
          *                 type: array
          *                 items:
          *                   type: boolean
          */
-        // this.router.post('/submit', (new ProofController()).submitProofs);
+        this.router.post('/submit', (new ProofController()).submitProofs);
 
         /**
          * @swagger
-         * /api/v1/proofs/requests/{serviceId}:
+         * /api/v1/proofs/verify:
+         *   post:
+         *     summary: Verify ZK Proof
+         *     description: Verify ZK proofs
+         *     tags:
+         *       - Proof
+         *     requestBody:
+         *       description: A JSON array of Proof
+         *       content:
+         *         application/json:
+         *           schema:
+         *             type: object
+         *             properties:
+         *               networkId:
+         *                 type: string
+         *               proofs:
+         *                 type: array
+         *                 items:
+         *                   $ref: '#/components/schemas/Proof'
+         *     responses:
+         *       '200':
+         *         description: An array of verification result
+         *         content:
+         *           application/json:
+         *             schema:
+         *             type: object
+         *             properties:
+         *               isValid:
+         *                 type: boolean
+         *               results:
+         *                 type: array
+         *                 items:
+         *                   type: boolean
+         */
+        this.router.post('/verify', (new ProofController()).verifyProofs);
+
+        /**
+         * @swagger
+         * /api/v1/proofs/{requestId}:
          *   get:
-         *     summary: Fetch ZK proof request
-         *     description: Fetch request for ZK proof generation
+         *     summary: Fetch ZK proof
+         *     description: Fetch ZK proof for a request
          *     tags:
          *       - Proof
          *     parameters:
          *       - in: path
-         *         name: serviceId
+         *         name: requestId
          *         schema:
          *           type: string
          *         required: true
-         *         description: DID of Issuer
+         *         description: Unique ID of a request
          *     responses:
          *       200:
          *         description: A JSON of proof request
@@ -81,38 +138,41 @@ export class ProofRouter {
          *           application/json:
          *             schema:
          *               type: object
+         *               properties:
+         *                 request:
+         *                   $ref: '#/components/schemas/ProofRequest'
          */
-        // this.router.get('/requests/:serviceId', (new ProofController()).getProofRequest);
+        this.router.get('/:requestId', (new ProofController()).fetchProofRequest);
 
         /**
          * @swagger
-         * /api/v1/proofs/public:
-         *   get:
-         *     summary: Fetch public data
-         *     description: Fetch necessary public data for ZK proof generation
+         * /api/v1/proofs/request:
+         *   post:
+         *     summary: Generate ZK proof request
+         *     description: Generate request for ZK proof generation
          *     tags:
          *       - Proof
-         *     parameters:
-         *       - in: query
-         *         name: issuerId
-         *         schema:
-         *           type: string
-         *         required: true
-         *         description: DID of Issuer
-         *       - in: query
-         *         name: claimId
-         *         schema:
-         *           type: string
-         *         required: true
-         *         description: Unique ID of claim
+         *     requestBody:
+         *       description: Data for generating proof generation request
+         *       content:
+         *         application/json:
+         *           schema:
+         *             type: object
+         *             properties:
+         *               serviceId:
+         *                 type: string
+         *                 required: true
          *     responses:
          *       200:
-         *         description: A JSON of public data
+         *         description: Unique ID of Request
          *         content:
          *           application/json:
          *             schema:
          *               type: object
+         *               properties:
+         *                 request:
+         *                   $ref: '#/components/schemas/ProofRequest'
          */
-        // this.router.get('/public', (new ProofController()).getProofPublicData);
+        this.router.post('/request', (new ProofController()).generateProofRequest);
     }
 }

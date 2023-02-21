@@ -58,6 +58,11 @@ export enum Contract {
     StateTransitionVerifier = 'StateTransitionVerifier'
 }
 
+export enum DefaultEndpoint {
+    Issuer = 'http://<hostname>/api/v1',
+    SchemaRegistry = 'http://<hostname>/api/v1/registries/<registryId>',
+    Service = 'http://<hostname>/api/v1/services/<serviceId>'
+}
+
 export const IMAGE_TYPES = /jpeg|jpg|png/;
 export const IMAGE_MAX_SIZE = 10 * 1000 * 1000;
-

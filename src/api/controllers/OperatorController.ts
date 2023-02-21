@@ -10,6 +10,7 @@ import logger from '../../lib/logger/index.js';
 import { IOperator } from '../models/Operator.js';
 import { v4 } from 'uuid';
 import { OperatorRole, Portal } from '../../lib/constants/index.js';
+import { sendRes } from '../responses/index.js';
 export class OperatorController {
 
 
@@ -33,32 +34,35 @@ export class OperatorController {
                 activate: true,
                 portal: Portal.Veifier
             }
+
             const newOperator = await this.operatorService.createOperator(operator);
-            res.send({ 'operator': newOperator });
+            sendRes(res, null, { 'operatorId': newOperator.userId, 'createdAt': (newOperator as any).createdAt })
         } catch (error: any) {
             logger.error(error);
-            res.status(error.httpCode ?? 500).send(error);
+            sendRes(res, error);
         }
     }
 
     public async getAllOperators(req: Request, res: Response) {
         try {
             const { verifierId } = req.params;
-            res.send({ 'operators': await this.operatorService.findAllOperators(verifierId) });
+            sendRes(res, null, {
+                'operators': (await this.operatorService.findAllOperators(verifierId))
+                    .map((e: any) => { return { 'operatorId': e.userId, 'createdAt': e.createdAt } })
+            });
         } catch (error: any) {
             logger.error(error);
-            res.status(error.httpCode ?? 500).send(error);
+            sendRes(res, error);
         }
     }
 
     public async removeOperator(req: Request, res: Response) {
         try {
             const { operatorId, verifierId } = req.params;
-            res.send({ 'operatorId': await this.operatorService.disable(operatorId, verifierId) });
-
+            sendRes(res, null, { 'operatorId': (await this.operatorService.disable(operatorId, verifierId)).userId });
         } catch (error: any) {
             logger.error(error);
-            res.status(error.httpCode ?? 500).send(error);
+            sendRes(res, error);
         }
     }
 }

@@ -1,4 +1,5 @@
 import { Router } from 'express';
+import { ServiceController } from '../controllers/ServiceController.js';
 
 export class ServiceRouter {
     public router: Router;
@@ -13,87 +14,140 @@ export class ServiceRouter {
          * @swagger
          * components:
          *   schemas:
-         *     ServiceProvider:
+         *     Service:
          *       properties:
-         *         _id:
+         *         serviceId:
          *           type: string
          *           example: 66555d65-1e87-4428-86c1-35f0e23480f4
          *         name:
          *           type: string
-         *           example: Organization Ltd
+         *           example: Service's Title
+         *         verifier:
+         *           type: object
+         *           properties:
+         *             verifierId:
+         *               type: string
+         *               example: 8077d5cb0c7bfbcff2197d3b1f651901
+         *             name:
+         *               type: string
+         *               example: Verifier's Name
+         *             logoUrl:
+         *               type: string
+         *               example: https://image.logo.url
          *         description:
          *           type: string
-         *           example: This is our Organization Ltd, we provide identity source
-         *         contact:
-         *           type: string
-         *           example: contact@organiza.tion
-         *         website:
-         *           type: string
-         *           example: https://organiza.tion
-         *         logoUrl:
-         *           type: string
-         *           example: https://logo.jpg
-         *     ServiceProviderForm:
+         *           example: This is a mock service
+         *         network:
+         *           type: object
+         *           properties:
+         *             networkId:
+         *               type: string
+         *               example: 56
+         *             name:
+         *               type: string
+         *               example: BNB Chain
+         *         active:
+         *           type: boolean
+         *           default: true
+         *         requirements:
+         *           type: array
+         *           items:
+         *             $ref: '#/components/schemas/Requirement'
+         *     ServiceForm:
          *       properties:
          *         name:
+         *           type: String
+         *           required: true
+         *           example: Service's Title
+         *         verifierId:
          *           type: string
-         *           example: Organization Ltd
+         *           required: true
+         *           example: 8077d5cb0c7bfbcff2197d3b1f651901
          *         description:
          *           type: string
-         *           example: This is our Organization Ltd, we provide identity source
-         *         contact:
+         *           required: true
+         *           example: This is a mock service
+         *         networkId:
          *           type: string
-         *           example: contact@organiza.tion
-         *         website:
+         *           required: true
+         *           example: 56
+         *         requirements:
+         *           type: array
+         *           items:
+         *             $ref: '#/components/schemas/Requirement'
+         *     Requirement:
+         *       properties:
+         *         title:
          *           type: string
-         *           example: https://organiza.tion
-         *         logoUrl:
+         *           example: Age Restriction
+         *         attestation:
          *           type: string
-         *           example: https://logo.jpg
+         *           example: Born before 01/01/2001
+         *         allowedIssuers:
+         *           type: array
+         *           items:
+         *             type: string
+         *         schemaHash:
+         *           type: string
+         *           example: 8077d5cb0c7bfbcff2197d3b1f651901
+         *         circuitId:
+         *           type: string
+         *           example: credentialAtomicQueryMTP
+         *         query:
+         *           type: object
+         *           properties:
+         *             propertyName:
+         *               type: string
+         *               example: dateOfBirth
+         *             operator:
+         *               type: number
+         *               example: 2
+         *             value:
+         *               type: array
+         *               items:
+         *                 type: number
+         *                 example: 20010101
          */
 
         /**
          * @swagger
-         * /api/v1/serviceProviders:
+         * /api/v1/services:
          *   post:
-         *     summary: Create new Service Provider
-         *     description: Register new Service Provider
+         *     summary: Create new Service
+         *     description: Register new Service
          *     tags:
-         *       - Service Provider
+         *       - Service
          *     requestBody:
-         *       description: A JSON form of Service Provider
+         *       description: A JSON form of Service
          *       required: true
          *       content:
          *         application/json:
          *           schema:
-         *             type: object
-         *             properties:
-         *               provider:
-         *                 $ref: '#/components/schemas/ServiceProvider'
+         *             $ref: '#/components/schemas/ServiceForm'
          *     responses:
          *       '200':
-         *         description: A JSON object of Service Provider
+         *         description: A JSON object of Service
          *         content:
          *           application/json:
          *             schema:
          *             type: object
          *             properties:
-         *               newProvider:
-         *                 $ref: '#/components/schemas/ServiceProvider'
+         *               service:
+         *                 $ref: '#/components/schemas/Service'
          */
-        // this.router.post('/', (new ServiceProviderController()).registerServiceProvider);
+        this.router.post('/', (new ServiceController()).registerService);
 
         /**
          * @swagger
-         * /api/v1/serviceProviders:
+         * /api/v1/services:
          *   get:
-         *     summary: Find all Service Provider
-         *     description: Get all registered Service Provider
+         *     summary: Find all Service
+         *     description: Get all registered Service
          *     tags:
-         *       - Service Provider
+         *       - Service
          *     responses:
          *       200:
-         *         description: A JSON array of Service Provider
+         *         description: A JSON array of Service
          *         content:
          *           application/json:
          *             schema:
@@ -102,96 +156,97 @@ export class ServiceRouter {
          *                 providers:
          *                   type: array
          *                   items:
-         *                     $ref: '#/components/schemas/ServiceProvider'
+         *                     $ref: '#/components/schemas/Service'
          */
-        // this.router.get('/', (new ServiceProviderController()).findAllProviders);
+        this.router.get('/', (new ServiceController()).findServices);
 
         /**
          * @swagger
-         * /api/v1/serviceProviders/{providerId}:
+         * /api/v1/services/{serviceId}:
          *   get:
-         *     summary: Find one Service Provider
-         *     description: Query an registered Service Provider by unique ID
+         *     summary: Find one Service
+         *     description: Query an registered Service by unique ID
          *     tags:
-         *       - Service Provider
+         *       - Service
          *     parameters:
          *       - in: path
-         *         name: providerId
+         *         name: serviceId
          *         schema:
          *           type: string
          *         required: true
-         *         description: Unique ID of Service Provider
+         *         description: Unique ID of Service
          *     responses:
          *       200:
-         *         description: A JSON object of Service Provider
+         *         description: A JSON object of Service
          *         content:
          *           application/json:
          *             schema:
          *             type: object
          *             properties:
          *               provider:
-         *                 $ref: '#/components/schemas/ServiceProvider'
+         *                 $ref: '#/components/schemas/Service'
          */
-        // this.router.get('/:providerId', (new ServiceProviderController()).findOneProvider);
+        this.router.get('/:serviceId', (new ServiceController()).findServiceById);
 
         /**
          * @swagger
-         * /api/v1/serviceProviders/{providerId}/services:
-         *   get:
-         *     summary: Find all schemas of Service Provider
-         *     description: Query schemas of an registered Service Provider by unique ID
+         * /api/v1/services/{serviceId}:
+         *   put:
+         *     summary: Activate/Deactivate Service
+         *     description: Toggle active status of a service
          *     tags:
-         *       - Service Provider
+         *       - Registry
          *     parameters:
          *       - in: path
-         *         name: providerId
+         *         name: serviceId
          *         schema:
          *           type: string
          *         required: true
-         *         description: Unique ID of Service Provider
+         *         description: Unique ID of Service
          *     responses:
          *       200:
-         *         description: A JSON array of Service
+         *         description: A JSON object of update result
          *         content:
          *           application/json:
          *             schema:
-         *               type: object
-         *               properties:
-         *                 schemas:
-         *                   type: array
-         *                   items:
-         *                     $ref: '#/components/schemas/Service'
+         *             type: object
+         *             properties:
+         *               serviceId:
+         *                 type: string
+         *               active:
+         *                 type: boolean
          */
-        // this.router.get('/:providerId/services', (new ServiceProviderController()).findAllServicesOfProvider);
+        this.router.put('/services/:serviceId', (new ServiceController()).updateService);
 
         /**
-         * @swagger
-         * /api/v1/serviceProviders/{providerId}/verifiers:
-         *   get:
-         *     summary: Find all issuers of Service Provider
-         *     description: Query issuers of an registered Service Provider by unique ID
+         * swagger // FIXME: move to service routes
+         * /api/v1/services/{serviceId}/active:
+         *   put:
+         *     summary: Activate/Deactivate Service
+         *     description: Toggle active status of a service
          *     tags:
-         *       - Service Provider
+         *       - Registry
          *     parameters:
          *       - in: path
-         *         name: providerId
+         *         name: serviceId
          *         schema:
          *           type: string
          *         required: true
-         *         description: Unique ID of Service Provider
+         *         description: Unique ID of Service
          *     responses:
          *       200:
-         *         description: A JSON array of Service
+         *         description: A JSON object of update result
          *         content:
          *           application/json:
          *             schema:
-         *               type: object
-         *               properties:
-         *                 issuers:
-         *                   type: array
-         *                   items:
-         *                     $ref: '#/components/schemas/Service'
+         *             type: object
+         *             properties:
+         *               serviceId:
+         *                 type: string
+         *               active:
+         *                 type: boolean
          */
-        // this.router.get('/:providerId/verifiers', (new ServiceProviderController()).findAllVerifiersOfProvider);
+        // this.router.put('/services/:serviceId/active', (new ServiceController()).toggleServiceActive);
+    
     }
 }

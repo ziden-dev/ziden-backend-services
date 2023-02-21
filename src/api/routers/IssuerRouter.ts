@@ -19,7 +19,7 @@ export class IssuerRouter {
          *   schemas:
          *     Issuer:
          *       properties:
-         *         _id:
+         *         issuerId:
          *           type: string
          *           example: 82701632f563e84bcb34de9542d0457ff5cfb17bf9703f743afb93ba605cc6
          *         name:
@@ -59,6 +59,17 @@ export class IssuerRouter {
          *           type: string
          *           format: binary
          *         endpointUrl:
+         *           type: string
+         *     
+         *     SchemaRegistryMetadata:
+         *       properties:
+         *         registryId:
+         *           type: string
+         *         name:
+         *           type: string
+         *         schemaHash:
+         *           type: string
+         *         network:
          *           type: string
          */
           
@@ -171,7 +182,12 @@ export class IssuerRouter {
          *                 issuers:
          *                   type: array
          *                   items:
-         *                     $ref: '#/components/schemas/Issuer'
+         *                     allOf:
+         *                       - $ref: '#/components/schemas/Issuer'
+         *                       - schemaRegistries:
+         *                           type: array
+         *                           items:
+         *                             $ref: '#/components/schemas/SchemaRegistryMetadata'
          */
         this.router.get('/', (new IssuerController()).findIssuers);
 
