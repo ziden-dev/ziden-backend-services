@@ -14,19 +14,19 @@ import { GlobalVariables } from './lib/global/index.js';
 import * as db from './database/index.js';
 
 export class App {
-    
+
     public app!: Application;
 
-    constructor () {
+    constructor() {
         this.initialize()
-        .then(() => {
-            this.app = this.createServer();
-            this.configSwagger();
-            this.startServer();
-        }).catch(error => {
-            logger.error('Server crashed: ' + error);
-            process.exit(1);
-        })
+            .then(() => {
+                this.app = this.createServer();
+                this.configSwagger();
+                this.startServer();
+            }).catch(error => {
+                logger.error('Server crashed: ' + error);
+                process.exit(1);
+            })
     }
 
     public async initialize() {
@@ -39,10 +39,11 @@ export class App {
         switch (database) {
             case db.DB.MONGODB:
                 const MONGODB_URL = `mongodb://${env.db.username}:${env.db.password}@${env.db.host}:${env.db.port}/${env.db.database}?authMechanism=DEFAULT&authSource=admin`;
+                // const MONGODB_URL = `mongodb://${env.db.host}:${env.db.port}/${env.db.database}`;
                 try {
                     const dbConnection = new db.Mongo()
                     await dbConnection.init(MONGODB_URL, {});
-                } catch(err) {
+                } catch (err) {
                     throw err;
                 }
                 break;
@@ -85,12 +86,12 @@ export class App {
 
     private createServer() {
         const expressApp = express();
-        
+
         expressApp.use(bodyParser.json());
         expressApp.use(bodyParser.urlencoded({ extended: true }));
         expressApp.use(compression());
         expressApp.use(cors());
-        expressApp.use('/ping', (req: Request, res: Response) => { res.send({'status': 'alive'}) });
+        expressApp.use('/ping', (req: Request, res: Response) => { res.send({ 'status': 'alive' }) });
         expressApp.use('/public', express.static('public'));
         expressApp.use(env.app.routePrefix, new LogMiddleware().use, new Routers().router);
         expressApp.use('/', new ErrorHandling().use);

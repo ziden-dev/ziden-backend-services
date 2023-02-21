@@ -10,17 +10,19 @@ import { NotFoundError } from "../errors/http/NotFoundError.js";
 import { BadRequestError } from "../errors/http/BadRequestError.js";
 import logger from "../../lib/logger/index.js";
 import env from "../../lib/env/index.js";
+import utils from "../utils/index.js";
+import { sendRes } from "../responses/index.js";
 
 export class VerifierController {
 
     verifierService: VerifierService;
     operatorService: OperatorService;
-    networkService: NetworkService;
-    
+
+
     constructor() {
         this.verifierService = new VerifierService();
         this.operatorService = new OperatorService();
-        this.networkService = new NetworkService();
+
 
         this.registration = this.registration.bind(this);
         this.findVerifiers = this.findVerifiers.bind(this);
@@ -35,24 +37,62 @@ export class VerifierController {
     }
 
     public async registration(req: Request, res: Response) {
+
         try {
-            if (!req.body.verifier) throw new BadRequestError('Missing verifier property in request body')
-            res.send({
-                'newVerifier': await this.verifierService.save(req.body.verifier as IVerifier)
-            })
+
+            const logoUrl = utils.getLogoUrl(
+                req.files === undefined ?
+                    ''
+                    : (req.files as { [fieldname: string]: Express.Multer.File[] })['verifierLogo'][0].filename
+            );
+
+            const verifier: IVerifier = {
+                _id: req.body.verifierId.toString(),
+                name: req.body.name.toString(),
+                description: req.body.description.toString(),
+                contact: req.body.contact.toString(),
+                isVerified: true,
+                website: req.body.website.toString(),
+                logoUrl: logoUrl,
+                endpointUrl: req.body.endpointUrl?.toString()
+            }
+            const newVerifier = await this.verifierService.createVerifier(verifier);
+            if (newVerifier === false) throw new BadRequestError('verifier existed');
+            sendRes(res, null, { 'verifier': newVerifier });
+
         } catch (error: any) {
             logger.error(error);
-            res.status(error.httpCode ?? 500).send(error);
+            sendRes(res, error);
         }
     }
 
+    // public async findverifiers(req: Request, res: Response) {
+    //     try {
+    //         let verifiers = await this.verifierService.findAll();
+    //         sendRes(res, null, { 'verifiers': verifiers });
+    //     } catch (error: any) {
+    //         sendRes(res, error);
+    //     }
+    // }
+
     public async findVerifiers(req: Request, res: Response) {
         try {
-            res.send({
-                'verifiers': await this.verifierService.findAll()
+            sendRes(res, null, {
+                'verifiers': (await this.verifierService.findAll()).map(e => {
+                    return {
+                        '_id': e._id,
+                        'name': e.name,
+                        'description': e.description,
+                        'contact': e.contact,
+                        'isVerified': e.isVerified,
+                        'website': e.website,
+                        'logoUrl': e.logoUrl
+                    }
+                })
             })
         } catch (error: any) {
-            res.status(error.httpCode ?? 500).send(error);
+            logger.error(error);
+            sendRes(res, error);
         }
     }
 
@@ -97,7 +137,7 @@ export class VerifierController {
 
     // public async updateVerifierProfile(req: Request, res: Response) {
     //     try {
-            
+
     //     } catch (error: any) {
     //         logger.error(error)
     //         res.status(error.httpCode ?? 500).send(error);
@@ -109,22 +149,22 @@ export class VerifierController {
     //         if (!req.params.verifierId) throw new BadRequestError('Missing verifierId in request parmas');
 
     //         const services: any[] = await this.registryService.findServicesByVerifiers([req.params.verifierId]);
-            
+
     //         await Promise.all(
     //             services.map(async (service: any) => { 
     //                 service['networkName'] = (await this.networkService.findNetworkById(service.network))?.name ?? 'Unknown';
     //                 await Promise.all(
     //                     service.requirements.map(async (req: any) => {
-    //                         const issuers = await Promise.all(req.allowedIssuers.map((issuerId: string) => this.issuerService.findOne(issuerId)))
+    //                         const verifiers = await Promise.all(req.allowedverifiers.map((verifierId: string) => this.verifierService.findOne(verifierId)))
     //                         Object.assign(req, {
     //                             'schemaName': (await this.schemaService.findOne(req.schemaHash))?.title ?? 'Unknown',
-    //                             'issuerNames': await Promise.all(issuers.map(async (issuer: any) => (await this.identityProviderService.findOne(issuer.providerId))?.name ?? 'Unknown'))
+    //                             'verifierNames': await Promise.all(verifiers.map(async (verifier: any) => (await this.identityProviderService.findOne(verifier.providerId))?.name ?? 'Unknown'))
     //                         })
     //                     })
     //                 );
     //             })
     //         );
-            
+
     //         res.send({ 'services': services })
     //     } catch (error: any) {
     //         logger.error(error)

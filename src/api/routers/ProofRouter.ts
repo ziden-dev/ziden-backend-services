@@ -10,7 +10,7 @@ export class ProofRouter {
     }
 
     public route() {
-        
+
         /**
          * @swagger
          * components:
