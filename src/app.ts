@@ -38,8 +38,8 @@ export class App {
     private async connectDatabase(database: string) {
         switch (database) {
             case db.DB.MONGODB:
-                //const MONGODB_URL = `mongodb://${env.db.username}:${env.db.password}@${env.db.host}:${env.db.port}/${env.db.database}?authMechanism=DEFAULT&authSource=admin`;
-                const MONGODB_URL = `mongodb://${env.db.host}:${env.db.port}/${env.db.database}`;
+                const MONGODB_URL = `mongodb://${env.db.username}:${env.db.password}@${env.db.host}:${env.db.port}/${env.db.database}?authMechanism=DEFAULT&authSource=admin`;
+                // const MONGODB_URL = `mongodb://${env.db.host}:${env.db.port}/${env.db.database}`;
                 try {
                     const dbConnection = new db.Mongo()
                     await dbConnection.init(MONGODB_URL, {});
