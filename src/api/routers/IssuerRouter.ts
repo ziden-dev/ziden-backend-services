@@ -192,7 +192,7 @@ export class IssuerRouter {
         this.router.get('/', (new IssuerController()).findIssuers);
 
         /**
-         * swagger // FIXME
+         * @swagger
          * /api/v1/issuers/{issuerId}:
          *   get:
          *     summary: Find one Issuer
@@ -217,7 +217,7 @@ export class IssuerRouter {
          *                 issuer:
          *                   $ref: '#/components/schemas/Issuer'
          */
-        // this.router.get('/:issuerId', (new IssuerController()).findOneIssuer);
+        this.router.get('/:issuerId', (new IssuerController()).findOneIssuer);
 
         /**
          * swagger // FIMXE

@@ -61,12 +61,12 @@ export class RegistryController {
             }
             
             if (req.query.schemaHash) {
-                registries = registries.filter((registry: ISchemaRegistry) => registry.schemaHash == req.query.schemaHash);
+                registries = registries.filter((registry: any) => registry.schema.hash == req.query.schemaHash);
             }
 
             const details = await Promise.all(registries.map(async (registry: ISchemaRegistry) => {
                 const [schema, issuer, network] = await Promise.all([
-                    this.schemaService.findOneById(registry.schemaHash),
+                    this.schemaService.findOneById((registry as any).schema.hash),
                     this.issuerService.findOneById(registry.issuerId),
                     '' // FIXME: TBD after finishing network routes
                 ]);
@@ -117,7 +117,7 @@ export class RegistryController {
             if (registry === undefined) throw new NotFoundError('Schema registry does not exist');
             
             const [schema, issuer, network] = await Promise.all([
-                this.schemaService.findOneById(registry.schemaHash),
+                this.schemaService.findOneById(registry.schema.hash),
                 this.issuerService.findOneById(registry.issuerId),
                 '' // FIXME: TBD after finishing network routes
             ])
