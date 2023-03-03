@@ -5,6 +5,7 @@ import { IssuerService } from "../services/IssuerService.js";
 import { SchemaService } from "../services/SchemaService.js";
 import { NetworkService } from "../services/NetworkService.js";
 import { OperatorService } from "../services/OperatorService.js";
+import { UploadedFile } from "../middlewares/UploadMiddleware.js";
 import { ISchemaRegistry } from "../models/SchemaRegistry.js";
 import { NotFoundError } from "../errors/http/NotFoundError.js";
 import { BadRequestError } from "../errors/http/BadRequestError.js";
@@ -29,24 +30,24 @@ export class IssuerController {
         this.registration = this.registration.bind(this);
         this.findIssuers = this.findIssuers.bind(this);
         this.findOneIssuer = this.findOneIssuer.bind(this);
+        this.updateIssuer = this.updateIssuer.bind(this);
     }
 
     public async registration(req: Request, res: Response) {
         try {
-            const logoUrl = utils.getLogoUrl(
-                req.files === undefined ? '' :
-                (req.files as {[fieldname: string]: Express.Multer.File[]})['issuerLogo'][0].filename
-            );
+            const logo = (req.files as UploadedFile)['issuerLogo'] === undefined ? '' :
+                        (req.files as UploadedFile)['issuerLogo'][0].filename;
 
             const issuer = {
-                _id: req.body.issuerId.toString(),
-                name: req.body.name.toString(),
-                description: req.body.description.toString(),
-                contact: req.body.contact.toString(),
-                website: req.body.website.toString(),
-                logoUrl: logoUrl,
-                endpointUrl: req.body.endpointUrl.toString()
+                _id: String(req.body.issuerId),
+                name: String(req.body.name),
+                description: String(req.body.description),
+                contact: String(req.body.contact),
+                website: String(req.body.website),
+                logoUrl: logo,
+                endpointUrl: String(req.body.endpointUrl)
             }
+
             const newIssuer = await this.issuerService.createIssuer(issuer);
             if (newIssuer === false) throw new BadRequestError('Issuer existed');
             sendRes(res, null, { 'issuer': newIssuer });
@@ -60,31 +61,30 @@ export class IssuerController {
         try {
             let issuers = await this.issuerService.findAll();
 
-            // FIXME
-            // if (req.query.schemaHashes) {
-            //     let schemaHashes: string[] = [];
-            //     if (Array.isArray(req.query.schemaHashes))
-            //         schemaHashes = req.query.schemaHashes as string[];
-            //     else
-            //         schemaHashes = [req.query.schemaHashes as string];
-            //     let registries = await this.registryService.findRegistriesBySchemas(schemaHashes);
-            //     let filteredIssuerIds: string[] = registries.map(registry => registry.issuerId);
-            //     issuers = issuers.filter(issuer => filteredIssuerIds.includes(issuer._id!));
-            // }
+            let registries: ISchemaRegistry[] = [];
 
-            // FIXME: fetching supported networks from issuer v1
-            // if (req.query.networks) {
-            //     let networks: string[] = [];
-            //     if (Array.isArray(req.query.networks))
-            //         networks = req.query.networks as string[];
-            //     else
-            //         networks = [req.query.networks as string];
-            //     issuers = issuers.filter(issuer => true);
-            // }
-            
+            // FIXME
+            if (req.query.schemaHash || req.query.networkId) {
+                const query = `?${req.query.schemaHash ? 'schemaHash='+req.query.schemaHash : ''}`
+                + `&${req.query.networkId ? 'network='+req.query.networkId : ''}`;
+                
+                const filtered = (await Promise.all(
+                    issuers.map(async (issuer) => {
+                        try {                
+                            registries = (await axios.get(`${issuer.endpointUrl}/registries${query}&issuerId=${issuer._id}`)).data;
+                        } catch (error: any) {
+                            logger.error(error);
+                        }
+                        if (registries.length == 0) return;
+                        
+                        return issuer._id;
+                    })
+                )).filter(e => e !== undefined);
+                issuers = issuers.filter(issuer => filtered.includes(issuer._id));
+            }
+
             await Promise.all(
                 issuers.map(async (issuer) => {
-                    let registries: ISchemaRegistry[] = [];
                     try {                
                         registries = (await axios.get(`${issuer.endpointUrl}/registries?issuerId=${issuer._id}`)).data;
                     } catch (error: any) {
@@ -92,18 +92,21 @@ export class IssuerController {
                     }
                     Object.assign(issuer, {
                         'issuerId': issuer._id,
+                        'logoUrl': utils.getLogoUrl(issuer.logoUrl),
                         'schemaRegistries': await Promise.all(registries.map(async(e: any) => {
                             return {
                                 'registryId': e.id,
                                 'name': (await this.schemaService.findOneById(e.schema.hash))?.name ?? 'Unknown schema',
                                 'schemaHash': e.schema.hash,
-                                'network': (await this.networkService.findOneById(e.network.networkId))?.name ?? 'BNB Testnet' // FIXME: TBU after finishing Network routes
+                                'network': (await this.networkService.findOneById(e.network.networkId))?.name ?? 'Unknown Network',
+                                'isActive': e.isActive ?? false
                             }
                         }))
                     });
                     delete (issuer as any)._id;
                 })
             );
+            
             sendRes(res, null, { 'issuers': issuers });
         } catch(error: any) {
             sendRes(res, error);
@@ -116,12 +119,41 @@ export class IssuerController {
             if (issuer === undefined) throw new NotFoundError('Issuer does not exist');
 
             Object.assign(issuer, {
-                'issuerId': issuer._id
+                'issuerId': issuer._id,
+                'logoUrl': utils.getLogoUrl(issuer.logoUrl)
             });
             delete (issuer as any)._id;
 
             sendRes(res, null, { 'issuer': issuer });
         } catch (error: any) {
+            sendRes(res, error);
+        }
+    }
+
+    public async updateIssuer(req: Request, res: Response) {
+        try {
+            const logo = (req.files as UploadedFile)['issuerLogo'] === undefined ? '' :
+                (req.files as UploadedFile)['issuerLogo'][0].filename
+
+            const issuer = await this.issuerService.findOneById(req.params.issuerId);
+            if (issuer === undefined) throw new NotFoundError('Issuer does not exist');
+
+            const updatedIssuer = await this.issuerService.updateIssuer({
+                _id: issuer?._id,
+                name: String(req.body.name || issuer.name),
+                description: String(req.body.description || issuer.description),
+                contact: String(req.body.contact || issuer.contact),
+                isVerified: issuer.isVerified || false,          // FIXME
+                website: String(req.body.website || issuer.website),
+                logoUrl: String(logo || issuer.logoUrl),
+                endpointUrl: String(req.body.endpointUrl || issuer.endpointUrl)
+            })
+
+            if (!updatedIssuer) throw new NotFoundError('Issuer does not exist');
+
+            sendRes(res, null);
+        } catch (error: any) {
+            logger.error(error);
             sendRes(res, error);
         }
     }

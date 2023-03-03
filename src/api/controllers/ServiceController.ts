@@ -43,7 +43,7 @@ export class ServiceController {
             if (service === undefined) throw new NotFoundError('Service does not exist');
 
             const [verifier, network] = await Promise.all([
-                '', // FIXME: TBD after finishing network routes
+                this.verifierService.findOneById(service.verifierId),
                 '' // FIXME: TBD after finishing network routes
             ]);
 
@@ -54,11 +54,11 @@ export class ServiceController {
                     description: service.description,
                     endpointUrl: service.endpointUrl,
                     verifier: {
-                        verifierId: '53b7e0f111ef8b3c0196ac1293a199e055c62dd4722155a7e659ab2fa0000',
-                        name: 'Demo',
+                        verifierId: verifier?._id ?? '',
+                        name: verifier?.name ?? 'Unknown Verifier',
                         logoUrl: utils.getLogoUrl(''),
-                        contact: 'contact@ziden.io',
-                        website: 'https://ziden.io'
+                        contact: verifier?.contact ?? '',
+                        website: verifier?.website ?? ''
                     },
                     network: {
                         networkId: 97,              // FIXME: TBD after finishing network routes
@@ -133,17 +133,22 @@ export class ServiceController {
             }
 
             sendRes(res, null, {services: await Promise.all(services.map(async (service) => {
+                const [verifier, network] = await Promise.all([
+                    this.verifierService.findOneById(service.verifierId),
+                    '' // FIXME: TBD after finishing network routes
+                ]);
+
                 return {
                     serviceId: service._id,
                     name: service.name,
                     description: service.description,
                     endpointUrl: service.endpointUrl,
                     verifier: {
-                        verifierId: '53b7e0f111ef8b3c0196ac1293a199e055c62dd4722155a7e659ab2fa0000',
-                        name: 'Demo',
+                        verifierId: verifier?._id ?? '',
+                        name: verifier?.name ?? 'Unknown Verifier',
                         logoUrl: utils.getLogoUrl(''),
-                        contact: 'contact@ziden.io',
-                        website: 'https://ziden.io'
+                        contact: verifier?.contact ?? '',
+                        website: verifier?.website ?? ''
                     },
                     network: {
                         networkId: 97,              // FIXME: TBD after finishing network routes

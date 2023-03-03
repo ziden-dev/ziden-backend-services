@@ -58,5 +58,8 @@ export class UploadMiddleWare {
             { name: 'verifierLogo', maxCount: 1 }
         ])(req, res, next);
     }
+}
 
+export type UploadedFile = {
+    [fieldname: string]: Express.Multer.File[]
 }

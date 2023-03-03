@@ -20,3 +20,12 @@ export function useQueryMtpValidator(chainId: number, address: string = '', prov
 
     return useContract('QUERY_MTP_VALIDATOR', ADDRESS, PROVIDER);
 }
+
+export {
+    ABIS,
+    addressConfig,
+    CHAINS, CHAIN_IDS
+}
+// export { ABIS } from './abis/index.js';
+// export { addressConfig } from './addresses/index.js';
+// export { CHAINS, CHAIN_IDS } from './chains.js';

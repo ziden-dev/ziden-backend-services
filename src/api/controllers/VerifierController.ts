@@ -6,6 +6,7 @@ import { OperatorService } from "../services/OperatorService.js";
 import { NetworkService } from "../services/NetworkService.js";
 import { IVerifier } from "../models/Verifier.js";
 import { IService } from "../models/Service.js";
+import { UploadedFile } from "../middlewares/UploadMiddleware.js";
 import { NotFoundError } from "../errors/http/NotFoundError.js";
 import { BadRequestError } from "../errors/http/BadRequestError.js";
 import logger from "../../lib/logger/index.js";
@@ -26,7 +27,7 @@ export class VerifierController {
 
         this.registration = this.registration.bind(this);
         this.findVerifiers = this.findVerifiers.bind(this);
-        // this.findOneVerifier = this.findOneVerifier.bind(this);
+        this.findOneVerifier = this.findOneVerifier.bind(this);
         // this.getVerifierProfile = this.getVerifierProfile.bind(this);
         // this.updateVerifierProfile = this.updateVerifierProfile.bind(this);
         // this.findVerifierServices = this.findVerifierServices.bind(this);
@@ -37,14 +38,9 @@ export class VerifierController {
     }
 
     public async registration(req: Request, res: Response) {
-
         try {
-
-            const logoUrl = utils.getLogoUrl(
-                req.files === undefined ?
-                    ''
-                    : (req.files as { [fieldname: string]: Express.Multer.File[] })['verifierLogo'][0].filename
-            );
+            const logo = (req.files as UploadedFile)['verifierLogo'] === undefined ? '' :
+                        (req.files as UploadedFile)['verifierLogo'][0].filename;
 
             const verifier: IVerifier = {
                 _id: req.body.verifierId.toString(),
@@ -53,7 +49,7 @@ export class VerifierController {
                 contact: req.body.contact.toString(),
                 isVerified: true,
                 website: req.body.website.toString(),
-                logoUrl: logoUrl,
+                logoUrl: logo,
                 endpointUrl: req.body.endpointUrl?.toString()
             }
             const newVerifier = await this.verifierService.createVerifier(verifier);
@@ -66,15 +62,6 @@ export class VerifierController {
         }
     }
 
-    // public async findverifiers(req: Request, res: Response) {
-    //     try {
-    //         let verifiers = await this.verifierService.findAll();
-    //         sendRes(res, null, { 'verifiers': verifiers });
-    //     } catch (error: any) {
-    //         sendRes(res, error);
-    //     }
-    // }
-
     public async findVerifiers(req: Request, res: Response) {
         try {
             sendRes(res, null, {
@@ -86,7 +73,7 @@ export class VerifierController {
                         'contact': e.contact,
                         'isVerified': e.isVerified,
                         'website': e.website,
-                        'logoUrl': e.logoUrl
+                        'logoUrl': utils.getLogoUrl(e.logoUrl)
                     }
                 })
             })
@@ -96,18 +83,23 @@ export class VerifierController {
         }
     }
 
-    // public async findOneVerifier(req: Request, res: Response) {
-    //     try {
-    //         if (!req.params.verifierId) throw new BadRequestError('Missing verifierId in request param');
-    //         const verifier = await this.verifierService.findOne(req.params.verifierId);
-    //         if (verifier === undefined) throw new NotFoundError('Verifier is not registered');
-    //         res.send({
-    //             'verifier': verifier
-    //         })
-    //     } catch (error: any) {
-    //         res.status(error.httpCode ?? 500).send(error);
-    //     }
-    // }
+    public async findOneVerifier(req: Request, res: Response) {
+        try {
+            if (!req.params.verifierId) throw new BadRequestError('Missing verifierId in request param');
+            const verifier = await this.verifierService.findOneById(req.params.verifierId);
+            if (verifier === undefined) throw new NotFoundError('Verifier is not registered');
+
+            Object.assign(verifier, {
+                'verifierId': verifier._id,
+                'logoUrl': utils.getLogoUrl(verifier.logoUrl)
+            });
+            delete (verifier as any)._id;
+
+            sendRes(res, null, { 'verifier': verifier });
+        } catch (error: any) {
+            sendRes(res, error);
+        }
+    }
 
     // public async getVerifierProfile(req: Request, res: Response) {
     //     try {

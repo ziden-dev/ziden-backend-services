@@ -158,19 +158,15 @@ export class IssuerRouter {
          *       - Issuer
          *     parameters:
          *       - in: query
-         *         name: schemaHashes
+         *         name: schemaHash
          *         schema:
-         *           type: array
-         *           items:
-         *             type: string
+         *           type: string
          *         description: Hash of Schema
          *       - in: query
-         *         name: networks
+         *         name: networkId
          *         schema:
-         *           type: array
-         *           items: 
-         *             type: string
-         *         description: Network IDs
+         *           type: string
+         *         description: Network ID
          *     responses:
          *       200:
          *         description: A JSON array of Issuer
@@ -220,9 +216,9 @@ export class IssuerRouter {
         this.router.get('/:issuerId', (new IssuerController()).findOneIssuer);
 
         /**
-         * swagger // FIMXE
+         * @swagger
          * /api/v1/issuers/{issuerId}:
-         *   put:
+         *   post:
          *     summary: Update Issuer's Profile
          *     description: Update profile of an Issuer
          *     tags:
@@ -235,17 +231,25 @@ export class IssuerRouter {
          *         required: true
          *         description: DID of Issuer
          *     requestBody:
-         *       description: Update info
+         *       description: A form data of Issuer registration data
          *       content:
-         *         application/json:
+         *         multipart/form-data:
          *           schema:
-         *             type: object
+         *             type: object       
          *             properties:
-         *               issuer:
-         *                 type: object
-         *                 properties:
-         *                   endpointUrl:
-         *                     type: string
+         *               name:
+         *                 type: string
+         *               description:
+         *                 type: string
+         *               contact:
+         *                 type: string
+         *               website:
+         *                 type: string
+         *               issuerLogo:
+         *                 type: string
+         *                 format: binary
+         *               endpointUrl:
+         *                 type: string
          *     responses:
          *       200:
          *         description: A JSON object
@@ -253,13 +257,7 @@ export class IssuerRouter {
          *           application/json:
          *             schema:
          *               type: object
-         *               properties:
-         *                 profile:
-         *                   type: object
-         *                   properties:
-         *                     update:
-         *                       type: object
          */
-        // this.router.put('/:issuerId', (new IssuerController()).updateIssuer);
+        this.router.post('/:issuerId', new UploadMiddleWare().use, (new IssuerController()).updateIssuer);
     }
 }

@@ -142,7 +142,7 @@ export class VerifierRouter {
         this.router.get('/', (new VerifierController()).findVerifiers);
 
         /**
-         * swagger // FIXME
+         * @swagger
          * /api/v1/verifiers/{verifierId}:
          *   get:
          *     summary: Find one Verifier
@@ -167,7 +167,7 @@ export class VerifierRouter {
          *                 verifier:
          *                   $ref: '#/components/schemas/Verifier'
          */
-        // this.router.get('/:verifierId', (new VerifierController()).findOneVerifier);
+        this.router.get('/:verifierId', (new VerifierController()).findOneVerifier);
 
         /**
          * swagger // FIXME

@@ -19,7 +19,7 @@ const CHAINS: { [chainId: number]: BasicChainInformation } = {
         rpcUrls: [
             process.env.INFURA_KEY ? `https://mainnet.infura.io/v3/${process.env.INFURA_KEY}` : '',
             'https://cloudflare-eth.com',
-        ].filter((url) => url !== ''),
+        ].filter((url) => url !== '')
     },
     [CHAIN_IDS.BNB_MAINNET]: {
         name: 'BSC Mainnet',
@@ -31,7 +31,7 @@ const CHAINS: { [chainId: number]: BasicChainInformation } = {
             'https://bsc-dataseed2.defibit.io/',
             'https://bsc-dataseed1.ninicoin.io/',
             'https://bsc-dataseed2.ninicoin.io/',
-        ],
+        ]
     },
     [CHAIN_IDS.BNB_TESTNET]: {
         name: 'BSC Testnet',
@@ -44,14 +44,14 @@ const CHAINS: { [chainId: number]: BasicChainInformation } = {
             'https://data-seed-prebsc-1-s3.binance.org:8545/',
             'https://data-seed-prebsc-2-s3.binance.org:8545/',
         ],
-        isTestnet: true,
+        isTestnet: true
     },
     [CHAIN_IDS.ORAICHAIN_PRO]: {
         name: 'Oraichain Pro',
         blockExplorerUrls: ['https://scan.orai.us/'],
         rpcUrls: [
             'https://ethrpc.pro.orai.us/',
-        ],
+        ]
     },
 };
 

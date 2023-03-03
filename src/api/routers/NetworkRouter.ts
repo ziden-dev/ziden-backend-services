@@ -35,7 +35,7 @@ export class NetworkRouter {
          *       - Network
          *     responses:
          *       '200':
-         *         description: An array of verification result
+         *         description: Array of Network
          *         content:
          *           application/json:
          *             schema:
@@ -46,28 +46,26 @@ export class NetworkRouter {
          *                   items:
          *                     $ref: '#/components/schemas/Network'
          */
-        // this.router.get('/', (new NetworkController()).getAllSupportedNetworks);
+        this.router.get('/', (new NetworkController()).getAllSupportedNetworks);
 
         /**
          * @swagger
-         * /api/v1/networks:
-         *   post:
+         * /api/v1/networks/{networkId}:
+         *   get:
          *     summary: Register Network
          *     description: Register new network
          *     tags:
          *       - Network
-         *     requestBody:
-         *       description: A JSON of Network
-         *       content:
-         *         application/json:
-         *           schema:
-         *             type: object
-         *             properties:
-         *               network:
-         *                 $ref: '#/components/schemas/Network'
+         *     parameters:
+         *       - in: path
+         *         name: networkId
+         *         schema:
+         *           type: string
+         *         required: true
+         *         description: Network ID
          *     responses:
          *       '200':
-         *         description: An array of verification result
+         *         description: JSON object of Network
          *         content:
          *           application/json:
          *             schema:
@@ -76,7 +74,6 @@ export class NetworkRouter {
          *                 network:
          *                   $ref: '#/components/schemas/Network'
          */
-        // this.router.post('/', (new NetworkController()).registerNetwork);
-        // this.router.get('/:chainId', (new NetworkController()).findNetworkById);
+        this.router.get('/:chainId', (new NetworkController()).findNetworkById);
     }
 }

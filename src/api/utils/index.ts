@@ -1,9 +1,14 @@
 import axios from "axios";
+import fs from 'fs';
+
 import env from "../../lib/env/index.js";
 import { DefaultEndpoint } from '../../lib/constants/index.js';
 
 function getLogoUrl(filename: string): string {
-    if (filename == '') return `${env.app.url}/public/assets/img/default-logo.png`;
+    if (
+        filename == '' || !fs.existsSync(`.${env.uploads.multerStorageDest}/${filename}`)
+    ) return `${env.app.url}/public/assets/img/default-logo.png`;
+
     return `${env.app.url}${env.uploads.multerStorageDest}/${filename}`;
 }
 

@@ -49,6 +49,13 @@ export enum ZkOperator {
     InRange = OPERATOR.IN_RANGE
 }
 
+export enum NetworkType {
+    Evm = 'EVM',
+    Cosmwasm = 'COSMWASM',
+    Hyperledger = 'HYPERLEDGER',
+    Unknown = 'UNKNOWN'
+}
+
 export enum Contract {
     State = 'State',
     QuerySigValidator = 'QuerySigValidator',
