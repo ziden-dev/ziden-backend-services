@@ -5,6 +5,7 @@ import { UploadMiddleWare } from '../middlewares/UploadMiddleware.js';
 import { VerifierController } from '../controllers/VerifierController.js';
 import env from '../../lib/env/index.js';
 import { OperatorController } from '../controllers/OperatorController.js';
+import { AuthenController } from '../controllers/AuthenController.js';
 
 export class VerifierRouter {
     public router: Router;
@@ -57,6 +58,12 @@ export class VerifierRouter {
          *         verifierLogo:
          *           type: string
          *           format: binary
+         *   securitySchemes: 
+         *       Authorization:
+         *         in: header
+         *         name: Authorization
+         *         type: apiKey
+         *         description: Token authorization
          */
 
         /**
@@ -239,6 +246,8 @@ export class VerifierRouter {
          * @swagger
          * /api/v1/verifiers/{verifierId}/operators:
          *   post:
+         *     security:
+         *       - Authorization: []
          *     summary: Add a Operator
          *     description: Add new Operator for an Verifier
          *     tags:
@@ -273,12 +282,14 @@ export class VerifierRouter {
          *                   type: string
          *                   format: date
          */
-        this.router.post('/:verifierId/operators', (new OperatorController()).createOperator);
+        this.router.post('/:verifierId/operators', (new AuthenController()).authorizationAdmin, (new OperatorController()).createOperator);
 
         /**
          * @swagger 
          * /api/v1/verifiers/{verifierId}/operators/{operatorId}:
          *   delete:
+         *     security:
+         *       - Authorization: []
          *     summary: Remove a Operator
          *     description: Remove existing Operator for an Verifier
          *     tags:
@@ -307,7 +318,40 @@ export class VerifierRouter {
          *                 operatorId:
          *                   type: string
          */
-        this.router.delete('/:verifierId/operators/:operatorId', (new OperatorController()).removeOperator);
+        this.router.delete('/:verifierId/operators/:operatorId', (new AuthenController()).authorizationAdmin, (new OperatorController()).removeOperator);
 
+        /**
+         * @swagger 
+         * /api/v1/verifiers/{verifierId}/operators/{operatorId}:
+         *   get:
+         *     summary: Get operator infor
+         *     description: Get Operator infor
+         *     tags:
+         *       - Verifier
+         *     parameters:
+         *       - in: path
+         *         name: verifierId
+         *         schema:
+         *           type: string
+         *         required: true
+         *         description: DID of Verifier
+         *       - in: path
+         *         name: operatorId
+         *         schema:
+         *           type: string
+         *         required: true
+         *         description: DID of OperatorId
+         *     responses:
+         *       200:
+         *         description: A JSON object of Operator
+         *         content:
+         *           application/json:
+         *             schema:
+         *               type: object
+         *               properties:
+         *                 operatorId:
+         *                   type: string
+         */
+        this.router.get('/:verifierId/operators/:operatorId', (new OperatorController()).getOperatorInfor);
     }
 }

@@ -68,6 +68,9 @@ const env = {
     },
     zkProof: {
         validTime: Number(getOsEnvOptional('PROOF_VALID_TIME') ?? '86400000')
+    },
+    authenService: {
+        url: getOsEnv('AUTHEN_SERVICE_URL')
     }
 };
 

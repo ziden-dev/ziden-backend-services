@@ -13,6 +13,7 @@ import logger from "../../lib/logger/index.js";
 import env from "../../lib/env/index.js";
 import utils from "../utils/index.js";
 import { sendRes } from "../responses/index.js";
+import { registerNewVerifier } from "../services/Authen.js";
 
 export class VerifierController {
 
@@ -54,10 +55,14 @@ export class VerifierController {
             }
             const newVerifier = await this.verifierService.createVerifier(verifier);
             if (newVerifier === false) throw new BadRequestError('verifier existed');
+            
+            const registerVerifier = await registerNewVerifier(verifier._id);
+            console.log(registerVerifier);
             sendRes(res, null, { 'verifier': newVerifier });
-
+        
         } catch (error: any) {
             logger.error(error);
+            console.log(error);
             sendRes(res, error);
         }
     }

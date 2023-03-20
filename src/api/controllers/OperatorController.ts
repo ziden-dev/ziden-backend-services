@@ -11,6 +11,7 @@ import { IOperator } from '../models/Operator.js';
 import { v4 } from 'uuid';
 import { OperatorRole, Portal } from '../../lib/constants/index.js';
 import { sendRes } from '../responses/index.js';
+import { createOperatorInAuthen, getOperatorInforInAuthen } from '../services/Authen.js';
 export class OperatorController {
 
 
@@ -20,17 +21,36 @@ export class OperatorController {
         this.operatorService = new OperatorService();
         this.createOperator = this.createOperator.bind(this);
         this.getAllOperators = this.getAllOperators.bind(this);
-        this.removeOperator = this.removeOperator.bind(this)
+        this.removeOperator = this.removeOperator.bind(this);
+        this.getOperatorInfor = this.getOperatorInfor.bind(this);
     }
 
     public async createOperator(req: Request, res: Response) {
         try {
+            const token = req.headers.authorization;
+            if (!token || typeof token != "string") {
+                throw new BadRequestError("Invalid token");
+            }
+
             const { verifierId } = req.params;
+
+            const { operatorId } = req.body;
+
+            if (!operatorId) {
+                throw new BadRequestError("Invalid operator");
+            }
+
+            if (!verifierId) {
+                throw new BadRequestError("Invalid verifierId");
+            }
+            
+            const createOperatorResponse = await createOperatorInAuthen(operatorId, verifierId, token);
+
             const operator = {
                 userId: req.body.operatorId.toString(),
                 issuerId: verifierId.toString(),
                 role: OperatorRole.Operator,
-                claimId: '123',
+                claimId: createOperatorResponse.claimId,
                 activate: true,
                 portal: Portal.Veifier
             }
@@ -65,5 +85,26 @@ export class OperatorController {
             sendRes(res, error);
         }
     }
+
+    public async getOperatorInfor(req: Request, res: Response) {
+        try {
+            const {verifierId, operatorId} = req.params;
+            if (!verifierId || typeof verifierId != "string") {
+                throw new BadRequestError("Invalid verifierId");
+            }
+
+            if (!operatorId || typeof operatorId != "string") {
+                throw new BadRequestError("Invalid operatorId");
+            }
+
+            const operatorInfor = await getOperatorInforInAuthen(operatorId, verifierId);
+            sendRes(res, null, operatorInfor);
+
+        } catch(err: any) {
+            console.log(err);
+            sendRes(res, err);
+        }
+    }
+
 }
 
