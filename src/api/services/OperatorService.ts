@@ -26,9 +26,8 @@ export class OperatorService {
     }
 
     public async findAllOperators(issuerId: string) {
-        return (await Operator.find({ issuerId })).map(e => e.toObject());
+        return (await Operator.find({ issuerId: issuerId, activate: true })).map(e => e.toObject());
     }
-
 
     public async disable(userId: string, issuerId: string) {
         const operator = await Operator.findOne({ userId, issuerId });

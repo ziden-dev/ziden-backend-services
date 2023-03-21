@@ -314,9 +314,6 @@ export class VerifierRouter {
          *           application/json:
          *             schema:
          *               type: object
-         *               properties:
-         *                 operatorId:
-         *                   type: string
          */
         this.router.delete('/:verifierId/operators/:operatorId', (new AuthenController()).authorizationAdmin, (new OperatorController()).removeOperator);
 
@@ -349,8 +346,17 @@ export class VerifierRouter {
          *             schema:
          *               type: object
          *               properties:
-         *                 operatorId:
+         *                 userId:
          *                   type: string
+         *                 verifierId:
+         *                   type: string
+         *                 claimId:
+         *                   type: string
+         *                 version:
+         *                   type: integer
+         *                 revNonce:
+         *                   type: integer
+         *                 
          */
         this.router.get('/:verifierId/operators/:operatorId', (new OperatorController()).getOperatorInfor);
     }

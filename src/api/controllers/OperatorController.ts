@@ -7,7 +7,7 @@ import { OperatorService } from '../services/OperatorService.js';
 import { BadRequestError } from '../errors/http/BadRequestError.js';
 import { NotFoundError } from '../errors/http/NotFoundError.js';
 import logger from '../../lib/logger/index.js';
-import { IOperator } from '../models/Operator.js';
+import Operator, { IOperator } from '../models/Operator.js';
 import { v4 } from 'uuid';
 import { OperatorRole, Portal } from '../../lib/constants/index.js';
 import { sendRes } from '../responses/index.js';
@@ -95,6 +95,15 @@ export class OperatorController {
 
             if (!operatorId || typeof operatorId != "string") {
                 throw new BadRequestError("Invalid operatorId");
+            }
+
+            const operator = await Operator.findOne({issuerId: verifierId, userId: operatorId});
+            if (!operator) {
+                throw new BadRequestError("Operator not exits!");
+            }
+
+            if (!operator.activate) {
+                throw new BadRequestError("Operator not activate!");
             }
 
             const operatorInfor = await getOperatorInforInAuthen(operatorId, verifierId);
