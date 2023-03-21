@@ -31,4 +31,7 @@ export class VerifierService {
         return (await Verifier.create(verifier));
     }
 
+    public async deleteVerifier(verifierId: string) {
+        await Verifier.findByIdAndRemove(verifierId);
+    }
 }

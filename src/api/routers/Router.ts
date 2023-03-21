@@ -7,6 +7,7 @@ import { RegistryRouter } from './RegistryRouter.js';
 import { SchemaRouter } from './SchemaRouter.js';
 import { ServiceRouter } from './ServiceRouter.js';
 import { VerifierRouter } from './VerifierRouter.js';
+import { AuthenRouter } from './AuthenRouter.js';
 
 export class Routers {
     public router: Router;
@@ -25,5 +26,6 @@ export class Routers {
         this.router.use('/services', new ServiceRouter().router);
         this.router.use('/proofs', new ProofRouter().router);
         this.router.use('/networks', new NetworkRouter().router);
+        this.router.use('/authen', new AuthenRouter().router);
     }
 }

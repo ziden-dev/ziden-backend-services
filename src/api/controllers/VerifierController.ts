@@ -13,6 +13,8 @@ import logger from "../../lib/logger/index.js";
 import env from "../../lib/env/index.js";
 import utils from "../utils/index.js";
 import { sendRes } from "../responses/index.js";
+import { registerNewVerifier } from "../services/Authen.js";
+import { OperatorRole, Portal } from "../../lib/constants/index.js";
 
 export class VerifierController {
 
@@ -54,10 +56,25 @@ export class VerifierController {
             }
             const newVerifier = await this.verifierService.createVerifier(verifier);
             if (newVerifier === false) throw new BadRequestError('verifier existed');
-            sendRes(res, null, { 'verifier': newVerifier });
 
+            const registerVerifier = await registerNewVerifier(verifier._id);
+
+            const operator = {
+                userId: req.body.verifierId.toString(),
+                issuerId: req.body.verifierId.toString(),
+                role: OperatorRole.Admin,
+                claimId: registerVerifier.claimId,
+                activate: true,
+                portal: Portal.Veifier
+            }
+
+            await this.operatorService.createOperator(operator);
+
+            sendRes(res, null, { 'verifier': newVerifier });
+        
         } catch (error: any) {
             logger.error(error);
+            console.log(error);
             sendRes(res, error);
         }
     }

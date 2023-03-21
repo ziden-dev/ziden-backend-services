@@ -20,12 +20,13 @@ export class GlobalVariables {
             await zidenGlobal.setupParams();
             GlobalVariables.instance.setup = true;
         }
-        if (!GlobalVariables.instance?.hasher) GlobalVariables.instance.hasher = await zidenGlobal.buildHasher();
-        if (!GlobalVariables.instance?.F) GlobalVariables.instance.F = await zidenGlobal.buildSnarkField();
-        if (!GlobalVariables.instance?.hash0) GlobalVariables.instance.hash0 = zidenGlobal.buildHash0Hash1(GlobalVariables.instance.hasher, GlobalVariables.instance.F).hash0;
-        if (!GlobalVariables.instance?.hash1) GlobalVariables.instance.hash1 = zidenGlobal.buildHash0Hash1(GlobalVariables.instance.hasher, GlobalVariables.instance.F).hash1;
-        if (!GlobalVariables.instance?.hashFunction) GlobalVariables.instance.hashFunction = zidenGlobal.buildFMTHashFunction(GlobalVariables.instance.hash0, GlobalVariables.instance.F);
-        if (!GlobalVariables.instance?.eddsa) GlobalVariables.instance.eddsa = await zidenGlobal.buildSigner();
+        let params = zidenGlobal.getZidenParams();
+        if (!GlobalVariables.instance?.hasher) GlobalVariables.instance.hasher = params.hasher;
+        if (!GlobalVariables.instance?.F) GlobalVariables.instance.F = params.F;
+        if (!GlobalVariables.instance?.hash0) GlobalVariables.instance.hash0 = params.hash0;
+        if (!GlobalVariables.instance?.hash1) GlobalVariables.instance.hash1 = params.hash1;
+        if (!GlobalVariables.instance?.hashFunction) GlobalVariables.instance.hashFunction = params.fmtHash;
+        if (!GlobalVariables.instance?.eddsa) GlobalVariables.instance.eddsa = params.eddsa;
     }
     
     public static async getInstance(): Promise<GlobalVariables | undefined> {
