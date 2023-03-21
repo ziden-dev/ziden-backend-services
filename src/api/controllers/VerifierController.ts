@@ -197,13 +197,7 @@ export class VerifierController {
 
     // public async removeOperator(req: Request, res: Response) {
     //     try {
-    //         if (!req.params.verifierId) throw new BadRequestError('Missing verifierId in request parmas');
-    //         if (!req.params.operatorId) throw new BadRequestError('Missing operatorId in request body');
-
-    //         const operator = await this.operatorService.removeOperatorByVerifier(
-    //             req.params.operatorId,
-    //             req.params.verifierId
-    //         )
+    //         if (!req.params.verifierId) throw new BadRequestErroissuer
 
     //         if (!operator) throw new BadRequestError('Operator does not exist');
     //         res.send({ 'operator': operator });

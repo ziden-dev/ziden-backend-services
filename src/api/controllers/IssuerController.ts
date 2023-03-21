@@ -115,6 +115,7 @@ export class IssuerController {
 
     public async findOneIssuer(req: Request, res: Response) {
         try {
+            if (!req.params.issuerId) throw new BadRequestError('Missing issuerId in request param');
             const issuer = await this.issuerService.findOneById(req.params.issuerId);
             if (issuer === undefined) throw new NotFoundError('Issuer does not exist');
 
