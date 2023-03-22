@@ -61,7 +61,7 @@ export async function verfifyTokenWithRole(token: string, verifierId: string, ro
 
 export async function login(data: any, verifierId: string) {
     if (!verifierId) {
-        throw("Invalid issuerId");
+        throw("Invalid verifierId");
     }
 
     try {
