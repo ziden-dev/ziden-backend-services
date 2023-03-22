@@ -7,8 +7,8 @@ import { getAuthenProof, getOperatorInforInAuthen, login, verfifyTokenWithRole, 
 export class AuthenController {
   public async login(req: Request, res: Response, next: NextFunction) {
     try {
-      const {issuerId} = req.params;
-      const token = await login(req.body, issuerId);
+      const {verifierId} = req.params;
+      const token = await login(req.body, verifierId);
 
       sendRes(res, null, {'token': token});
       return token;
