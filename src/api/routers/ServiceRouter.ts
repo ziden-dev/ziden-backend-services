@@ -107,6 +107,12 @@ export class ServiceRouter {
          *               items:
          *                 type: number
          *                 example: 20010101
+         *   securitySchemes: 
+         *       Authorization:
+         *         in: header
+         *         name: Authorization
+         *         type: apiKey
+         *         description: Token authorization
          */
 
         /**
@@ -145,6 +151,17 @@ export class ServiceRouter {
          *     description: Get all registered Service
          *     tags:
          *       - Service
+         *     parameters:
+         *       - in: query
+         *         name: verifierId
+         *         schema:
+         *           type: string
+         *         description: DID of Verifier
+         *       - in: query
+         *         name: active
+         *         schema:
+         *           type: boolean
+         *         description: Query by Service status
          *     responses:
          *       200:
          *         description: A JSON array of Service
@@ -189,13 +206,15 @@ export class ServiceRouter {
         this.router.get('/:serviceId', (new ServiceController()).findServiceById);
 
         /**
-         * @swagger
+         * swagger // FIXME
          * /api/v1/services/{serviceId}:
          *   put:
+         *     security:
+         *       - Authorization: []
          *     summary: Activate/Deactivate Service
          *     description: Toggle active status of a service
          *     tags:
-         *       - Registry
+         *       - Service
          *     parameters:
          *       - in: path
          *         name: serviceId
@@ -216,16 +235,18 @@ export class ServiceRouter {
          *               active:
          *                 type: boolean
          */
-        this.router.put('/services/:serviceId', (new ServiceController()).updateService);
+        // this.router.put('/services/:serviceId', (new ServiceController()).checkServiceAuthen, (new ServiceController()).updateService);
 
         /**
-         * swagger // FIXME: move to service routes
+         * @swagger
          * /api/v1/services/{serviceId}/active:
          *   put:
+         *     security:
+         *       - Authorization: []
          *     summary: Activate/Deactivate Service
          *     description: Toggle active status of a service
          *     tags:
-         *       - Registry
+         *       - Service
          *     parameters:
          *       - in: path
          *         name: serviceId
@@ -233,6 +254,14 @@ export class ServiceRouter {
          *           type: string
          *         required: true
          *         description: Unique ID of Service
+         *     requestBody:
+         *       content:
+         *         application/json:
+         *           schema:
+         *             type: object
+         *             properties:
+         *               active:
+         *                 type: boolean
          *     responses:
          *       200:
          *         description: A JSON object of update result
@@ -246,7 +275,7 @@ export class ServiceRouter {
          *               active:
          *                 type: boolean
          */
-        // this.router.put('/services/:serviceId/active', (new ServiceController()).toggleServiceActive);
+        this.router.put('/:serviceId/active', (new ServiceController()).checkServiceAuthen, (new ServiceController()).activeService);
     
     }
 }

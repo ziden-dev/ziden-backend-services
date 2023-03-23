@@ -12,8 +12,8 @@ export class ServiceService {
         return (await Service.findById(serviceId))?.toObject();
     }
 
-    public async findAll(): Promise<IService[]> {
-        return (await Service.find()).map(e => e.toObject());
+    public async findAll(query: any): Promise<IService[]> {
+        return (await Service.find(query)).map(e => e.toObject());
     }
 
     public async findManyByVerifier(verifierId: string): Promise<IService[]> {

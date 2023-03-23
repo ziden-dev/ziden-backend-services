@@ -23,7 +23,7 @@ export class AuthenController {
     try {
       const {verifierId} = req.params;
       if (!verifierId ) {
-        throw new BadRequestError("Invalid token");
+        throw new BadRequestError("Invalid verifierId");
 
       }
       let token = req.headers.authorization;

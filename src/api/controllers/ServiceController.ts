@@ -1,11 +1,11 @@
-import { Request, Response } from 'express';
+import { NextFunction, Request, Response } from 'express';
 import axios from 'axios';
 
 import { ServiceService } from '../services/ServiceService.js';
 import { SchemaService } from '../services/SchemaService.js';
 import { IssuerService } from '../services/IssuerService.js';
 import { VerifierService } from '../services/VerifierService.js';
-import { IService } from '../models/Service.js';
+import Service, { IService } from '../models/Service.js';
 import { sendRes } from '../responses/index.js';
 import { BadRequestError } from '../errors/http/BadRequestError.js';
 import { NotFoundError } from '../errors/http/NotFoundError.js';
@@ -13,6 +13,8 @@ import logger from '../../lib/logger/index.js';
 import { DefaultEndpoint } from '../../lib/constants/index.js';
 import utils from '../utils/index.js';
 import env from '../../lib/env/index.js';
+import { UnauthorizedError } from '../errors/http/UnauthorizedError.js';
+import { verifyTokenAdmin } from '../services/Authen.js';
 
 export class ServiceController {
 
@@ -33,6 +35,8 @@ export class ServiceController {
         this.fetchProofRequest = this.fetchProofRequest.bind(this);
         this.updateService = this.updateService.bind(this);
         this.toggleServiceActive = this.toggleServiceActive.bind(this);
+        this.checkServiceAuthen = this.checkServiceAuthen.bind(this);
+        this.activeService = this.activeService.bind(this);
     }
 
     public async findServiceById(req: Request, res: Response) {
@@ -118,19 +122,22 @@ export class ServiceController {
 
     public async findServices(req: Request, res: Response) {
         try {
-            let services = await this.serviceService.findAll();
+            let query: any = {};
 
-            if (req.query.active) {
-                services = services.filter(service => service.active == !(!req.query.active))
+            if (req.query.active != undefined) {
+                query["active"] = req.query.active;
             }
 
-            if (req.query.verfierId) {
-
+            if (req.query.verifierId != undefined) {
+                console.log(req.query.verifierId);
+                query["verifierId"] = req.query.verifierId;
             }
 
-            if (req.query.networkId) {
-
+            if (req.query.networkId != undefined) {
+                // query["networdId"] = req.query.networdId;
             }
+
+            let services = await this.serviceService.findAll(query);
 
             sendRes(res, null, {services: await Promise.all(services.map(async (service) => {
                 const [verifier, network] = await Promise.all([
@@ -206,6 +213,66 @@ export class ServiceController {
             sendRes(res, null, {});
         } catch (error: any) {
             sendRes(res, error);
+        }
+    }
+
+    public async checkServiceAuthen(req: Request, res: Response, next: NextFunction) {
+        try {
+            const token = req.headers.authorization;
+            if (!token) {
+                throw new UnauthorizedError("Invalid token");
+            }
+            const serviceId = req.params.serviceId;
+            if (!serviceId || typeof serviceId != "string") {
+                throw new BadRequestError("Invalid serviceId");
+            }
+            const service = await this.serviceService.findOneById(serviceId);
+            if (!service) {
+                throw new BadRequestError("Service not exited!");
+            }
+
+            const verifierId = service.verifierId;
+            const isTokenValid = await verifyTokenAdmin(token, verifierId);
+            if (isTokenValid) {
+                next();
+                return;
+            } else {
+                throw new UnauthorizedError("Invalid token");
+            }
+
+        } catch (err: any) {
+            sendRes(res, err);
+            return;
+        }
+        
+    }
+
+    public async activeService(req: Request, res: Response) {
+        try {
+            const serviceId = req.params.serviceId;
+            if (!serviceId || typeof serviceId != "string") {
+                throw new BadRequestError("Invalid serviceId");
+            }
+            
+            const active = req.body.active;
+            if (active == undefined || typeof active != "boolean") {
+                throw new BadRequestError("Required active in body");
+            }
+
+            const service = await Service.findById(serviceId);
+            if (!service) {
+                throw new BadRequestError("Service not exited!");
+            }
+
+            service.active = active;
+            await service.save();
+
+            sendRes(res, null, {serviceId: serviceId, active: service.active});
+        } catch (err: any) {
+            console.log(err);
+
+            sendRes(res, err);
+            return;
         }
     }
 
