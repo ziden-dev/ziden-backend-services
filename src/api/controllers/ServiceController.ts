@@ -59,7 +59,7 @@ export class ServiceController {
                     verifier: {
                         verifierId: verifier?._id ?? '',
                         name: verifier?.name ?? 'Unknown Verifier',
-                        logoUrl: utils.getLogoUrl(''),
+                        logoUrl: utils.getLogoUrl(verifier?.logoUrl ?? ''),
                         contact: verifier?.contact ?? '',
                         website: verifier?.website ?? ''
                     },
@@ -162,7 +162,7 @@ export class ServiceController {
                     verifier: {
                         verifierId: verifier?._id ?? '',
                         name: verifier?.name ?? 'Unknown Verifier',
-                        logoUrl: utils.getLogoUrl(''),
+                        logoUrl: utils.getLogoUrl(verifier?.logoUrl ?? ''),
                         contact: verifier?.contact ?? '',
                         website: verifier?.website ?? ''
                     },
