@@ -26,6 +26,6 @@ export class Routers {
         this.router.use('/services', new ServiceRouter().router);
         this.router.use('/proofs', new ProofRouter().router);
         this.router.use('/networks', new NetworkRouter().router);
-        this.router.use('/authen', new AuthenRouter().router);
+        this.router.use('/auth', new AuthenRouter().router);
     }
 }

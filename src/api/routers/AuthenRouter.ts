@@ -12,7 +12,7 @@ export class AuthenRouter {
     public route() {
         /**
          * @swagger
-         * /api/v1/authen/login/{verifierId}:
+         * /api/v1/auth/login/{verifierId}:
          *   post:
          *     summary: API login
          *     description: API login
@@ -60,7 +60,7 @@ export class AuthenRouter {
 
         /**
          * @swagger
-         * /api/v1/authen/verify-token/{verifierId}:
+         * /api/v1/auth/verify-token/{verifierId}:
          *   post:
          *     summary: API Verify token
          *     description: API Verify token
@@ -96,7 +96,7 @@ export class AuthenRouter {
 
         /**
          * @swagger
-         * /api/v1/authen/proof/{claimId}:
+         * /api/v1/auth/proof/{claimId}:
          *   get:
          *     summary: Generate proof input
          *     description: Generate proof input
