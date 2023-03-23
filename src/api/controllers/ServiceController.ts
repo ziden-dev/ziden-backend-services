@@ -36,7 +36,6 @@ export class ServiceController {
         this.updateService = this.updateService.bind(this);
         this.toggleServiceActive = this.toggleServiceActive.bind(this);
         this.checkServiceAuthen = this.checkServiceAuthen.bind(this);
-        this.activeService = this.activeService.bind(this);
     }
 
     public async findServiceById(req: Request, res: Response) {
@@ -98,6 +97,16 @@ export class ServiceController {
 
     public async registerService(req: Request, res: Response) {
         try {
+            const verifierId = req.body.verifierId;
+            const token = req.headers.authorization;
+            if (!verifierId || !token) {
+                throw new BadRequestError("Invalid token!");
+            }
+            const isTokenValid = await verifyTokenAdmin(token, verifierId);
+            if (!isTokenValid) {
+                throw new BadRequestError("Invalid token!");
+            } 
+
             if (!req.body.verifierId
             || !req.body.networkId
             || !req.body.requirements
@@ -209,10 +218,25 @@ export class ServiceController {
 
     public async toggleServiceActive(req: Request, res: Response) {
         try {
-            if (!req.body.service) throw new BadRequestError('Missing service property in request body');
-            sendRes(res, null, {});
-        } catch (error: any) {
-            sendRes(res, error);
+            const serviceId = req.params.serviceId;
+            if (!serviceId || typeof serviceId != "string") {
+                throw new BadRequestError("Invalid serviceId");
+            }
+
+            const service = await Service.findById(serviceId);
+            if (!service) {
+                throw new BadRequestError("Service not exited!");
+            }
+
+            service.active = !service.active;
+            await service.save();
+
+            sendRes(res, null, {serviceId: serviceId, active: service.active});
+        } catch (err: any) {
+            console.log(err);
+
+            sendRes(res, err);
+            return;
         }
     }
 
@@ -245,35 +269,6 @@ export class ServiceController {
             return;
         }
         
-    }
-
-    public async activeService(req: Request, res: Response) {
-        try {
-            const serviceId = req.params.serviceId;
-            if (!serviceId || typeof serviceId != "string") {
-                throw new BadRequestError("Invalid serviceId");
-            }
-            
-            const active = req.body.active;
-            if (active == undefined || typeof active != "boolean") {
-                throw new BadRequestError("Required active in body");
-            }
-
-            const service = await Service.findById(serviceId);
-            if (!service) {
-                throw new BadRequestError("Service not exited!");
-            }
-
-            service.active = active;
-            await service.save();
-
-            sendRes(res, null, {serviceId: serviceId, active: service.active});
-        } catch (err: any) {
-            console.log(err);
-
-            sendRes(res, err);
-            return;
-        }
     }
 
 }

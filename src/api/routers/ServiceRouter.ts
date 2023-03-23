@@ -119,6 +119,8 @@ export class ServiceRouter {
          * @swagger
          * /api/v1/services:
          *   post:
+         *     security:
+         *       - Authorization: []
          *     summary: Create new Service
          *     description: Register new Service
          *     tags:
@@ -254,14 +256,6 @@ export class ServiceRouter {
          *           type: string
          *         required: true
          *         description: Unique ID of Service
-         *     requestBody:
-         *       content:
-         *         application/json:
-         *           schema:
-         *             type: object
-         *             properties:
-         *               active:
-         *                 type: boolean
          *     responses:
          *       200:
          *         description: A JSON object of update result
@@ -275,7 +269,7 @@ export class ServiceRouter {
          *               active:
          *                 type: boolean
          */
-        this.router.put('/:serviceId/active', (new ServiceController()).checkServiceAuthen, (new ServiceController()).activeService);
+        this.router.put('/:serviceId/active', (new ServiceController()).checkServiceAuthen, (new ServiceController()).toggleServiceActive);
     
     }
 }
