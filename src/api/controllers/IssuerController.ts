@@ -13,6 +13,8 @@ import { sendRes } from "../responses/index.js";
 import logger from "../../lib/logger/index.js";
 import env from "../../lib/env/index.js";
 import utils from "../utils/index.js";
+import { UnauthorizedError } from "../errors/http/UnauthorizedError.js";
+import { verifyTokenAdmin } from "../services/Authen.js";
 
 export class IssuerController {
     
@@ -133,6 +135,16 @@ export class IssuerController {
 
     public async updateIssuer(req: Request, res: Response) {
         try {
+            const {issuerId} = req.params;
+            const token = req.headers.authorization;
+            if (!issuerId || !token) {
+                throw new UnauthorizedError("Invalid token");
+            }
+            const isTokenValid = await verifyTokenAdmin(token, issuerId);
+            if (!isTokenValid) {
+                throw new UnauthorizedError("Invalid token");
+            }
+
             const logo = (req.files as UploadedFile)['issuerLogo'] === undefined ? '' :
                 (req.files as UploadedFile)['issuerLogo'][0].filename
 

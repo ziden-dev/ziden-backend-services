@@ -71,6 +71,12 @@ export class IssuerRouter {
          *           type: string
          *         network:
          *           type: string
+         *   securitySchemes: 
+         *       Authorization:
+         *         in: header
+         *         name: Authorization
+         *         type: apiKey
+         *         description: Token authorization
          */
           
         /**
@@ -219,6 +225,8 @@ export class IssuerRouter {
          * @swagger
          * /api/v1/issuers/{issuerId}:
          *   post:
+         *     security:
+         *       - Authorization: []
          *     summary: Update Issuer's Profile
          *     description: Update profile of an Issuer
          *     tags:
