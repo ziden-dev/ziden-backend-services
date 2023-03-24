@@ -14,7 +14,7 @@ import { DefaultEndpoint } from '../../lib/constants/index.js';
 import utils from '../utils/index.js';
 import env from '../../lib/env/index.js';
 import { UnauthorizedError } from '../errors/http/UnauthorizedError.js';
-import { verifyTokenAdmin } from '../services/Authen.js';
+import { verfifyTokenWithRole, verifyTokenAdmin } from '../services/Authen.js';
 
 export class ServiceController {
 
@@ -261,7 +261,13 @@ export class ServiceController {
                 next();
                 return;
             } else {
-                throw new UnauthorizedError("Invalid token");
+                const isOperatorValid = await verfifyTokenWithRole(token, verifierId, 2);
+                if (isOperatorValid) {
+                    next();
+                    return;
+                } else {
+                    throw new UnauthorizedError("Invalid token");
+                }
             }
 
         } catch (err: any) {
