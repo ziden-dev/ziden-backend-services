@@ -203,8 +203,53 @@ export class VerifierRouter {
          *                   $ref: '#/components/schemas/VerifierProfile'
          */
         // this.router.get('/:verifierId/profile', (new VerifierController()).getVerifierProfile);
-
-        // this.router.put('/:verifierId/profiles', (new VerifierController()).updateVerifierProfile);
+        
+        /**
+         * @swagger
+         * /api/v1/verifiers/{verifierId}/profiles:
+         *   put:
+         *     security:
+         *       - Authorization: []
+         *     summary: Update verifier profile
+         *     description: Update verifier profile
+         *     tags:
+         *       - Verifier
+         *     parameters:
+         *       - in: path
+         *         name: verifierId
+         *         schema:
+         *           type: string
+         *         required: true
+         *         description: DID of Verifier
+         *     requestBody:
+         *       description: A full JSON object of Verifier registration data
+         *       content:
+         *         multipart/form-data:
+         *           schema:
+         *             type: object
+         *             properties:
+         *               name:
+         *                 type: string
+         *               description:
+         *                 type: string
+         *               contact:
+         *                 type: string
+         *               website:
+         *                 type: string
+         *               verifierLogo:
+         *                 type: file
+         *     responses:
+         *       '200':
+         *         description: A JSON object of Verifier
+         *         content:
+         *           application/json:
+         *             schema:
+         *             type: object
+         *             properties:
+         *               newVerifier:
+         *                 $ref: '#/components/schemas/Verifier'
+         */
+        this.router.put('/:verifierId/profiles', [new UploadMiddleWare().use, (new AuthenController()).authorizationAdmin], (new VerifierController()).updateVerifierProfile);
 
         /**
          * @swagger

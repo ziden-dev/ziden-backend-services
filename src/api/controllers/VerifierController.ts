@@ -31,7 +31,7 @@ export class VerifierController {
         this.findVerifiers = this.findVerifiers.bind(this);
         this.findOneVerifier = this.findOneVerifier.bind(this);
         // this.getVerifierProfile = this.getVerifierProfile.bind(this);
-        // this.updateVerifierProfile = this.updateVerifierProfile.bind(this);
+        this.updateVerifierProfile = this.updateVerifierProfile.bind(this);
         // this.findVerifierServices = this.findVerifierServices.bind(this);
         // this.findVerifierOperators = this.findVerifierOperators.bind(this);
         // this.addOperator = this.addOperator.bind(this);
@@ -144,14 +144,62 @@ export class VerifierController {
     //     }
     // }
 
-    // public async updateVerifierProfile(req: Request, res: Response) {
-    //     try {
+    public async updateVerifierProfile(req: Request, res: Response) {
+        try {
+            const {verifierId} = req.params;
+            if (!verifierId || typeof verifierId != "string") {
+                throw new BadRequestError("Invalid verifierId!");
+            }
 
-    //     } catch (error: any) {
-    //         logger.error(error)
-    //         res.status(error.httpCode ?? 500).send(error);
-    //     }
-    // }
+            const verifier = await this.verifierService.findOneById(verifierId);
+
+            if (!verifier) {
+                throw new BadRequestError("Verifier not exited!");
+            }
+
+            let logo = '';
+
+            try {
+                logo = (req.files as UploadedFile)['verifierLogo'] === undefined ? '' :
+                (req.files as UploadedFile)['verifierLogo'][0].filename;
+            } catch (err: any) {
+
+            }
+            
+            const {name, description, contact, website, endpointUrl} = req.body;
+
+            if (typeof name == "string" && name != '') {
+                verifier.name = name;
+            }
+
+            if (typeof description == "string" && description != '') {
+                verifier.description = description;
+            }
+
+            if (typeof contact == "string" && contact != '') {
+                verifier.contact = contact;
+            }
+
+            if (typeof website == "string" && website != '') {
+                verifier.website = website;
+            }
+
+            if (typeof endpointUrl == "string" && endpointUrl != '') {
+                verifier.endpointUrl = endpointUrl;
+            }
+
+            if (logo != '') {
+                verifier.logoUrl = logo;
+            }
+
+            this.verifierService.save(verifier);
+
+            sendRes(res, null, verifier);
+
+        } catch (error: any) {
+            sendRes(res, error);
+        }
+    }
 
     // public async findVerifierServices(req: Request, res: Response) {
     //     try {
