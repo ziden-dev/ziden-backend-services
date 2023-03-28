@@ -27,7 +27,6 @@ export class ClaimController {
 
     public async findClaims(req: Request, res: Response) {
         try {
-            let issuers = await this.issuerService.findAll();
             
             let claimIds = req.query.claimIds;
             if (!claimIds) {
@@ -46,17 +45,18 @@ export class ClaimController {
                 claimIds: claimIds,
             }
 
-            // FIXME: to process issuerId query
-            // if (req.query.issuerId) {
-            //     issuers = issuers.filter(issuer => issuer._id == req.query.issuerId?.toString());
-            // }
+            let issuers = [];
+            
+            if (query.issuerId) {
+                issuers = await this.issuerService.findManyByIds([query.issuerId]);
+            }
+            else {
+                issuers = await this.issuerService.findAll();
+            }
 
             let requestQuery = `?`;
             let queryCheck = 0;
-            if (query.issuerId) {
-                requestQuery += `issuerId=${query.issuerId}`;
-                queryCheck = 1;
-            }
+            
             if (query.holderId) {
                 // if (queryCheck) requestQuery += '&';
                 requestQuery += `holderId=${query.holderId}`;
@@ -77,7 +77,7 @@ export class ClaimController {
 
             const claims = (await Promise.all(issuers.map(async (issuer) => {
                 try {
-                    return (await axios.get(issuer.endpointUrl+'/claims'+requestQuery))?.data ?? undefined;
+                    return (await axios.get(issuer.endpointUrl+'/claims'+requestQuery+'&issuerId='+issuer._id))?.data ?? undefined;
                 } catch (error:any) {
                     logger.error(error);
                     return undefined;
