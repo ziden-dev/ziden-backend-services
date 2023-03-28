@@ -28,24 +28,52 @@ export class ClaimController {
     public async findClaims(req: Request, res: Response) {
         try {
             let issuers = await this.issuerService.findAll();
-        
-            const query = {
+            
+            let claimIds = req.query.claimIds;
+            if (!claimIds) {
+                claimIds = [];
+            }
+            if (typeof claimIds == "string") {
+                claimIds = [claimIds];
+            }
+            claimIds = claimIds as string[];
+
+            let query: any = {
                 issuerId: req.query.issuerId ?? null,
                 holderId: req.query.holderId ?? null,
                 schemaHash: req.query.schemaHash ?? null,
                 status: req.query.schemaHash ?? null,
-                claimIds: req.query.claimIds ?? [],
+                claimIds: claimIds,
             }
-            
+
             // FIXME: to process issuerId query
             // if (req.query.issuerId) {
             //     issuers = issuers.filter(issuer => issuer._id == req.query.issuerId?.toString());
             // }
 
             let requestQuery = `?`;
-            if (query.issuerId) requestQuery += `issuerId=${query.issuerId}`;
-            if (query.holderId) requestQuery += `holderId=${query.holderId}`;
-            if (query.schemaHash) requestQuery += `schemaHash=${query.schemaHash}`;
+            let queryCheck = 0;
+            if (query.issuerId) {
+                requestQuery += `issuerId=${query.issuerId}`;
+                queryCheck = 1;
+            }
+            if (query.holderId) {
+                // if (queryCheck) requestQuery += '&';
+                requestQuery += `holderId=${query.holderId}`;
+                queryCheck = 1;
+            }
+            if (query.schemaHash) {
+                // if (queryCheck) requestQuery += '&';
+                requestQuery += `schemaHash=${query.schemaHash}`;
+                queryCheck = 1;
+            }
+            if (claimIds.length > 0) {
+                claimIds.forEach(e => {
+                    if (queryCheck) requestQuery += '&';
+                    requestQuery += `claimId=${e}`;
+                    queryCheck = 1;
+                });
+            }
 
             const claims = (await Promise.all(issuers.map(async (issuer) => {
                 try {
