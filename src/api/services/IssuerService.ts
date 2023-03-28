@@ -19,7 +19,7 @@ export class IssuerService {
 
     public async findManyByIds(issuerIds: string[]): Promise<IIssuer[]> {
         return (await Issuer.find({
-            issuerId: { $in: issuerIds }
+            _id: { $in: issuerIds }
         })).map(e => e.toObject());
     }
 
