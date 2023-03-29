@@ -34,7 +34,7 @@ export class ProofRouter {
          *         validUntil:
          *           type: string
          *           format: date-time
-         *         proofs:
+         *         zkProofs:
          *           type: array
          *           items:
          *             $ref: '#/components/schemas/Proof'

@@ -84,7 +84,8 @@ export class ProofController {
                     'requestId': request._id,
                     'serviceId': request.serviceId,
                     'message': request.message,
-                    'validUntil': request.validUntil ?? ''
+                    'validUntil': request.validUntil ?? '',
+                    'zkProofs': request.proofs || []
                 }
             });
         } catch (error: any) {
@@ -107,7 +108,7 @@ export class ProofController {
                 return this.proofService.verifyZkProof(Number(service.networkId), proof);
             }));
 
-            await this.proofService.saveProof(req.body.requestId, req.body.proofs);
+            await this.proofService.saveProof(req.body.requestId, req.body.zkProofs);
 
             sendRes(res, null, {
                 'isValid': !verifications.includes(false),
