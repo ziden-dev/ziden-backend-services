@@ -148,5 +148,35 @@ export class SchemaRouter {
         
 
         // this.router.get('/:schemaHash/contexts');
+
+        /**
+         * @swagger
+         * /api/v1/schemas/pull-request:
+         *   post:
+         *     summary: Register schema
+         *     description: Register a new schema
+         *     tags:
+         *       - Schema
+         *     requestBody:
+         *       description: A JSON object of Schema's metadata
+         *       content:
+         *         application/json:
+         *           schema:
+         *             type: object
+         *             properties:
+         *               schema:
+         *                 type: object
+         *               issuerId:
+         *                 type: string
+         *     responses:
+         *       200:
+         *         description: A JSON object of Schema
+         *         content:
+         *           application/json:
+         *             schema:
+         *               type: object
+         *               
+         */
+        this.router.post('/pull-request', (new SchemaController()).createNewSchema);
     }
 }
