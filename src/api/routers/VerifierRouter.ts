@@ -63,7 +63,7 @@ export class VerifierRouter {
          *         in: header
          *         name: Authorization
          *         type: apiKey
-         *         description: Token authorization
+         *         description: JWZ Token
          */
 
         /**
@@ -122,6 +122,17 @@ export class VerifierRouter {
          *             properties:
          *               newVerifier:
          *                 $ref: '#/components/schemas/Verifier'
+         *       '500':
+         *         description: Error Response
+         *         content:
+         *           application/json:
+         *             schema:
+         *               type: object
+         *               properties:
+         *                 message:
+         *                   type: string
+         *                   description: Message error
+         *                   example: Error message
          */
         this.router.post('/registration', new UploadMiddleWare().use, (new VerifierController()).registration);
 
@@ -145,6 +156,17 @@ export class VerifierRouter {
          *                   type: array
          *                   items:
          *                     $ref: '#/components/schemas/Verifier'
+         *       '500':
+         *         description: Error Response
+         *         content:
+         *           application/json:
+         *             schema:
+         *               type: object
+         *               properties:
+         *                 message:
+         *                   type: string
+         *                   description: Message error
+         *                   example: Error message
          */
         this.router.get('/', (new VerifierController()).findVerifiers);
 
@@ -173,6 +195,17 @@ export class VerifierRouter {
          *               properties:
          *                 verifier:
          *                   $ref: '#/components/schemas/Verifier'
+         *       '500':
+         *         description: Error Response
+         *         content:
+         *           application/json:
+         *             schema:
+         *               type: object
+         *               properties:
+         *                 message:
+         *                   type: string
+         *                   description: Message error
+         *                   example: Error message
          */
         this.router.get('/:verifierId', (new VerifierController()).findOneVerifier);
 
@@ -201,6 +234,17 @@ export class VerifierRouter {
          *               properties:
          *                 profile:
          *                   $ref: '#/components/schemas/VerifierProfile'
+         *       '500':
+         *         description: Error Response
+         *         content:
+         *           application/json:
+         *             schema:
+         *               type: object
+         *               properties:
+         *                 message:
+         *                   type: string
+         *                   description: Message error
+         *                   example: Error message
          */
         // this.router.get('/:verifierId/profile', (new VerifierController()).getVerifierProfile);
         
@@ -248,6 +292,17 @@ export class VerifierRouter {
          *             properties:
          *               newVerifier:
          *                 $ref: '#/components/schemas/Verifier'
+         *       '500':
+         *         description: Error Response
+         *         content:
+         *           application/json:
+         *             schema:
+         *               type: object
+         *               properties:
+         *                 message:
+         *                   type: string
+         *                   description: Message error
+         *                   example: Error message
          */
         this.router.put('/:verifierId/profiles', [new UploadMiddleWare().use, (new AuthenController()).authorizationAdmin], (new VerifierController()).updateVerifierProfile);
 
@@ -284,6 +339,17 @@ export class VerifierRouter {
          *                       createdAt:
          *                         type: string
          *                         format: date
+         *       '500':
+         *         description: Error Response
+         *         content:
+         *           application/json:
+         *             schema:
+         *               type: object
+         *               properties:
+         *                 message:
+         *                   type: string
+         *                   description: Message error
+         *                   example: Error message
          */
         this.router.get('/:verifierId/operators', (new OperatorController()).getAllOperators);
 
@@ -326,6 +392,17 @@ export class VerifierRouter {
          *                 createdAt:
          *                   type: string
          *                   format: date
+         *       '500':
+         *         description: Error Response
+         *         content:
+         *           application/json:
+         *             schema:
+         *               type: object
+         *               properties:
+         *                 message:
+         *                   type: string
+         *                   description: Message error
+         *                   example: Error message
          */
         this.router.post('/:verifierId/operators', (new AuthenController()).authorizationAdmin, (new OperatorController()).createOperator);
 
@@ -359,6 +436,17 @@ export class VerifierRouter {
          *           application/json:
          *             schema:
          *               type: object
+         *       '500':
+         *         description: Error Response
+         *         content:
+         *           application/json:
+         *             schema:
+         *               type: object
+         *               properties:
+         *                 message:
+         *                   type: string
+         *                   description: Message error
+         *                   example: Error message
          */
         this.router.delete('/:verifierId/operators/:operatorId', (new AuthenController()).authorizationAdmin, (new OperatorController()).removeOperator);
 
@@ -401,6 +489,17 @@ export class VerifierRouter {
          *                   type: integer
          *                 revNonce:
          *                   type: integer
+         *       '500':
+         *         description: Error Response
+         *         content:
+         *           application/json:
+         *             schema:
+         *               type: object
+         *               properties:
+         *                 message:
+         *                   type: string
+         *                   description: Message error
+         *                   example: Error message
          *                 
          */
         this.router.get('/:verifierId/operators/:operatorId', (new OperatorController()).getOperatorInfor);

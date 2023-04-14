@@ -62,6 +62,8 @@ const env = {
         route: getOsEnv('SWAGGER_ROUTE'),
         username: getOsEnv('SWAGGER_USERNAME'),
         password: getOsEnv('SWAGGER_PASSWORD'),
+        redoc: getOsEnv('SWAGGER_DOC_ROUTE') ?? '/docs',
+        redocJson: getOsEnv('SWAGGER_DOC_ROUTE_JSON') ?? '/docs/swagger.json'
     },
     uploads: {
         multerStorageDest: getOsEnvOptional('MULTER_STORAGE_DESTINATION') ?? '/public/uploads'
