@@ -31,7 +31,6 @@ export class ClaimRouter {
          *         schema:
          *           type: string
          *         description: DID of Issuer
-         *         example: "1234"
          *       - in: query
          *         name: claimIds
          *         schema:
@@ -39,7 +38,6 @@ export class ClaimRouter {
          *           items:
          *             type: string
          *         description: Unique ID of claims
-         *         example: "1234"
          *     responses:
          *       200:
          *         description: A JSON object
