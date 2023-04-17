@@ -5,6 +5,7 @@ import { BadRequestError } from "../errors/http/BadRequestError.js";
 export async function createPullRequest(schema: any) {
     try {
         const time = (Number(Date.now())).toString();
+        const schemaName = schema["@name"] ?? time;
         const schemaHash = schema["@hash"] ?? time;
         const branchName = `${schemaHash}-${time}`;
 
@@ -33,8 +34,8 @@ export async function createPullRequest(schema: any) {
             path: `/${env.git.jsonSchemaPath}/${fileName}`,
             message: `request create schema ${fileName}`,
             committer: {
-                name: schemaHash,
-                email: schemaHash,
+                name: schemaName,
+                email: schemaName,
             },
             branch: branchName,
             content: schemaContent,
@@ -46,8 +47,8 @@ export async function createPullRequest(schema: any) {
         await octokit.request(`POST /repos/${env.git.owner}/${env.git.schemaModelsRepo}/pulls`, {
             owner: env.git.owner,
             repo: env.git.schemaModelsRepo,
-            title: `${schemaHash} request create schema ${fileName}`,
-            body: `${schemaHash} request create schema ${fileName}`,
+            title: `${schemaName} request create schema ${fileName}`,
+            body: `${schemaName} request create schema ${fileName}`,
             head: branchName,
             base: 'main',
             headers: {
