@@ -294,7 +294,7 @@ export class VerifierRouter {
          *     security:
          *       - Authorization: []
          *     summary: Update verifier profile
-         *     description: Update verifier profile
+         *     description: Update verifier's information
          *     tags:
          *       - Verifier
          *     parameters:
@@ -522,7 +522,7 @@ export class VerifierRouter {
          * /api/v1/verifiers/{verifierId}/operators/{operatorId}:
          *   get:
          *     summary: Get operator infor
-         *     description: Get Operator infor
+         *     description: Get Operator information
          *     tags:
          *       - Verifier
          *     parameters:
