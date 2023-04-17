@@ -62,6 +62,8 @@ const env = {
         route: getOsEnv('SWAGGER_ROUTE'),
         username: getOsEnv('SWAGGER_USERNAME'),
         password: getOsEnv('SWAGGER_PASSWORD'),
+        redoc: getOsEnv('SWAGGER_DOC_ROUTE') ?? '/docs',
+        redocJson: getOsEnv('SWAGGER_DOC_ROUTE_JSON') ?? '/docs/swagger.json'
     },
     uploads: {
         multerStorageDest: getOsEnvOptional('MULTER_STORAGE_DESTINATION') ?? '/public/uploads'
@@ -71,6 +73,13 @@ const env = {
     },
     authenService: {
         url: getOsEnv('AUTHEN_SERVICE_URL')
+    },
+    git: {
+        token: getOsEnv('GIT_TOKEN') ?? '',
+        owner: getOsEnv('GIT_OWNER') ?? '',
+        schemaModelsRepo: getOsEnv('SCHEMA_MODELS_REPO') ?? '',
+        sha: getOsEnv('SHA') ?? '',
+        jsonSchemaPath: getOsEnv('JSON_SCHEMA_PATH')?? 'json/schemas'
     }
 };
 

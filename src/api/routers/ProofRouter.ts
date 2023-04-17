@@ -19,21 +19,34 @@ export class ProofRouter {
          *       properties:
          *         proof:
          *           type: object
+         *           description: Your ZK Proof
          *         publicData:
          *           type: array
          *           items:
-         *             type: object
+         *             type: string
+         *             description: Your Public Signals
+         *       required:
+         *           - proof
+         *           - publicData
          *     ProofRequest:
          *       properties:
          *         requestId:
          *           type: string
+         *           description: Id of request
+         *           example: 1234
          *         serviceId:
          *           type: string
+         *           description: Id of service
+         *           example: 1234
          *         message:
          *           type: string
+         *           description: Sign this message to provide proof
+         *           example: 1234
          *         validUntil:
          *           type: string
          *           format: date-time
+         *           description: Expiration date of Proof
+         *           example: 2023-02-13T02:55:39.667+00:00
          *         zkProofs:
          *           type: array
          *           items:
@@ -57,24 +70,43 @@ export class ProofRouter {
          *             properties:
          *               requestId:
          *                 type: string
+         *                 description: Id of request
          *               proofs:
          *                 type: array
          *                 items:
          *                   $ref: '#/components/schemas/Proof'
+         *             required:
+         *                 - requestId
+         *                 - proofs
          *     responses:
          *       '200':
          *         description: An array of verification result
          *         content:
          *           application/json:
          *             schema:
-         *             type: object
-         *             properties:
-         *               isValid:
-         *                 type: boolean
-         *               results:
-         *                 type: array
-         *                 items:
-         *                   type: boolean
+         *                type: object
+         *                properties:
+         *                  isValid:
+         *                    type: boolean
+         *                    description: Result Verify all ZK Proofs
+         *                    example: true
+         *                  results:
+         *                    type: array
+         *                    items:
+         *                       type: boolean
+         *                       description: Result Verify each Proof in Array ZK Proof
+         *                       example: true
+         *       '500':
+         *         description: Error Response
+         *         content:
+         *           application/json:
+         *             schema:
+         *               type: object
+         *               properties:
+         *                 message:
+         *                   type: string
+         *                   description: Message error
+         *                   example: Error message
          */
         this.router.post('/submit', (new ProofController()).submitProofs);
 
@@ -83,7 +115,7 @@ export class ProofRouter {
          * /api/v1/proofs/verify:
          *   post:
          *     summary: Verify ZK Proof
-         *     description: Verify ZK proofs
+         *     description: Verify Your ZK Proof
          *     tags:
          *       - Proof
          *     requestBody:
@@ -95,24 +127,44 @@ export class ProofRouter {
          *             properties:
          *               networkId:
          *                 type: string
+         *                 description: Network Chain Id you want to verify in
          *               proofs:
          *                 type: array
+         *                 description: Array of ZK Proof
          *                 items:
          *                   $ref: '#/components/schemas/Proof'
+         *               required:
+         *                 - networkId
+         *                 - proofs
          *     responses:
          *       '200':
          *         description: An array of verification result
          *         content:
          *           application/json:
          *             schema:
-         *             type: object
-         *             properties:
-         *               isValid:
-         *                 type: boolean
-         *               results:
-         *                 type: array
-         *                 items:
-         *                   type: boolean
+         *                type: object
+         *                properties:
+         *                  isValid:
+         *                    type: boolean
+         *                    description: Result Verify all ZK Proofs
+         *                    example: true
+         *                  results:
+         *                    type: array
+         *                    items:
+         *                       type: boolean
+         *                       description: Result Verify each Proof in Array ZK Proof
+         *                       example: true
+         *       '500':
+         *         description: Error Response
+         *         content:
+         *           application/json:
+         *             schema:
+         *               type: object
+         *               properties:
+         *                 message:
+         *                   type: string
+         *                   description: Message error
+         *                   example: Error message
          */
         this.router.post('/verify', (new ProofController()).verifyProofs);
 
@@ -141,6 +193,17 @@ export class ProofRouter {
          *               properties:
          *                 request:
          *                   $ref: '#/components/schemas/ProofRequest'
+         *       '500':
+         *         description: Error Response
+         *         content:
+         *           application/json:
+         *             schema:
+         *               type: object
+         *               properties:
+         *                 message:
+         *                   type: string
+         *                   description: Message error
+         *                   example: Error message
          */
         this.router.get('/:requestId', (new ProofController()).fetchProofRequest);
 
@@ -161,7 +224,10 @@ export class ProofRouter {
          *             properties:
          *               serviceId:
          *                 type: string
-         *                 required: true
+         *                 description: Unique ID of Service
+         *                 example: 1234
+         *             required:
+         *               - serviceId
          *     responses:
          *       200:
          *         description: Unique ID of Request
@@ -171,7 +237,36 @@ export class ProofRouter {
          *               type: object
          *               properties:
          *                 request:
-         *                   $ref: '#/components/schemas/ProofRequest'
+         *                   type: object
+         *                   properties:
+         *                      requestId:
+         *                          type: string
+         *                          description: Id of request
+         *                          example: 1234
+         *                      serviceId:
+         *                          type: string
+         *                          description: Id of service
+         *                          example: 1234
+         *                      message:
+         *                          type: string
+         *                          description: Sign this message to provide proof
+         *                          example: 1234
+         *                      validUntil:
+         *                          type: string
+         *                          format: date-time
+         *                          description: Expiration date of Proof
+         *                          example: 2023-02-13T02:55:39.667+00:00
+         *       '500':
+         *         description: Error Response
+         *         content:
+         *           application/json:
+         *             schema:
+         *               type: object
+         *               properties:
+         *                 message:
+         *                   type: string
+         *                   description: Message error
+         *                   example: Error message
          */
         this.router.post('/request', (new ProofController()).generateProofRequest);
     }

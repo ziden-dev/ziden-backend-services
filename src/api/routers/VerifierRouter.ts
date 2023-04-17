@@ -26,44 +26,63 @@ export class VerifierRouter {
          *         _id:
          *           type: string
          *           example: 82701632f563e84bcb34de9542d0457ff5cfb17bf9703f743afb93ba605cc6
+         *           description: DID of Verifier
          *         name:
          *           type: string
          *           example: Verifier's Name
+         *           description: Verifier's name
          *         description:
          *           type: string
          *           example: Verifier's Description
+         *           description: Description about Verifier
          *         contact:
          *           type: string
          *           example: contact@ziden.io
+         *           description: Email or Phone number of Verifier
          *         isVerified:
          *           type: boolean
+         *           description: Is verified?
+         *           example: true
          *         website:
          *           type: string
          *           example: https://ziden.io
+         *           description: Verifier's website
          *         logoUrl:
          *           type: string
          *           example: https://logo.image.url
+         *           description: Vefifier's Logo Url
          *     VerifierRegistration:
          *       properties:
          *         verifierId:
          *           type: string
+         *           description: Verifier's DID
+         *           example: 1234
          *         name:
          *           type: string
+         *           example: Verifier's Name
+         *           description: Verifier's name
          *         description:
          *           type: string
+         *           example: Verifier's Description
+         *           description: Description about Verifier
          *         contact:
          *           type: string
+         *           example: contact@ziden.io
+         *           description: Email or Phone number of Verifier
          *         website:
          *           type: string
+         *           example: https://ziden.io
+         *           description: Verifier's website
          *         verifierLogo:
          *           type: string
          *           format: binary
+         *           description: Verifier's Logo
          *   securitySchemes: 
          *       Authorization:
          *         in: header
          *         name: Authorization
          *         type: apiKey
-         *         description: Token authorization
+         *         description: JWZ Token
          */
 
         /**
@@ -100,28 +119,58 @@ export class VerifierRouter {
          *           schema:
          *             type: object
          *             properties:
-         *               verifierId:
-         *                 type: string
-         *               name:
-         *                 type: string
-         *               description:
-         *                 type: string
-         *               contact:
-         *                 type: string
-         *               website:
-         *                 type: string
-         *               verifierLogo:
-         *                 type: file
+         *                 verifierId:
+         *                      type: string
+         *                      description: Verifier's DID
+         *                      example: 1234
+         *                 name:
+         *                      type: string
+         *                      example: Verifier's Name
+         *                      description: Verifier's name
+         *                 description:
+         *                      type: string
+         *                      example: Verifier's Description
+         *                      description: Description about Verifier
+         *                 contact:
+         *                      type: string
+         *                      example: contact@ziden.io
+         *                      description: Email or Phone number of Verifier
+         *                 website:
+         *                      type: string
+         *                      example: https://ziden.io
+         *                      description: Verifier's website
+         *                 verifierLogo:
+         *                      type: string
+         *                      format: binary
+         *                      description: Verifier's Logo
+         *             required:
+         *                 - verifierId
+         *                 - name
+         *                 - description
+         *                 - contact
+         *                 - website
+         *                 - verifierLogo
          *     responses:
          *       '200':
          *         description: A JSON object of Verifier
          *         content:
          *           application/json:
          *             schema:
-         *             type: object
-         *             properties:
+         *              type: object
+         *              properties:
          *               newVerifier:
          *                 $ref: '#/components/schemas/Verifier'
+         *       '500':
+         *         description: Error Response
+         *         content:
+         *           application/json:
+         *             schema:
+         *               type: object
+         *               properties:
+         *                 message:
+         *                   type: string
+         *                   description: Message error
+         *                   example: Error message
          */
         this.router.post('/registration', new UploadMiddleWare().use, (new VerifierController()).registration);
 
@@ -145,6 +194,17 @@ export class VerifierRouter {
          *                   type: array
          *                   items:
          *                     $ref: '#/components/schemas/Verifier'
+         *       '500':
+         *         description: Error Response
+         *         content:
+         *           application/json:
+         *             schema:
+         *               type: object
+         *               properties:
+         *                 message:
+         *                   type: string
+         *                   description: Message error
+         *                   example: Error message
          */
         this.router.get('/', (new VerifierController()).findVerifiers);
 
@@ -163,6 +223,7 @@ export class VerifierRouter {
          *           type: string
          *         required: true
          *         description: DID of Verifier
+         *         example: 12345
          *     responses:
          *       200:
          *         description: A JSON object of Verifier
@@ -173,6 +234,17 @@ export class VerifierRouter {
          *               properties:
          *                 verifier:
          *                   $ref: '#/components/schemas/Verifier'
+         *       '500':
+         *         description: Error Response
+         *         content:
+         *           application/json:
+         *             schema:
+         *               type: object
+         *               properties:
+         *                 message:
+         *                   type: string
+         *                   description: Message error
+         *                   example: Error message
          */
         this.router.get('/:verifierId', (new VerifierController()).findOneVerifier);
 
@@ -201,6 +273,17 @@ export class VerifierRouter {
          *               properties:
          *                 profile:
          *                   $ref: '#/components/schemas/VerifierProfile'
+         *       '500':
+         *         description: Error Response
+         *         content:
+         *           application/json:
+         *             schema:
+         *               type: object
+         *               properties:
+         *                 message:
+         *                   type: string
+         *                   description: Message error
+         *                   example: Error message
          */
         // this.router.get('/:verifierId/profile', (new VerifierController()).getVerifierProfile);
         
@@ -211,7 +294,7 @@ export class VerifierRouter {
          *     security:
          *       - Authorization: []
          *     summary: Update verifier profile
-         *     description: Update verifier profile
+         *     description: Update verifier's information
          *     tags:
          *       - Verifier
          *     parameters:
@@ -221,6 +304,7 @@ export class VerifierRouter {
          *           type: string
          *         required: true
          *         description: DID of Verifier
+         *         example: 1234
          *     requestBody:
          *       description: A full JSON object of Verifier registration data
          *       content:
@@ -228,26 +312,53 @@ export class VerifierRouter {
          *           schema:
          *             type: object
          *             properties:
-         *               name:
-         *                 type: string
-         *               description:
-         *                 type: string
-         *               contact:
-         *                 type: string
-         *               website:
-         *                 type: string
-         *               verifierLogo:
-         *                 type: file
+         *                 name:
+         *                      type: string
+         *                      example: Verifier's Name
+         *                      description: Verifier's name
+         *                 description:
+         *                      type: string
+         *                      example: Verifier's Description
+         *                      description: Description about Verifier
+         *                 contact:
+         *                      type: string
+         *                      example: contact@ziden.io
+         *                      description: Email or Phone number of Verifier
+         *                 website:
+         *                      type: string
+         *                      example: https://ziden.io
+         *                      description: Verifier's website
+         *                 verifierLogo:
+         *                      type: string
+         *                      format: binary
+         *                      description: Verifier's Logo
+         *             required:
+         *                 - name
+         *                 - description
+         *                 - contact
+         *                 - website
+         *                 - verifierLogo
          *     responses:
          *       '200':
          *         description: A JSON object of Verifier
          *         content:
          *           application/json:
          *             schema:
-         *             type: object
-         *             properties:
+         *              type: object
+         *              properties:
          *               newVerifier:
          *                 $ref: '#/components/schemas/Verifier'
+         *       '500':
+         *         description: Error Response
+         *         content:
+         *           application/json:
+         *             schema:
+         *               type: object
+         *               properties:
+         *                 message:
+         *                   type: string
+         *                   description: Message error
+         *                   example: Error message
          */
         this.router.put('/:verifierId/profiles', [new UploadMiddleWare().use, (new AuthenController()).authorizationAdmin], (new VerifierController()).updateVerifierProfile);
 
@@ -281,9 +392,24 @@ export class VerifierRouter {
          *                     properties:
          *                       operatorId:
          *                         type: string
+         *                         description: DID of Operator
+         *                         example: 12345
          *                       createdAt:
          *                         type: string
          *                         format: date
+         *                         description: Timestamp Operator created
+         *                         example: '2023-03-22T08:01:35.099+00:00'
+         *       '500':
+         *         description: Error Response
+         *         content:
+         *           application/json:
+         *             schema:
+         *               type: object
+         *               properties:
+         *                 message:
+         *                   type: string
+         *                   description: Message error
+         *                   example: Error message
          */
         this.router.get('/:verifierId/operators', (new OperatorController()).getAllOperators);
 
@@ -304,6 +430,7 @@ export class VerifierRouter {
          *           type: string
          *         required: true
          *         description: DID of Verifier
+         *         example: 1234
          *     requestBody:
          *       description: DID of Operator
          *       content:
@@ -313,6 +440,10 @@ export class VerifierRouter {
          *             properties:
          *               operatorId:
          *                 type: string
+         *                 example: 1234
+         *                 description: DID of Operator
+         *             required:
+         *               - operatorId
          *     responses:
          *       200:
          *         description: A JSON object of Operator
@@ -326,6 +457,17 @@ export class VerifierRouter {
          *                 createdAt:
          *                   type: string
          *                   format: date
+         *       '500':
+         *         description: Error Response
+         *         content:
+         *           application/json:
+         *             schema:
+         *               type: object
+         *               properties:
+         *                 message:
+         *                   type: string
+         *                   description: Message error
+         *                   example: Error message
          */
         this.router.post('/:verifierId/operators', (new AuthenController()).authorizationAdmin, (new OperatorController()).createOperator);
 
@@ -346,12 +488,14 @@ export class VerifierRouter {
          *           type: string
          *         required: true
          *         description: DID of Verifier
+         *         example: 1234
          *       - in: path
          *         name: operatorId
          *         schema:
          *           type: string
          *         required: true
          *         description: DID of OperatorId
+         *         example: 12345
          *     responses:
          *       200:
          *         description: A JSON object of Operator
@@ -359,6 +503,17 @@ export class VerifierRouter {
          *           application/json:
          *             schema:
          *               type: object
+         *       '500':
+         *         description: Error Response
+         *         content:
+         *           application/json:
+         *             schema:
+         *               type: object
+         *               properties:
+         *                 message:
+         *                   type: string
+         *                   description: Message error
+         *                   example: Error message
          */
         this.router.delete('/:verifierId/operators/:operatorId', (new AuthenController()).authorizationAdmin, (new OperatorController()).removeOperator);
 
@@ -367,7 +522,7 @@ export class VerifierRouter {
          * /api/v1/verifiers/{verifierId}/operators/{operatorId}:
          *   get:
          *     summary: Get operator infor
-         *     description: Get Operator infor
+         *     description: Get Operator information
          *     tags:
          *       - Verifier
          *     parameters:
@@ -377,12 +532,14 @@ export class VerifierRouter {
          *           type: string
          *         required: true
          *         description: DID of Verifier
+         *         example: 1234
          *       - in: path
          *         name: operatorId
          *         schema:
          *           type: string
          *         required: true
          *         description: DID of OperatorId
+         *         example: 12345
          *     responses:
          *       200:
          *         description: A JSON object of Operator
@@ -393,14 +550,35 @@ export class VerifierRouter {
          *               properties:
          *                 userId:
          *                   type: string
+         *                   description: DID of User
+         *                   example: 1234
          *                 verifierId:
          *                   type: string
+         *                   description: DID of Verifier
+         *                   example: 1234      
          *                 claimId:
          *                   type: string
+         *                   description: Unique Id of Claim
+         *                   example: 1234
          *                 version:
          *                   type: integer
+         *                   description: Version of claim
+         *                   example: 1
          *                 revNonce:
          *                   type: integer
+         *                   description: Revocation nonce of claim
+         *                   example: 10
+         *       '500':
+         *         description: Error Response
+         *         content:
+         *           application/json:
+         *             schema:
+         *               type: object
+         *               properties:
+         *                 message:
+         *                   type: string
+         *                   description: Message error
+         *                   example: Error message
          *                 
          */
         this.router.get('/:verifierId/operators/:operatorId', (new OperatorController()).getOperatorInfor);

@@ -12,6 +12,7 @@ import env from './lib/env/index.js';
 import logger from './lib/logger/index.js';
 import { GlobalVariables } from './lib/global/index.js';
 import * as db from './database/index.js';
+import redoc from 'redoc-express';
 
 export class App {
 
@@ -38,8 +39,8 @@ export class App {
     private async connectDatabase(database: string) {
         switch (database) {
             case db.DB.MONGODB:
-                const MONGODB_URL = `mongodb://${env.db.username}:${env.db.password}@${env.db.host}:${env.db.port}/${env.db.database}?authMechanism=DEFAULT&authSource=admin`;
-                // const MONGODB_URL = `mongodb://${env.db.host}:${env.db.port}/${env.db.database}`;
+                // const MONGODB_URL = `mongodb://${env.db.username}:${env.db.password}@${env.db.host}:${env.db.port}/${env.db.database}?authMechanism=DEFAULT&authSource=admin`;
+                const MONGODB_URL = `mongodb://${env.db.host}:${env.db.port}/${env.db.database}`;
                 try {
                     const dbConnection = new db.Mongo()
                     await dbConnection.init(MONGODB_URL, {});
@@ -73,6 +74,44 @@ export class App {
                         version: env.app.version
                     },
                     host: `${env.app.host}:${env.app.port}`,
+                    tags: [
+                        {
+                            "name": "Authen",
+                            "description": "*List APIs for authentication.*"
+                        },
+                        {
+                            "name": "Claim",
+                            "description": "*List APIs for Claims.*"
+                        },
+                        {
+                            "name": "Issuer",
+                            "description": "*List APIs to manager Issuers.*"
+                        },
+                        {
+                            "name": "Network",
+                            "description": "*List APIs to config networks.*"
+                        },
+                        {
+                            "name": "Proof",
+                            "description": "*List APIs to generate proof request and verify proof.*"
+                        },
+                        {
+                            "name": "Registry",
+                            "description": "*List APIs to manager Registry Services.*"
+                        },
+                        {
+                            "name": "Schema",
+                            "description": "*List APIs to manager Schema.*"
+                        },
+                        {
+                            "name": "Service",
+                            "description": "*List APIs to manager Service.*"
+                        },
+                        {
+                            "name": "Verifier",
+                            "description": "*List APIs to manager Verifier.*"
+                        }
+                    ]
 
                 },
                 apis: ['./src/api/routers/*.ts'],
@@ -80,6 +119,13 @@ export class App {
             };
             const swaggerSpec = swaggerJsdoc(options);
             this.app.use(`${env.swagger.route}`, swaggerUi.serve, swaggerUi.setup(swaggerSpec));
+            this.app.get(`${env.swagger.redocJson}`, (req, res) => {
+                res.send(swaggerSpec);
+            });
+            this.app.get(`${env.swagger.redoc}`, redoc({
+                title: 'API Docs',
+                specUrl: `${env.swagger.redocJson}`
+            }));
             logger.info('Swagger UI is enabled');
         }
     }

@@ -18,11 +18,17 @@ export class NetworkRouter {
          *     Network:
          *       properties:
          *         chainId:
-         *           type: string
+         *           description: network chain id
+         *           type: integer
+         *           example: 97
          *         name:
          *           type: string
-         *         shortName:
+         *           description: network name
+         *           example: BNB Testnet
+         *         type:
          *           type: string
+         *           description: type of network
+         *           example: EVM
          */
 
         /**
@@ -45,6 +51,17 @@ export class NetworkRouter {
          *                   type: array
          *                   items:
          *                     $ref: '#/components/schemas/Network'
+         *       '500':
+         *         description: Error Response
+         *         content:
+         *           application/json:
+         *             schema:
+         *               type: object
+         *               properties:
+         *                 message:
+         *                   type: string
+         *                   description: Message error
+         *                   example: Error message
          */
         this.router.get('/', (new NetworkController()).getAllSupportedNetworks);
 
@@ -52,8 +69,8 @@ export class NetworkRouter {
          * @swagger
          * /api/v1/networks/{networkId}:
          *   get:
-         *     summary: Register Network
-         *     description: Register new network
+         *     summary: Get network information
+         *     description: Get network information by networkId
          *     tags:
          *       - Network
          *     parameters:
@@ -61,8 +78,9 @@ export class NetworkRouter {
          *         name: networkId
          *         schema:
          *           type: string
+         *           example: 97
          *         required: true
-         *         description: Network ID
+         *         description: network chain id
          *     responses:
          *       '200':
          *         description: JSON object of Network
@@ -73,6 +91,17 @@ export class NetworkRouter {
          *               properties:
          *                 network:
          *                   $ref: '#/components/schemas/Network'
+         *       '500':
+         *         description: Error Response
+         *         content:
+         *           application/json:
+         *             schema:
+         *               type: object
+         *               properties:
+         *                 message:
+         *                   type: string
+         *                   description: Message error
+         *                   example: Error message
          */
         this.router.get('/:chainId', (new NetworkController()).findNetworkById);
     }
