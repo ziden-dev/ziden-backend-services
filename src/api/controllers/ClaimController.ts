@@ -112,7 +112,8 @@ export class ClaimController {
                         issuerId: issuer?._id ?? '',
                         name: issuer?.name ?? 'Unknown Issuer',
                         endpointUrl: issuer?.endpointUrl ?? ''
-                    }
+                    },
+                    claimIndex: claim.claimIndex ?? 0
                 }
             }))
             sendRes(res, null, details);

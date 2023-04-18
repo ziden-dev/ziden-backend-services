@@ -6,5 +6,6 @@ export interface IClaim {
     holderId?: string,
     schemaHash?: string,
     status?: ClaimStatus,
-    entry?: Object
+    entry?: Object,
+    claimIndex: number
 }
