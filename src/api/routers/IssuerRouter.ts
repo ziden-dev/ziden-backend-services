@@ -331,6 +331,7 @@ export class IssuerRouter {
          *       content:
          *         multipart/form-data:
          *           schema:
+         *             type: object
          *             properties:
          *               name:
          *                 type: string
@@ -357,7 +358,6 @@ export class IssuerRouter {
          *                 description: Issuer endpoint Url
          *                 example: https://issuer.endpoint.url/registration
          *             required:
-         *              - issuerId
          *              - name
          *              - description
          *              - contact
