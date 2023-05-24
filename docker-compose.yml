@@ -11,6 +11,9 @@ services:
       - ./logs:/home/node/app/logs
       - ./public:/home/node/app/public
     container_name: backend-server
+    networks:
+      - ziden
+      - default
     depends_on:
       - backend-db
     expose:
@@ -22,5 +25,13 @@ services:
     image: mongo
     volumes:
       - mongodb-backend:/data/db
+    networks:
+      - default
 volumes:
   mongodb-backend:
+networks:
+  ziden:
+    external: true 
+    name: ziden
+  default:
+  
