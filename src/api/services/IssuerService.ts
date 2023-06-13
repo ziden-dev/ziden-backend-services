@@ -17,6 +17,10 @@ export class IssuerService {
         return (await Issuer.find()).map(e => e.toObject());
     }
 
+    public async findByQuery(query: any): Promise<IIssuer[]> {
+        return (await Issuer.find(query)).map(e => e.toObject());
+    }
+
     public async findManyByIds(issuerIds: string[]): Promise<IIssuer[]> {
         return (await Issuer.find({
             _id: { $in: issuerIds }

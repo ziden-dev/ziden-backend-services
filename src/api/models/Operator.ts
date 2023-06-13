@@ -4,7 +4,7 @@ import { OperatorRole, Portal } from '../../lib/constants/index.js';
 
 export interface IOperator {
     userId: string,
-    issuerId: string,
+    verifierId: string,
     role: string,
     claimId: string,
     activate: boolean,
@@ -13,7 +13,7 @@ export interface IOperator {
 
 const OperatorSchema = new Schema<IOperator>({
     userId: { type: String, required: true },
-    issuerId: { type: String, required: true },
+    verifierId: { type: String, required: true },
     role: { type: String, required: true, enum: OperatorRole },
     claimId: { type: String, required: true },
     activate: { type: Boolean, required: true },

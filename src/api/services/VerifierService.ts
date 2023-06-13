@@ -4,8 +4,8 @@ export class VerifierService {
 
     constructor() { }
 
-    public async findOneById(issuerId: string): Promise<IVerifier | undefined> {
-        return (await Verifier.findById(issuerId))?.toObject();
+    public async findOneById(verifierId: string): Promise<IVerifier | undefined> {
+        return (await Verifier.findById(verifierId))?.toObject();
     }
 
     public async findAll(): Promise<IVerifier[]> {
@@ -16,10 +16,10 @@ export class VerifierService {
         return (await Verifier.find({ 'providerId': providerId })).map(e => e.toObject());
     }
 
-    public async save(issuer: IVerifier): Promise<IVerifier> {
+    public async save(verifier: IVerifier): Promise<IVerifier> {
         return (await Verifier.findByIdAndUpdate(
-            issuer._id,
-            issuer,
+            verifier._id,
+            verifier,
             { upsert: true, new: true }
         )).toObject();
     }
@@ -33,5 +33,9 @@ export class VerifierService {
 
     public async deleteVerifier(verifierId: string) {
         await Verifier.findByIdAndRemove(verifierId);
+    }
+
+    public async findByQuery(query: any) {
+        return (await Verifier.find(query)).map(e => e.toObject());
     }
 }

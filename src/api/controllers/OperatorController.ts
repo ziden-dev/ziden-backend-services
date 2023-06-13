@@ -48,7 +48,7 @@ export class OperatorController {
 
             const operator = {
                 userId: req.body.operatorId.toString(),
-                issuerId: verifierId.toString(),
+                verifierId: verifierId.toString(),
                 role: OperatorRole.Operator,
                 claimId: createOperatorResponse.claimId,
                 activate: true,
@@ -97,7 +97,7 @@ export class OperatorController {
                 throw new BadRequestError("Invalid operatorId");
             }
 
-            const operator = await Operator.findOne({issuerId: verifierId, userId: operatorId});
+            const operator = await Operator.findOne({verifierId: verifierId, userId: operatorId});
             if (!operator) {
                 throw new BadRequestError("Operator not exits!");
             }

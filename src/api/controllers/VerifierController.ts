@@ -61,7 +61,7 @@ export class VerifierController {
 
             const operator = {
                 userId: req.body.verifierId.toString(),
-                issuerId: req.body.verifierId.toString(),
+                verifierId: req.body.verifierId.toString(),
                 role: OperatorRole.Admin,
                 claimId: registerVerifier.claimId,
                 activate: true,
@@ -81,19 +81,40 @@ export class VerifierController {
 
     public async findVerifiers(req: Request, res: Response) {
         try {
-            sendRes(res, null, {
-                'verifiers': (await this.verifierService.findAll()).map(e => {
-                    return {
-                        '_id': e._id,
-                        'name': e.name,
-                        'description': e.description,
-                        'contact': e.contact,
-                        'isVerified': e.isVerified,
-                        'website': e.website,
-                        'logoUrl': utils.getLogoUrl(e.logoUrl)
-                    }
+            const {operatorId} = req.query;
+            if (operatorId != undefined && typeof operatorId == "string") {
+                const verifierList = await this.operatorService.getAllVerifierByOperator(operatorId);
+                console.log(verifierList)
+                sendRes(res, null, {
+                    'verifiers': (await this.verifierService.findByQuery({ '_id': { '$in': verifierList } })).map(e => {
+                        return {
+                            '_id': e._id,
+                            'name': e.name,
+                            'description': e.description,
+                            'contact': e.contact,
+                            'isVerified': e.isVerified,
+                            'website': e.website,
+                            'logoUrl': utils.getLogoUrl(e.logoUrl)
+                        }
+                    })
                 })
-            })
+            }
+
+            else {
+                sendRes(res, null, {
+                    'verifiers': (await this.verifierService.findAll()).map(e => {
+                        return {
+                            '_id': e._id,
+                            'name': e.name,
+                            'description': e.description,
+                            'contact': e.contact,
+                            'isVerified': e.isVerified,
+                            'website': e.website,
+                            'logoUrl': utils.getLogoUrl(e.logoUrl)
+                        }
+                    })
+                })
+            }
         } catch (error: any) {
             logger.error(error);
             sendRes(res, error);

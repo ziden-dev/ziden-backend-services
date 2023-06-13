@@ -182,6 +182,13 @@ export class VerifierRouter {
          *     description: Get all registered Verifier
          *     tags:
          *       - Verifier
+         *     parameters:
+         *       - in: query
+         *         name: operatorId
+         *         schema:
+         *           type: string
+         *           example: 1234
+         *         description: get verifier services by operatorId
          *     responses:
          *       200:
          *         description: A JSON array of Verifier

@@ -1,17 +1,15 @@
-import { Express, Request, Response } from "express";
+import { Request, Response } from "express";
 import axios from "axios";
 
 import { IssuerService } from "../services/IssuerService.js";
 import { SchemaService } from "../services/SchemaService.js";
 import { NetworkService } from "../services/NetworkService.js";
-import { OperatorService } from "../services/OperatorService.js";
 import { UploadedFile } from "../middlewares/UploadMiddleware.js";
 import { ISchemaRegistry } from "../models/SchemaRegistry.js";
 import { NotFoundError } from "../errors/http/NotFoundError.js";
 import { BadRequestError } from "../errors/http/BadRequestError.js";
 import { sendRes } from "../responses/index.js";
 import logger from "../../lib/logger/index.js";
-import env from "../../lib/env/index.js";
 import utils from "../utils/index.js";
 import { UnauthorizedError } from "../errors/http/UnauthorizedError.js";
 import { verifyTokenAdmin } from "../services/Authen.js";
@@ -21,13 +19,11 @@ export class IssuerController {
     issuerService: IssuerService;
     schemaService: SchemaService;
     networkService: NetworkService;
-    operatorService: OperatorService;
 
     constructor() {
         this.issuerService = new IssuerService();
         this.schemaService = new SchemaService();
         this.networkService = new NetworkService();
-        this.operatorService = new OperatorService();
         
         this.registration = this.registration.bind(this);
         this.findIssuers = this.findIssuers.bind(this);
