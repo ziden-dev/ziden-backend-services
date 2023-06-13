@@ -1,7 +1,6 @@
 import { model, Schema } from 'mongoose';
 
-import { KYCQueryMTPInput, KYCNonRevQueryMTPInput } from "zidenjs/build/witnesses/queryMTP.js";
-import { KYCQuerySigInput, KYCQuerySigNonRevInput } from "zidenjs/build/witnesses/querySig.js";
+import { KYCQueryMTPInput, KYCNonRevQueryMTPInput, KYCQuerySigInput, KYCNonRevQuerySigInput } from "@zidendev/zidenjs";
 
 export interface IProofRequest {
     _id?: string
@@ -15,7 +14,7 @@ export interface IProofData {
     mtpInput?: KYCQueryMTPInput,
     nonRevMtpInput?: KYCNonRevQueryMTPInput
     sigInput?: KYCQuerySigInput,
-    nonRevSigInput?: KYCQuerySigNonRevInput
+    nonRevSigInput?: KYCNonRevQuerySigInput
 }
 
 export interface IProof {

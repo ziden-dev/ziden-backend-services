@@ -1,8 +1,7 @@
 import { Request, Response } from 'express';
 import axios from 'axios';
 
-import { KYCQueryMTPInput, KYCNonRevQueryMTPInput } from "zidenjs/build/witnesses/queryMTP.js";
-import { KYCQuerySigInput, KYCQuerySigNonRevInput } from "zidenjs/build/witnesses/querySig.js";
+import { KYCQueryMTPInput, KYCNonRevQueryMTPInput, KYCQuerySigInput, KYCNonRevQuerySigInput } from "@zidendev/zidenjs";
 import { IQuery } from "../models/Service.js";
 import { IssuerService } from "../services/IssuerService.js";
 import { ProofService } from "../services/ProofService.js";
@@ -26,7 +25,7 @@ export interface ProofData {
     mtpInput?: KYCQueryMTPInput,
     nonRevMtpInput?: KYCNonRevQueryMTPInput
     sigInput?: KYCQuerySigInput,
-    nonRevSigInput?: KYCQuerySigNonRevInput
+    nonRevSigInput?: KYCNonRevQuerySigInput
 }
 
 export interface Proof {

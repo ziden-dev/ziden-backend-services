@@ -1,7 +1,6 @@
 import { v4 } from "uuid";
 import Operator, { IOperator } from "../models/Operator.js";
 import { Portal } from "../../lib/constants/index.js";
-import { claim } from "zidenjs";
 import { NotFoundError } from "../errors/http/NotFoundError.js";
 export class OperatorService {
 

@@ -1,5 +1,3 @@
-import { schema as zidenSchema } from 'zidenjs';
-
 import Schema, { ISchema } from '../models/Schema.js';
 import { PropertyType } from '../../lib/constants/index.js';
 

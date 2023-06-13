@@ -58,22 +58,33 @@ export class ProofService {
 
     public async verifyZkProof(networkId: number, zkProof: IProof): Promise<any> {
         const { proof, publicData } = zkProof;
-        
+
         const queryMTP = useQueryMtpValidator(networkId);
         if (queryMTP === undefined) throw 'Network is not supported';
 
-        const input = publicData[6];
-        console.log(BigInt(input).toString(2).padStart(198, "0"));
-        const queryCompactInput = BigInt("0b" + BigInt(input).toString(2).padStart(198, "0").slice(64, 198)).toString();
-        console.log(queryCompactInput)
+        // const input = publicData[6];
+        // console.log(BigInt(input).toString(2).padStart(198, "0"));
+        // const queryCompactInput = BigInt("0b" + BigInt(input).toString(2).padStart(198, "0").slice(64, 198)).toString();
+        // console.log(queryCompactInput)
+
+        // const circuitQuery = {
+        //     deterministicValue: publicData[7],
+        //     compactInput: queryCompactInput,
+        //     mask: publicData[8],
+        //     circuitId: 'credentialAtomicQuery'
+        // }
 
         const circuitQuery = {
-            deterministicValue: publicData[7],
-            compactInput: queryCompactInput,
-            mask: publicData[8],
-            circuitId: 'credentialAtomicQuery'
+            deterministicValue: publicData[10],
+            mask: publicData[11],
+            claimSchema: publicData[7],
+            timestamp: publicData[6],
+            slotIndex: publicData[8],
+            operator: publicData[9]
         }
         
+        console.log(circuitQuery)
+
         const callData = {
             a: [p256(proof.pi_a[0]), p256(proof.pi_a[1])],
             b: [[p256(proof.pi_b[0][1]), p256(proof.pi_b[0][0])], [p256(proof.pi_b[1][1]), p256(proof.pi_b[1][0])]],

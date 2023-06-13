@@ -1,4 +1,4 @@
-import { OPERATOR } from "zidenjs/build/witnesses/query";
+import { OPERATOR } from "@zidendev/zidenjs";
 
 // FIXME
 export enum ClaimStatus {
