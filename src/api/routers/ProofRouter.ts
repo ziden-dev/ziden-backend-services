@@ -71,13 +71,13 @@ export class ProofRouter {
          *               requestId:
          *                 type: string
          *                 description: Id of request
-         *               proofs:
+         *               zkProofs:
          *                 type: array
          *                 items:
          *                   $ref: '#/components/schemas/Proof'
          *             required:
          *                 - requestId
-         *                 - proofs
+         *                 - zkProofs
          *     responses:
          *       '200':
          *         description: An array of verification result
@@ -128,14 +128,14 @@ export class ProofRouter {
          *               networkId:
          *                 type: string
          *                 description: Network Chain Id you want to verify in
-         *               proofs:
+         *               zkProofs:
          *                 type: array
          *                 description: Array of ZK Proof
          *                 items:
          *                   $ref: '#/components/schemas/Proof'
-         *               required:
-         *                 - networkId
-         *                 - proofs
+         *             required:
+         *                - networkId
+         *                - zkProofs
          *     responses:
          *       '200':
          *         description: An array of verification result
