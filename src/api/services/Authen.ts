@@ -172,6 +172,7 @@ export async function getOperatorInforInAuthen(operatorId: string, verifierId: s
         operator: response.data.operator,
         claimId: response.data.claimId,
         version: response.data.version,
-        revNonce: response.data.revNonce
+        revNonce: response.data.revNonce,
+        schemaHash: response.data.schemaHash
     };
 }
