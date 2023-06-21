@@ -358,7 +358,7 @@ export class ServiceRouter {
          *                   description: Message error
          *                   example: Error message
          */
-        this.router.put('/:serviceId/active', (new ServiceController()).checkServiceAuthen, (new ServiceController()).toggleServiceActive);
+        this.router.put('/:serviceId/active', (new ServiceController()).toggleServiceActive);
     
     }
 }

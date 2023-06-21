@@ -193,49 +193,5 @@ export class SchemaRouter {
         // this.router.get('/dataTypes', (new SchemaController()).getAllDataTypes);
 
         
-
-        // this.router.get('/:schemaHash/contexts');
-
-        /**
-         * @swagger
-         * /api/v1/schemas/pull-request:
-         *   post:
-         *     summary: Submit request create new schema
-         *     description: Submit request create new schema to Github. Ziden will review and accept if this schema is valid.
-         *     tags:
-         *       - Schema
-         *     requestBody:
-         *       description: A JSON object of Schema's metadata
-         *       content:
-         *         application/json:
-         *           schema:
-         *             type: object
-         *             properties:
-         *               schema:
-         *                 type: object
-         *                 description: Schema Json to create pull request to github
-         *             required:
-         *               - schema
-         *     responses:
-         *       200:
-         *         description: A JSON object of Schema
-         *         content:
-         *           application/json:
-         *             schema:
-         *               type: object
-         *       '500':
-         *         description: Error Response
-         *         content:
-         *           application/json:
-         *             schema:
-         *               type: object
-         *               properties:
-         *                 message:
-         *                   type: string
-         *                   description: Message error
-         *                   example: Error message
-         *               
-         */
-        this.router.post('/pull-request', (new SchemaController()).createNewSchema);
     }
 }

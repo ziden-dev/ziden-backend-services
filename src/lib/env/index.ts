@@ -73,13 +73,6 @@ const env = {
     },
     authenService: {
         url: getOsEnv('AUTHEN_SERVICE_URL')
-    },
-    git: {
-        token: getOsEnv('GIT_TOKEN') ?? '',
-        owner: getOsEnv('GIT_OWNER') ?? '',
-        schemaModelsRepo: getOsEnv('SCHEMA_MODELS_REPO') ?? '',
-        sha: getOsEnv('SHA') ?? '',
-        jsonSchemaPath: getOsEnv('JSON_SCHEMA_PATH')?? 'json/schemas'
     }
 };
 

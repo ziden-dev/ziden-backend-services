@@ -19,7 +19,6 @@ export interface IRequirement {
 export type IService = {
     _id?: string,
     name: string,
-    verifierId: string,
     description: string,
     networkId: string,
     requirements: IRequirement[],
@@ -53,7 +52,6 @@ const RequirementSchema = new Schema<IRequirement>({
 const ServiceSchema = new Schema<IService>({
     _id: { type: String, required: true },
     name: { type: String, required: true },
-    verifierId: { type: String, required: true },
     description: { type: String, required: true },
     networkId: { type: String, required: true },
     requirements: { type: [RequirementSchema], required: true },

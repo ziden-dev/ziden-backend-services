@@ -3,31 +3,22 @@ import axios from 'axios';
 
 import { ServiceService } from '../services/ServiceService.js';
 import { SchemaService } from '../services/SchemaService.js';
-import { IssuerService } from '../services/IssuerService.js';
-import { VerifierService } from '../services/VerifierService.js';
 import Service, { IService } from '../models/Service.js';
 import { sendRes } from '../responses/index.js';
 import { BadRequestError } from '../errors/http/BadRequestError.js';
 import { NotFoundError } from '../errors/http/NotFoundError.js';
-import logger from '../../lib/logger/index.js';
 import { DefaultEndpoint } from '../../lib/constants/index.js';
 import utils from '../utils/index.js';
 import env from '../../lib/env/index.js';
-import { UnauthorizedError } from '../errors/http/UnauthorizedError.js';
-import { verfifyTokenWithRole, verifyTokenAdmin } from '../services/Authen.js';
 
 export class ServiceController {
 
     serviceService: ServiceService;
     schemaService: SchemaService;
-    issuerService: IssuerService;
-    verifierService: VerifierService;
 
     constructor() {
         this.serviceService = new ServiceService();
         this.schemaService = new SchemaService();
-        this.issuerService = new IssuerService();
-        this.verifierService = new VerifierService();
 
         this.registerService = this.registerService.bind(this);
         this.findServiceById = this.findServiceById.bind(this);
@@ -35,7 +26,6 @@ export class ServiceController {
         this.fetchProofRequest = this.fetchProofRequest.bind(this);
         this.updateService = this.updateService.bind(this);
         this.toggleServiceActive = this.toggleServiceActive.bind(this);
-        this.checkServiceAuthen = this.checkServiceAuthen.bind(this);
     }
 
     public async findServiceById(req: Request, res: Response) {
@@ -45,11 +35,6 @@ export class ServiceController {
             const service = await this.serviceService.findOneById(req.params.serviceId);
             if (service === undefined) throw new NotFoundError('Service does not exist');
 
-            const [verifier, network] = await Promise.all([
-                this.verifierService.findOneById(service.verifierId),
-                '' // FIXME: TBD after finishing network routes
-            ]);
-
             sendRes(res, null, {
                 service: {
                     serviceId: service._id,
@@ -57,11 +42,11 @@ export class ServiceController {
                     description: service.description,
                     endpointUrl: service.endpointUrl,
                     verifier: {
-                        verifierId: verifier?._id ?? '',
-                        name: verifier?.name ?? 'Unknown Verifier',
-                        logoUrl: utils.getLogoUrl(verifier?.logoUrl ?? ''),
-                        contact: verifier?.contact ?? '',
-                        website: verifier?.website ?? ''
+                        verifierId: '',
+                        name: 'Unknown Verifier',
+                        logoUrl: utils.getLogoUrl(''),
+                        contact: '',
+                        website: ''
                     },
                     network: {
                         networkId: 97,              // FIXME: TBD after finishing network routes
@@ -69,15 +54,15 @@ export class ServiceController {
                     },
                     requirements: await Promise.all(service.requirements.map(async (req) => {
                         const [issuers, schema] = await Promise.all([
-                            Promise.all(req.allowedIssuers.map(async (issuerId) => await this.issuerService.findOneById(issuerId))),
+                            req.allowedIssuers,
                             this.schemaService.findOneById(req.schemaHash)
                         ]);
                         Object.assign(req, {
                             'allowedIssuers': issuers.map(issuer => {
                                 return {
-                                    'issuerId': issuer?._id ?? '',
-                                    'name': issuer?.name ?? 'Unknown Issuer',
-                                    'endpointUrl': issuer?.endpointUrl ?? ''
+                                    'issuerId': issuer,
+                                    'name': 'Unknown Issuer',
+                                    'endpointUrl': ''
                                 }
                             }),
                             'schema': {
@@ -97,23 +82,11 @@ export class ServiceController {
 
     public async registerService(req: Request, res: Response) {
         try {
-            const verifierId = req.body.verifierId;
-            const token = req.headers.authorization;
-            if (!verifierId || !token) {
-                throw new BadRequestError("Invalid token!");
-            }
-            const isTokenValid = await verifyTokenAdmin(token, verifierId);
-            if (!isTokenValid) {
-                throw new BadRequestError("Invalid token!");
-            } 
-
-            if (!req.body.verifierId
-            || !req.body.networkId
+            if (!req.body.networkId
             || !req.body.requirements
             ) throw new BadRequestError('Missing service property in request body');
             const service = {
                 name: req.body.name ?? 'Unnamed Service',
-                verifierId: req.body.verifierId,
                 description: req.body.description ?? 'This service does not have any description',
                 networkId: req.body.networkId,
                 requirements: req.body.requirements,
@@ -149,10 +122,6 @@ export class ServiceController {
             let services = await this.serviceService.findAll(query);
 
             sendRes(res, null, {services: await Promise.all(services.map(async (service) => {
-                const [verifier, network] = await Promise.all([
-                    this.verifierService.findOneById(service.verifierId),
-                    '' // FIXME: TBD after finishing network routes
-                ]);
 
                 return {
                     serviceId: service._id,
@@ -160,11 +129,11 @@ export class ServiceController {
                     description: service.description,
                     endpointUrl: service.endpointUrl,
                     verifier: {
-                        verifierId: verifier?._id ?? '',
-                        name: verifier?.name ?? 'Unknown Verifier',
-                        logoUrl: utils.getLogoUrl(verifier?.logoUrl ?? ''),
-                        contact: verifier?.contact ?? '',
-                        website: verifier?.website ?? ''
+                        verifierId:  '',
+                        name: 'Unknown Verifier',
+                        logoUrl: utils.getLogoUrl(''),
+                        contact: '',
+                        website: ''
                     },
                     network: {
                         networkId: 97,              // FIXME: TBD after finishing network routes
@@ -172,15 +141,15 @@ export class ServiceController {
                     },
                     requirements: await Promise.all(service.requirements.map(async (req) => {
                         const [issuers, schema] = await Promise.all([
-                            Promise.all(req.allowedIssuers.map(async (issuerId) => await this.issuerService.findOneById(issuerId))),
+                            req.allowedIssuers,
                             this.schemaService.findOneById(req.schemaHash)
                         ]);
                         Object.assign(req, {
                             'allowedIssuers': issuers.map(issuer => {
                                 return {
-                                    'issuerId': issuer?._id ?? '',
-                                    'name': issuer?.name ?? 'Unknown Issuer',
-                                    'endpointUrl': issuer?.endpointUrl ?? ''
+                                    'issuerId': issuer,
+                                    'name': 'Unknown Issuer',
+                                    'endpointUrl': ''
                                 }
                             }),
                             'schema': {
@@ -238,43 +207,6 @@ export class ServiceController {
             sendRes(res, err);
             return;
         }
-    }
-
-    public async checkServiceAuthen(req: Request, res: Response, next: NextFunction) {
-        try {
-            const token = req.headers.authorization;
-            if (!token) {
-                throw new UnauthorizedError("Invalid token");
-            }
-            const serviceId = req.params.serviceId;
-            if (!serviceId || typeof serviceId != "string") {
-                throw new BadRequestError("Invalid serviceId");
-            }
-            const service = await this.serviceService.findOneById(serviceId);
-            if (!service) {
-                throw new BadRequestError("Service not exited!");
-            }
-
-            const verifierId = service.verifierId;
-            const isTokenValid = await verifyTokenAdmin(token, verifierId);
-            if (isTokenValid) {
-                next();
-                return;
-            } else {
-                const isOperatorValid = await verfifyTokenWithRole(token, verifierId, 2);
-                if (isOperatorValid) {
-                    next();
-                    return;
-                } else {
-                    throw new UnauthorizedError("Invalid token");
-                }
-            }
-
-        } catch (err: any) {
-            sendRes(res, err);
-            return;
-        }
-        
     }
 
 }

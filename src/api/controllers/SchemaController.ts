@@ -8,8 +8,6 @@ import { NotFoundError } from '../errors/http/NotFoundError.js';
 import { sendRes } from '../responses/index.js';
 import utils from '../utils/index.js';
 import logger from '../../lib/logger/index.js';
-import { Octokit } from 'octokit';
-import { createPullRequest } from '../services/InteractiveGit.js';
 
 export class SchemaController {
     
@@ -22,7 +20,6 @@ export class SchemaController {
         this.findAllSchemas = this.findAllSchemas.bind(this);
         this.fineOneSchema = this.fineOneSchema.bind(this);
         this.getAllDataTypes = this.getAllDataTypes.bind(this);
-        this.createNewSchema = this.createNewSchema.bind(this);
     }
 
     public async findAllSchemas(req: Request, res: Response) {
@@ -98,26 +95,6 @@ export class SchemaController {
         } catch (error: any) {
             logger.error(error)
             res.status(error.httpCode ?? 500).send(error);
-        }
-    }
-
-    public async createNewSchema(req: Request, res: Response) {
-        try {
-            const {schema} = req.body;
-            if (schema == undefined) {
-                throw(new BadRequestError("Invalid schema"));
-            }
-
-            const id = schema["@id"];
-            if (id == undefined) {
-                throw(new BadRequestError("Invalid schema"));
-            }
-
-            await createPullRequest(schema);
-            sendRes(res, null, {});
-        } catch (err: any) {
-            // console.log(err);
-            sendRes(res, err);
         }
     }
 }

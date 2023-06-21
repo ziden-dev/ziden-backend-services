@@ -3,7 +3,6 @@ import axios from 'axios';
 
 import { KYCQueryMTPInput, KYCNonRevQueryMTPInput, KYCQuerySigInput, KYCNonRevQuerySigInput } from "@zidendev/zidenjs";
 import { IQuery } from "../models/Service.js";
-import { IssuerService } from "../services/IssuerService.js";
 import { ProofService } from "../services/ProofService.js";
 import { ServiceService } from '../services/ServiceService.js';
 import { BadRequestError } from '../errors/http/BadRequestError.js';
@@ -36,12 +35,10 @@ export interface Proof {
 export class ProofController {
 
     serviceService: ServiceService;
-    issuerService: IssuerService;
     proofService: ProofService;
 
     constructor() {
         this.serviceService = new ServiceService();
-        this.issuerService = new IssuerService();
         this.proofService = new ProofService();
         
         this.generateProofRequest = this.generateProofRequest.bind(this);
