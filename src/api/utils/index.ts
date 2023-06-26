@@ -56,11 +56,20 @@ function camel2Title(camelText: string): string {
     return separated.charAt(0).toUpperCase() + separated.slice(1);
 }
 
+function parseBigInt(val: Array<any>) {
+    let res = [];
+    for (let i = 0; i < val.length; i++) {
+        res.push(BigInt(val[i]));
+    }
+    return res;
+}
+
 const utils = {
     getLogoUrl,
     getDefaultUrl,
     fetchSchemaContext,
-    camel2Title
+    camel2Title,
+    parseBigInt
 }
 
 export default utils;
