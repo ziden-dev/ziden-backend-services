@@ -18,16 +18,22 @@ export class NetworkRouter {
          *     Network:
          *       properties:
          *         chainId:
-         *           type: string
+         *           description: network chain id
+         *           type: integer
+         *           example: 97
          *         name:
          *           type: string
-         *         shortName:
+         *           description: network name
+         *           example: BNB Testnet
+         *         type:
          *           type: string
+         *           description: type of network
+         *           example: EVM
          */
 
         /**
          * @swagger
-         * /api/networks:
+         * /api/v1/networks:
          *   get:
          *     summary: Supported Networks
          *     description: Get all supported networks information
@@ -35,7 +41,7 @@ export class NetworkRouter {
          *       - Network
          *     responses:
          *       '200':
-         *         description: An array of verification result
+         *         description: Array of Network
          *         content:
          *           application/json:
          *             schema:
@@ -45,29 +51,39 @@ export class NetworkRouter {
          *                   type: array
          *                   items:
          *                     $ref: '#/components/schemas/Network'
+         *       '500':
+         *         description: Error Response
+         *         content:
+         *           application/json:
+         *             schema:
+         *               type: object
+         *               properties:
+         *                 message:
+         *                   type: string
+         *                   description: Message error
+         *                   example: Error message
          */
         this.router.get('/', (new NetworkController()).getAllSupportedNetworks);
 
         /**
          * @swagger
-         * /api/networks:
-         *   post:
-         *     summary: Register Network
-         *     description: Register new network
+         * /api/v1/networks/{networkId}:
+         *   get:
+         *     summary: Get network information
+         *     description: Get network information by networkId
          *     tags:
          *       - Network
-         *     requestBody:
-         *       description: A JSON of Network
-         *       content:
-         *         application/json:
-         *           schema:
-         *             type: object
-         *             properties:
-         *               network:
-         *                 $ref: '#/components/schemas/Network'
+         *     parameters:
+         *       - in: path
+         *         name: networkId
+         *         schema:
+         *           type: string
+         *           example: 97
+         *         required: true
+         *         description: network chain id
          *     responses:
          *       '200':
-         *         description: An array of verification result
+         *         description: JSON object of Network
          *         content:
          *           application/json:
          *             schema:
@@ -75,8 +91,18 @@ export class NetworkRouter {
          *               properties:
          *                 network:
          *                   $ref: '#/components/schemas/Network'
+         *       '500':
+         *         description: Error Response
+         *         content:
+         *           application/json:
+         *             schema:
+         *               type: object
+         *               properties:
+         *                 message:
+         *                   type: string
+         *                   description: Message error
+         *                   example: Error message
          */
-        this.router.post('/', (new NetworkController()).registerNetwork);
         this.router.get('/:chainId', (new NetworkController()).findNetworkById);
     }
 }

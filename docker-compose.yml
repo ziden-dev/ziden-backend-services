@@ -1,0 +1,37 @@
+version: '3.7'
+
+services:
+  backend-server:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: base
+    volumes:
+      - ./src:/home/node/app/src
+      - ./logs:/home/node/app/logs
+      - ./public:/home/node/app/public
+    container_name: backend-server
+    networks:
+      - ziden
+      - default
+    depends_on:
+      - backend-db
+    expose:
+      - ${APP_PORT}
+    ports:
+      - ${APP_PORT}:${APP_PORT}
+    command: npm run start
+  backend-db:
+    image: mongo
+    volumes:
+      - mongodb-backend:/data/db
+    networks:
+      - default
+volumes:
+  mongodb-backend:
+networks:
+  ziden:
+    external: true 
+    name: ziden
+  default:
+  

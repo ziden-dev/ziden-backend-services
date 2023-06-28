@@ -17,67 +17,114 @@ export class RegistryRouter {
          *   schemas:
          *     SchemaRegistry:
          *       properties:
-         *         _id:
+         *         registryId:
          *           type: string
          *           example: 66555d65-1e87-4428-86c1-35f0e23480f4
-         *         schemaHash:
-         *           type: string
-         *           example: 8077d5cb0c7bfbcff2197d3b1f651901
-         *         issuerId:
-         *           type: string
-         *           example: 82701632f563e84bcb34de9542d0457ff5cfb17bf9703f743afb93ba605cc6
+         *           description: Unique Id of a Registry Service
          *         description:
          *           type: string
          *           example: This is a mock registry
+         *           description: Description about Registry Service
          *         expiration:
-         *           type: string
+         *           type: number
          *           example: 86400000
+         *           description: Expiration time of a claim
          *         updatable:
-         *           type: string
-         *           example: false
-         *         network:
-         *           type: string
-         *           example: BSC Testnet
+         *           type: boolean
+         *           example: true
+         *           description: Updatable flag in claim
          *         endpointUrl:
          *           type: string
          *           example: https://example.com
+         *           description: Registry endpoint url
+         *         schema:
+         *           type: object
+         *           description: Schema information in this registry service
+         *           properties:
+         *             name:
+         *               type: string
+         *               example: Demo Schema
+         *               description: Schema name
+         *             schemaHash:
+         *               type: string
+         *               example: 8077d5cb0c7bfbcff2197d3b1f651901
+         *               description: Schema Hash
+         *         issuer:
+         *           type: object
+         *           description: Issuer Information
+         *           properties:
+         *             issuerId:
+         *               type: string
+         *               example: 82701632f563e84bcb34de9542d0457ff5cfb17bf9703f743afb93ba605cc6
+         *               description: DID of Issuer
+         *             name:
+         *               type: string
+         *               example: Demo Issuer
+         *               description: Issuer's name
+         *             logoUrl:
+         *               type: string
+         *               example: https://image.logo.url
+         *               description: Issuer's Logo Url
+         *         network:
+         *           type: object
+         *           description: Network Supported
+         *           properties:
+         *             networkId:
+         *               type: string
+         *               example: 97
+         *               description: Network chain Id
+         *             name:
+         *               type: string
+         *               example: BNB Chain Testnet
+         *               description: Network name
          *     SchemaRegistryForm:
          *       properties:
          *         schemaHash:
          *           type: string
          *           example: 8077d5cb0c7bfbcff2197d3b1f651901
+         *           description: Schema Hash
          *         issuerId:
          *           type: string
+         *           description: DID of Issuer
          *           example: 82701632f563e84bcb34de9542d0457ff5cfb17bf9703f743afb93ba605cc6
          *         description:
          *           type: string
+         *           description: Description about Registry service
          *           example: This is a mock registry
          *         expiration:
          *           type: string
          *           example: 86400000
+         *           description: Expiration date of claim
          *         updatable:
          *           type: string
          *           example: false
+         *           description: Updatetable flag in claim
          *         network:
          *           type: string
          *           example: BSC Testnet
+         *           description: network
          *         endpointUrl:
          *           type: string
          *           example: https://example.com
+         *           description: Endpoint Url
          *     Service:
          *       properties:
          *         _id:
          *           type: string
          *           example: 66555d65-1e87-4428-86c1-35f0e23480f4
+         *           description: Unique Id of Service
          *         title:
          *           type: String
          *           example: Service's Title
+         *           description: Title of Serivce
          *         verifierId:
          *           type: string
          *           example: 8077d5cb0c7bfbcff2197d3b1f651901
+         *           description: DID of Verifier
          *         description:
          *           type: string
          *           example: This is a mock service
+         *           description: Description about this service
          *         requirements:
          *           type: array
          *           items:
@@ -85,20 +132,25 @@ export class RegistryRouter {
          *         active:
          *           type: boolean
          *           default: true
+         *           description: Is service is active?
          *         network:
-         *           type: string
-         *           example: 56
+         *           type: integer
+         *           example: 97
+         *           description: Network chain Id
          *     ServiceForm:
          *       properties:
          *         title:
          *           type: String
          *           example: Service's Title
+         *           description: Title
          *         verifierId:
          *           type: string
          *           example: 8077d5cb0c7bfbcff2197d3b1f651901
+         *           description: DID of verifier
          *         description:
          *           type: string
          *           example: This is a mock service
+         *           description: Description about this Service
          *         requirements:
          *           type: array
          *           items:
@@ -107,37 +159,47 @@ export class RegistryRouter {
          *           type: boolean
          *           default: true
          *         network:
-         *           type: string
-         *           example: 56
+         *           type: integer
+         *           example: 97
+         *           description: Network chain Id
          *     Requirement:
          *       properties:
          *         title:
          *           type: string
          *           example: Age Restriction
+         *           description: Requimenet's title
          *         attestation:
          *           type: string
          *           example: Born before 01/01/2001
+         *           description: Description about this requirement
          *         allowedIssuers:
          *           type: array
+         *           description: Array of allowed Issuers
          *           items:
          *             type: string
+         *             example: 1234
          *         schemaHash:
          *           type: string
          *           example: 8077d5cb0c7bfbcff2197d3b1f651901
+         *           description: Schema hash
          *         circuitId:
          *           type: string
          *           example: credentialAtomicQueryMTP
+         *           description: Circuit Id
          *         query:
          *           type: object
          *           properties:
          *             propertyName:
          *               type: string
          *               example: dateOfBirth
+         *               description: Name of property need to query
          *             operator:
          *               type: number
          *               example: 2
+         *               description: Operator compare
          *             value:
          *               type: array
+         *               description: Array of values compare
          *               items:
          *                 type: number
          *                 example: 20010101
@@ -145,77 +207,7 @@ export class RegistryRouter {
 
         /**
          * @swagger
-         * /api/registries/schemas:
-         *   post:
-         *     summary: Register new Schema
-         *     description: Register new Schema
-         *     tags:
-         *       - Registry
-         *     requestBody:
-         *       description: A full JSON object of Issuer
-         *       content:
-         *         application/json:
-         *           schema:
-         *             type: object
-         *             properties:
-         *               registry:
-         *                 $ref: '#/components/schemas/SchemaRegistryForm'
-         *                 required: true
-         *               schema:
-         *                 $ref: '#/components/schemas/SchemaForm'
-         *                 required: true
-         *     responses:
-         *       '200':
-         *         description: A JSON object of Schema Registry & Schema
-         *         content:
-         *           application/json:
-         *             schema:
-         *               type: object
-         *               properties:
-         *                 registry:
-         *                   $ref: '#/components/schemas/SchemaRegistry'
-         *                 schema:
-         *                   $ref: '#/components/schemas/Schema'
-         */
-        this.router.post('/schemas', (new RegistryController()).registerSchema);
-
-        /**
-         * @swagger
-         * /api/registries/schemas:
-         *   get:
-         *     summary: Find many Schema Registry
-         *     description: Get many registered Schema Registry
-         *     tags:
-         *       - Registry
-         *     parameters:
-         *       - in: query
-         *         name: schemaHash
-         *         schema:
-         *           type: string
-         *         description: Hash of Schema
-         *       - in: query
-         *         name: issuerId
-         *         schema:
-         *           type: string
-         *         description: DID of Issuer
-         *     responses:
-         *       200:
-         *         description: A JSON array of Schema Registry
-         *         content:
-         *           application/json:
-         *             schema:
-         *               type: object
-         *               properties:
-         *                 registries:
-         *                   type: array
-         *                   items:
-         *                     $ref: '#/components/schemas/SchemaRegistry'
-         */
-        this.router.get('/schemas', (new RegistryController()).findSchemaRegistries);
-
-        /**
-         * @swagger
-         * /api/registries/schemas/{registryId}:
+         * /api/v1/registries/{registryId}:
          *   get:
          *     summary: Find one Schema Registry
          *     description: Query an registered Schema Registry by unique ID
@@ -226,212 +218,76 @@ export class RegistryRouter {
          *         name: registryId
          *         schema:
          *           type: string
+         *           example: 1234
          *         required: true
          *         description: Unique ID of Schema Registry
          *     responses:
          *       200:
-         *         description: A JSON object of Schema Registry & Schema
-         *         content:
-         *           application/json:
-         *             schema:
-         *             type: object
-         *             properties:
-         *               registry:
-         *                 $ref: '#/components/schemas/SchemaRegistry'
-         *               schema:
-         *                 $ref: '#/components/schemas/Schema'
-         */
-        this.router.get('/schemas/:registryId', (new RegistryController()).findSchemaRegistryById);
-
-        this.router.put('/schemas/:registryId', (new RegistryController()).updateSchemaRegistry);
-
-        /**
-         * @swagger
-         * /api/registries/schemas/{registryId}/active:
-         *   put:
-         *     summary: Activate/Deactivate Schema Registry
-         *     description: Toggle active status of a schema registry
-         *     tags:
-         *       - Registry
-         *     parameters:
-         *       - in: path
-         *         name: registryId
-         *         schema:
-         *           type: string
-         *         required: true
-         *         description: Unique ID of Schema Registry
-         *     responses:
-         *       200:
-         *         description: A JSON object of update result
-         *         content:
-         *           application/json:
-         *             schema:
-         *             type: object
-         *             properties:
-         *               registryId:
-         *                 type: string
-         *               active:
-         *                 type: boolean
-         */
-        this.router.put('/schemas/:registryId/active', (new RegistryController()).toggleSchemaRegistryActive);
-
-        /**
-         * @swagger
-         * /api/registries/schemas/{registryId}/request:
-         *   get:
-         *     summary: Fetch data for request page
-         *     description: Fetch data for request page
-         *     tags:
-         *       - Registry
-         *     parameters:
-         *       - in: path
-         *         name: registryId
-         *         schema:
-         *           type: string
-         *         required: true
-         *         description: Unique ID of Schema Registry
-         *     responses:
-         *       200:
-         *         description: A JSON object
-         *         content:
-         *           application/json:
-         *             schema:
-         *             type: object
-         *             properties:
-         *               title:
-         *                 type: string
-         *                 example: 'Demo Schema'
-         *               provider:
-         *                 type: string
-         *                 example: 'Ziden Demo'
-         *               description:
-         *                 type: string
-         *                 example: 'This is a mock request page'
-         *               logoUrl:
-         *                 type: string
-         *                 example: 'https://example.logo'
-         *               endpointUrl:
-         *                 type: string
-         *                 example: 'https://exapmle.endpoint.com'
-         */
-        this.router.get('/schemas/:registryId/request', (new RegistryController()).fetchRegistryRequestPage);
-
-        /**
-         * @swagger
-         * /api/registries/services:
-         *   post:
-         *     summary: Register new Service
-         *     description: Register new Service
-         *     tags:
-         *       - Registry
-         *     requestBody:
-         *       description: A JSON object of Service
-         *       content:
-         *         application/json:
-         *           schema:
-         *             type: object
-         *             properties:
-         *               service:
-         *                 $ref: '#/components/schemas/ServiceForm'
-         *     responses:
-         *       '200':
-         *         description: A JSON object of Service
+         *         description: A JSON object of Schema Registry
          *         content:
          *           application/json:
          *             schema:
          *               type: object
          *               properties:
-         *                 newService:
-         *                   $ref: '#/components/schemas/Service'
-         */
-        this.router.post('/services', (new RegistryController()).registerService);
-
-        /**
-         * @swagger
-         * /api/registries/services:
-         *   get:
-         *     summary: Find all Service
-         *     description: Get all registered Service
-         *     tags:
-         *       - Registry
-         *     responses:
-         *       200:
-         *         description: A JSON array of Service
+         *                  registry:
+         *                      $ref: '#/components/schemas/SchemaRegistry'
+         *       '500':
+         *         description: Error Response
          *         content:
          *           application/json:
          *             schema:
          *               type: object
          *               properties:
-         *                 services:
-         *                   type: array
-         *                   items:
-         *                     $ref: '#/components/schemas/Service'
-         *                 logos:
-         *                   type: array
-         *                   items:
-         *                     type: string
-         *                     example: 'https://example.logo.com'
+         *                 message:
+         *                   type: string
+         *                   description: Message error
+         *                   example: Error message
          */
-        this.router.get('/services', (new RegistryController()).findAllServices);
+        this.router.get('/:registryId', (new RegistryController()).findSchemaRegistryById);
 
         /**
          * @swagger
-         * /api/registries/services/{serviceId}:
+         * /api/v1/registries:
          *   get:
-         *     summary: Find one Service
-         *     description: Query an registered Service by unique ID
+         *     summary: Get all Registry Service
+         *     description: Get all registry Service
          *     tags:
          *       - Registry
          *     parameters:
-         *       - in: path
-         *         name: serviceId
+         *       - in: query
+         *         name: issuerId
          *         schema:
          *           type: string
-         *         required: true
-         *         description: Unique ID of Service
+         *         description: DID of Issuer
+         *       - in: query
+         *         name: schemaHash
+         *         schema:
+         *           type: string
+         *         description: Unique hash of Schema
          *     responses:
          *       200:
-         *         description: A JSON object of Service
+         *         description: A JSON object of Schema Registry
+         *         content:
+         *           application/json:
+         *             schema:
+         *                type: object
+         *                properties:
+         *                    registries:
+         *                      type: array
+         *                      items:
+         *                          $ref: '#/components/schemas/SchemaRegistry'
+         *       '500':
+         *         description: Error Response
          *         content:
          *           application/json:
          *             schema:
          *               type: object
          *               properties:
-         *                 service:
-         *                   $ref: '#/components/schemas/Service'
+         *                 message:
+         *                   type: string
+         *                   description: Message error
+         *                   example: Error message
          */
-        this.router.get('/services/:serviceId', (new RegistryController()).findOneService);
-
-        this.router.put('/services/:serviceId', (new RegistryController()).updateService);
-
-        /**
-         * @swagger
-         * /api/registries/services/{serviceId}/active:
-         *   put:
-         *     summary: Activate/Deactivate Service
-         *     description: Toggle active status of a service
-         *     tags:
-         *       - Registry
-         *     parameters:
-         *       - in: path
-         *         name: serviceId
-         *         schema:
-         *           type: string
-         *         required: true
-         *         description: Unique ID of Service
-         *     responses:
-         *       200:
-         *         description: A JSON object of update result
-         *         content:
-         *           application/json:
-         *             schema:
-         *             type: object
-         *             properties:
-         *               serviceId:
-         *                 type: string
-         *               active:
-         *                 type: boolean
-         */
-        this.router.put('/services/:serviceId/active', (new RegistryController()).toggleServiceActive);
-    }
+        this.router.get('/', (new RegistryController()).findSchemaRegistries);
+    }   
 }

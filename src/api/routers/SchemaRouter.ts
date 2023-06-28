@@ -17,53 +17,87 @@ export class SchemaRouter {
          *   schemas:
          *     Schema:
          *       properties:
-         *         _id:
-         *           type: string
-         *           example: 8077d5cb0c7bfbcff2197d3b1f651901
-         *         schemaHash:
-         *           type: string
-         *           example: 8077d5cb0c7bfbcff2197d3b1f651901
-         *         title:
+         *         name:
          *           type: string
          *           example: Demo Schema
-         *         properties:
+         *           description: Name of Schema
+         *         hash:
+         *           type: string
+         *           example: 8077d5cb0c7bfbcff2197d3b1f651901
+         *           description: Schema Hash
+         *         accessUri:
+         *           type: string
+         *           example: https://schema.access.url/#identifier
+         *           description: Schema Uri
+         *         jsonSchema:
          *           type: object
-         *         index:
-         *           type: array
-         *           items:
-         *             type: string
-         *         value:
-         *           type: array
-         *           items:
-         *             type: string
-         *         required:
-         *           type: array
-         *           items:
-         *             type: string
-         *     SchemaForm:
+         *           description: Schema Form
+         *     SchemaMetadata:
          *       properties:
-         *         title:
+         *         name:
          *           type: string
          *           example: Demo Schema
-         *         properties:
-         *           type: object
-         *         index:
-         *           type: array
-         *           items:
-         *             type: string
-         *         value:
-         *           type: array
-         *           items:
-         *             type: string
-         *         required:
-         *           type: array
-         *           items:
-         *             type: string
+         *           description: Name of Schema
+         *         hash:
+         *           type: string
+         *           example: 8077d5cb0c7bfbcff2197d3b1f651901
+         *           description: Schema Hash
+         *         accessUri:
+         *           type: string
+         *           example: https://schema.access.url/#identifier
+         *           description: Schema Uri
+         *       required:
+         *          - name
+         *          - hash
+         *          - accessUri
          */
 
         /**
          * @swagger
-         * /api/schemas:
+         * /api/v1/schemas:
+         *   post:
+         *     summary: Create new schema
+         *     description: Add new schema and save it to database.
+         *     tags:
+         *       - Schema
+         *     requestBody:
+         *       description: A JSON object of Schema's metadata
+         *       content:
+         *         application/json:
+         *           schema:
+         *             type: object
+         *             properties:
+         *               schema:
+         *                 $ref: '#/components/schemas/SchemaMetadata'
+         *             required:
+         *               - schema
+         *     responses:
+         *       200:
+         *         description: A JSON object of Schema
+         *         content:
+         *           application/json:
+         *             schema:
+         *               type: object
+         *               properties:
+         *                 schema:
+         *                   $ref: '#/components/schemas/Schema'
+         *       '500':
+         *         description: Error Response
+         *         content:
+         *           application/json:
+         *             schema:
+         *               type: object
+         *               properties:
+         *                 message:
+         *                   type: string
+         *                   description: Message error
+         *                   example: Error message
+         */
+        this.router.post('/', (new SchemaController()).registerSchema);
+
+        /**
+         * @swagger
+         * /api/v1/schemas:
          *   get:
          *     summary: Find all Schema
          *     description: Get all registered Schema
@@ -81,12 +115,63 @@ export class SchemaRouter {
          *                   type: array
          *                   items:
          *                     $ref: '#/components/schemas/Schema'
+         *       '500':
+         *         description: Error Response
+         *         content:
+         *           application/json:
+         *             schema:
+         *               type: object
+         *               properties:
+         *                 message:
+         *                   type: string
+         *                   description: Message error
+         *                   example: Error message
          */
         this.router.get('/', (new SchemaController()).findAllSchemas);
 
         /**
          * @swagger
-         * /api/schemas/dataTypes:
+         * /api/v1/schemas/{schemaHash}:
+         *   get:
+         *     summary: Find one Schema
+         *     description: Query an registered Schema by schemaHash
+         *     tags:
+         *       - Schema
+         *     parameters:
+         *       - in: path
+         *         name: schemaHash
+         *         schema:
+         *           type: string
+         *           description: Schema Hash
+         *         required: true
+         *         description: Schema hash
+         *     responses:
+         *       200:
+         *         description: A JSON object of Schema
+         *         content:
+         *           application/json:
+         *             schema:
+         *               type: object
+         *               properties:
+         *                 schema:
+         *                   $ref: '#/components/schemas/Schema'
+         *       '500':
+         *         description: Error Response
+         *         content:
+         *           application/json:
+         *             schema:
+         *               type: object
+         *               properties:
+         *                 message:
+         *                   type: string
+         *                   description: Message error
+         *                   example: Error message
+         */
+        this.router.get('/:schemaHash', (new SchemaController()).fineOneSchema);
+
+        /**
+         * swagger // FIXME
+         * /api/v1/schemas/dataTypes:
          *   get:
          *     summary: Find all supported data types
          *     description: Get all supported data types for a schema's property
@@ -105,23 +190,32 @@ export class SchemaRouter {
          *                   items:
          *                     type: string
          */
-        this.router.get('/dataTypes', (new SchemaController()).getAllDataTypes);
+        // this.router.get('/dataTypes', (new SchemaController()).getAllDataTypes);
+
+        
+
+        // this.router.get('/:schemaHash/contexts');
 
         /**
          * @swagger
-         * /api/schemas/{schemaHash}:
-         *   get:
-         *     summary: Find one Schema
-         *     description: Query an registered Schema by schemaHash
+         * /api/v1/schemas/pull-request:
+         *   post:
+         *     summary: Submit request create new schema
+         *     description: Submit request create new schema to Github. Ziden will review and accept if this schema is valid.
          *     tags:
          *       - Schema
-         *     parameters:
-         *       - in: path
-         *         name: schemaHash
-         *         schema:
-         *           type: string
-         *         required: true
-         *         description: Schema hash
+         *     requestBody:
+         *       description: A JSON object of Schema's metadata
+         *       content:
+         *         application/json:
+         *           schema:
+         *             type: object
+         *             properties:
+         *               schema:
+         *                 type: object
+         *                 description: Schema Json to create pull request to github
+         *             required:
+         *               - schema
          *     responses:
          *       200:
          *         description: A JSON object of Schema
@@ -129,14 +223,19 @@ export class SchemaRouter {
          *           application/json:
          *             schema:
          *               type: object
+         *       '500':
+         *         description: Error Response
+         *         content:
+         *           application/json:
+         *             schema:
+         *               type: object
          *               properties:
-         *                 schema:
-         *                   $ref: '#/components/schemas/Schema'
+         *                 message:
+         *                   type: string
+         *                   description: Message error
+         *                   example: Error message
+         *               
          */
-        this.router.get('/:schemaHash', (new SchemaController()).fineOneSchema);
-
-        this.router.get('/:schemaHash/contexts');
-
-        this.router
+        this.router.post('/pull-request', (new SchemaController()).createNewSchema);
     }
 }

@@ -3,222 +3,293 @@ import { Request, Response } from "express";
 
 import { VerifierService } from "../services/VerifierService.js";
 import { OperatorService } from "../services/OperatorService.js";
-import { ServiceProviderService } from "../services/ServiceProviderService.js";
-import { RegistryService } from "../services/RegistryService.js";
 import { NetworkService } from "../services/NetworkService.js";
-import { IdentityProviderService } from "../services/IdentityProviderService.js";
 import { IVerifier } from "../models/Verifier.js";
 import { IService } from "../models/Service.js";
+import { UploadedFile } from "../middlewares/UploadMiddleware.js";
 import { NotFoundError } from "../errors/http/NotFoundError.js";
 import { BadRequestError } from "../errors/http/BadRequestError.js";
 import logger from "../../lib/logger/index.js";
-import { SchemaService } from "../services/SchemaService.js";
-import { IssuerService } from "../services/IssuerService.js";
-import { IServiceProvider } from "../models/ServiceProvider.js";
 import env from "../../lib/env/index.js";
+import utils from "../utils/index.js";
+import { sendRes } from "../responses/index.js";
+import { registerNewVerifier } from "../services/Authen.js";
+import { OperatorRole, Portal } from "../../lib/constants/index.js";
 
 export class VerifierController {
 
     verifierService: VerifierService;
     operatorService: OperatorService;
-    serviceProviderService: ServiceProviderService;
-    registryService: RegistryService;
-    networkService: NetworkService;
-    schemaService: SchemaService;
-    issuerService: IssuerService;
-    identityProviderService: IdentityProviderService;
-    
+
+
     constructor() {
         this.verifierService = new VerifierService();
         this.operatorService = new OperatorService();
-        this.serviceProviderService = new ServiceProviderService();
-        this.registryService = new RegistryService();
-        this.networkService = new NetworkService();
-        this.schemaService = new SchemaService();
-        this.issuerService = new IssuerService();
-        this.identityProviderService = new IdentityProviderService();
 
-        this.findAllVerifiers = this.findAllVerifiers.bind(this);
-        this.findOneVerifier = this.findOneVerifier.bind(this);
-        this.createVerifier = this.createVerifier.bind(this);
-        this.getVerifierProfile = this.getVerifierProfile.bind(this);
-        this.updateVerifierProfile = this.updateVerifierProfile.bind(this);
-        this.findVerifierServices = this.findVerifierServices.bind(this);
-        this.findVerifierOperators = this.findVerifierOperators.bind(this);
-        this.addOperator = this.addOperator.bind(this);
-        this.removeOperator = this.removeOperator.bind(this);
+
         this.registration = this.registration.bind(this);
+        this.findVerifiers = this.findVerifiers.bind(this);
+        this.findOneVerifier = this.findOneVerifier.bind(this);
+        // this.getVerifierProfile = this.getVerifierProfile.bind(this);
+        this.updateVerifierProfile = this.updateVerifierProfile.bind(this);
+        // this.findVerifierServices = this.findVerifierServices.bind(this);
+        // this.findVerifierOperators = this.findVerifierOperators.bind(this);
+        // this.addOperator = this.addOperator.bind(this);
+        // this.removeOperator = this.removeOperator.bind(this);
+        // this.registration = this.registration.bind(this);
     }
 
-    public async findAllVerifiers(req: Request, res: Response) {
+    public async registration(req: Request, res: Response) {
         try {
-            res.send({
-                'verifiers': await this.verifierService.findAll()
-            })
+            const logo = (req.files as UploadedFile)['verifierLogo'] === undefined ? '' :
+                        (req.files as UploadedFile)['verifierLogo'][0].filename;
+
+            const verifier: IVerifier = {
+                _id: req.body.verifierId.toString(),
+                name: req.body.name.toString(),
+                description: req.body.description.toString(),
+                contact: req.body.contact.toString(),
+                isVerified: true,
+                website: req.body.website.toString(),
+                logoUrl: logo,
+                endpointUrl: req.body.endpointUrl?.toString()
+            }
+            const newVerifier = await this.verifierService.createVerifier(verifier);
+            if (newVerifier === false) throw new BadRequestError('verifier existed');
+
+            const registerVerifier = await registerNewVerifier(verifier._id);
+
+            const operator = {
+                userId: req.body.verifierId.toString(),
+                verifierId: req.body.verifierId.toString(),
+                role: OperatorRole.Admin,
+                claimId: registerVerifier.claimId,
+                activate: true,
+                portal: Portal.Veifier
+            }
+
+            await this.operatorService.createOperator(operator);
+
+            sendRes(res, null, { 'verifier': newVerifier });
+        
         } catch (error: any) {
-            res.status(error.httpCode ?? 500).send(error);
+            logger.error(error);
+            console.log(error);
+            sendRes(res, error);
+        }
+    }
+
+    public async findVerifiers(req: Request, res: Response) {
+        try {
+            const {operatorId} = req.query;
+            if (operatorId != undefined && typeof operatorId == "string") {
+                const verifierList = await this.operatorService.getAllVerifierByOperator(operatorId);
+                console.log(verifierList)
+                sendRes(res, null, {
+                    'verifiers': (await this.verifierService.findByQuery({ '_id': { '$in': verifierList } })).map(e => {
+                        return {
+                            '_id': e._id,
+                            'name': e.name,
+                            'description': e.description,
+                            'contact': e.contact,
+                            'isVerified': e.isVerified,
+                            'website': e.website,
+                            'logoUrl': utils.getLogoUrl(e.logoUrl)
+                        }
+                    })
+                })
+            }
+
+            else {
+                sendRes(res, null, {
+                    'verifiers': (await this.verifierService.findAll()).map(e => {
+                        return {
+                            '_id': e._id,
+                            'name': e.name,
+                            'description': e.description,
+                            'contact': e.contact,
+                            'isVerified': e.isVerified,
+                            'website': e.website,
+                            'logoUrl': utils.getLogoUrl(e.logoUrl)
+                        }
+                    })
+                })
+            }
+        } catch (error: any) {
+            logger.error(error);
+            sendRes(res, error);
         }
     }
 
     public async findOneVerifier(req: Request, res: Response) {
         try {
             if (!req.params.verifierId) throw new BadRequestError('Missing verifierId in request param');
-            const verifier = await this.verifierService.findOne(req.params.verifierId);
+            const verifier = await this.verifierService.findOneById(req.params.verifierId);
             if (verifier === undefined) throw new NotFoundError('Verifier is not registered');
-            res.send({
-                'verifier': verifier
-            })
+
+            Object.assign(verifier, {
+                'verifierId': verifier._id,
+                'logoUrl': utils.getLogoUrl(verifier.logoUrl)
+            });
+            delete (verifier as any)._id;
+
+            sendRes(res, null, { 'verifier': verifier });
         } catch (error: any) {
-            res.status(error.httpCode ?? 500).send(error);
+            sendRes(res, error);
         }
     }
 
-    public async createVerifier(req: Request, res: Response) {
-        try {
-            if (!req.body.verifier) throw new BadRequestError('Missing verifier property in request body')
-            res.send({
-                'newVerifier': await this.verifierService.save(req.body.verifier as IVerifier)
-            })
-        } catch (error: any) {
-            logger.error(error)
-            res.status(error.httpCode ?? 500).send(error);
-        }
-    }
+    // public async getVerifierProfile(req: Request, res: Response) {
+    //     try {
+    //         if (!req.params.verifierId) throw new BadRequestError('Missing verifierId in params');
+    //         const verifier = await this.verifierService.findOne(req.params.verifierId);
+    //         if (verifier === undefined) throw new NotFoundError("Verifier not found");
 
-    public async getVerifierProfile(req: Request, res: Response) {
-        try {
-            if (!req.params.verifierId) throw new BadRequestError('Missing verifierId in params');
-            const verifier = await this.verifierService.findOne(req.params.verifierId);
-            if (verifier === undefined) throw new NotFoundError("Verifier not found");
+    //         const provider = await this.serviceProviderService.findOne(verifier.providerId);
 
-            const provider = await this.serviceProviderService.findOne(verifier.providerId);
+    //         if (provider === undefined) throw new NotFoundError('Service Provider not found');
 
-            if (provider === undefined) throw new NotFoundError('Service Provider not found');
-
-            res.send({
-                'profile': {
-                    'name': provider?.name,
-                    'description': provider?.description,
-                    'logo': provider.logoUrl,
-                    'contact': provider.contact,
-                    'website': provider.website,
-                    'endpointUrl': verifier.endpointUrl
-                }
-            })
-        } catch (error: any) {
-            logger.error(error)
-            res.status(error.httpCode ?? 500).send(error);
-        }
-    }
+    //         res.send({
+    //             'profile': {
+    //                 'name': provider?.name,
+    //                 'description': provider?.description,
+    //                 'logo': provider.logoUrl,
+    //                 'contact': provider.contact,
+    //                 'website': provider.website,
+    //                 'endpointUrl': verifier.endpointUrl
+    //             }
+    //         })
+    //     } catch (error: any) {
+    //         logger.error(error)
+    //         res.status(error.httpCode ?? 500).send(error);
+    //     }
+    // }
 
     public async updateVerifierProfile(req: Request, res: Response) {
         try {
-            
-        } catch (error: any) {
-            logger.error(error)
-            res.status(error.httpCode ?? 500).send(error);
-        }
-    }
-
-    public async findVerifierServices(req: Request, res: Response) {
-        try {
-            if (!req.params.verifierId) throw new BadRequestError('Missing verifierId in request parmas');
-
-            const services: any[] = await this.registryService.findServicesByVerifiers([req.params.verifierId]);
-            
-            await Promise.all(
-                services.map(async (service: any) => { 
-                    service['networkName'] = (await this.networkService.findNetworkById(service.network))?.name ?? 'Unknown';
-                    await Promise.all(
-                        service.requirements.map(async (req: any) => {
-                            const issuers = await Promise.all(req.allowedIssuers.map((issuerId: string) => this.issuerService.findOne(issuerId)))
-                            Object.assign(req, {
-                                'schemaName': (await this.schemaService.findOne(req.schemaHash))?.title ?? 'Unknown',
-                                'issuerNames': await Promise.all(issuers.map(async (issuer: any) => (await this.identityProviderService.findOne(issuer.providerId))?.name ?? 'Unknown'))
-                            })
-                        })
-                    );
-                })
-            );
-            
-            res.send({ 'services': services })
-        } catch (error: any) {
-            logger.error(error)
-            res.status(error.httpCode ?? 500).send(error);
-        }
-    }
-
-    public async findVerifierOperators(req: Request, res: Response) {
-        try {
-            if (!req.params.verifierId) throw new BadRequestError('Missing verifierId in request parmas');
-
-            res.send({
-                'operators': await this.operatorService.findByVerifier(req.params.verifierId) 
-            });
-        } catch (error: any) {
-            logger.error(error);
-            res.status(error.httpCode ?? 500).send(error);
-        }
-    }
-
-    public async addOperator(req: Request, res: Response) {
-        try {
-            if (!req.params.verifierId) throw new BadRequestError('Missing verifierId in request parmas');
-            if (!req.body.operatorId) throw new BadRequestError('Missing operatorId in request body');
-
-            const newOperator = await this.operatorService.addOperatorByVerifier(
-                req.body.operatorId,
-                req.params.verifierId
-            )
-
-            if (!newOperator) throw new BadRequestError('Operator existed');
-            res.send({ 'newOperator': newOperator });
-        } catch (error: any) {
-            logger.error(error);
-            res.status(error.httpCode ?? 500).send(error);
-        }
-    }
-
-    public async removeOperator(req: Request, res: Response) {
-        try {
-            if (!req.params.verifierId) throw new BadRequestError('Missing verifierId in request parmas');
-            if (!req.params.operatorId) throw new BadRequestError('Missing operatorId in request body');
-
-            const operator = await this.operatorService.removeOperatorByVerifier(
-                req.params.operatorId,
-                req.params.verifierId
-            )
-
-            if (!operator) throw new BadRequestError('Operator does not exist');
-            res.send({ 'operator': operator });
-        } catch (error: any) {
-            logger.error(error);
-            res.status(error.httpCode ?? 500).send(error);
-        }
-    }
-
-    public async registration(req: Request, res: Response) {
-        try {
-            const serviceProvider: IServiceProvider = {
-                name: req.body.name ?? 'Anonymous',
-                description: req.body.description ?? 'No information',
-                contact: req.body.contact ?? 'No information',
-                website: req.body.website ?? 'No information',
-                logoUrl: `https://${env.app.host}/uploads/${req.file?.filename}`
+            const {verifierId} = req.params;
+            if (!verifierId || typeof verifierId != "string") {
+                throw new BadRequestError("Invalid verifierId!");
             }
-            logger.info(serviceProvider);
-            const newProvider = await this.serviceProviderService.save(serviceProvider);
-            
-            const verifier: IVerifier = {
-                _id: req.body.issuerId,
-                providerId: newProvider._id!,
-                endpointUrl: `https://${env.app.host}${env.app.routePrefix}`
+
+            const verifier = await this.verifierService.findOneById(verifierId);
+
+            if (!verifier) {
+                throw new BadRequestError("Verifier not exited!");
             }
-            const newIssuer = await this.verifierService.save(verifier);
-            res.send();
+
+            let logo = '';
+
+            try {
+                logo = (req.files as UploadedFile)['verifierLogo'] === undefined ? '' :
+                (req.files as UploadedFile)['verifierLogo'][0].filename;
+            } catch (err: any) {
+
+            }
+            
+            const {name, description, contact, website, endpointUrl} = req.body;
+
+            if (typeof name == "string" && name != '') {
+                verifier.name = name;
+            }
+
+            if (typeof description == "string" && description != '') {
+                verifier.description = description;
+            }
+
+            if (typeof contact == "string" && contact != '') {
+                verifier.contact = contact;
+            }
+
+            if (typeof website == "string" && website != '') {
+                verifier.website = website;
+            }
+
+            if (typeof endpointUrl == "string" && endpointUrl != '') {
+                verifier.endpointUrl = endpointUrl;
+            }
+
+            if (logo != '') {
+                verifier.logoUrl = logo;
+            }
+
+            this.verifierService.save(verifier);
+
+            sendRes(res, null, verifier);
+
         } catch (error: any) {
-            logger.error(error);
-            res.status(error.httpCode ?? 500).send(error);
+            sendRes(res, error);
         }
     }
+
+    // public async findVerifierServices(req: Request, res: Response) {
+    //     try {
+    //         if (!req.params.verifierId) throw new BadRequestError('Missing verifierId in request parmas');
+
+    //         const services: any[] = await this.registryService.findServicesByVerifiers([req.params.verifierId]);
+
+    //         await Promise.all(
+    //             services.map(async (service: any) => { 
+    //                 service['networkName'] = (await this.networkService.findNetworkById(service.network))?.name ?? 'Unknown';
+    //                 await Promise.all(
+    //                     service.requirements.map(async (req: any) => {
+    //                         const verifiers = await Promise.all(req.allowedverifiers.map((verifierId: string) => this.verifierService.findOne(verifierId)))
+    //                         Object.assign(req, {
+    //                             'schemaName': (await this.schemaService.findOne(req.schemaHash))?.title ?? 'Unknown',
+    //                             'verifierNames': await Promise.all(verifiers.map(async (verifier: any) => (await this.identityProviderService.findOne(verifier.providerId))?.name ?? 'Unknown'))
+    //                         })
+    //                     })
+    //                 );
+    //             })
+    //         );
+
+    //         res.send({ 'services': services })
+    //     } catch (error: any) {
+    //         logger.error(error)
+    //         res.status(error.httpCode ?? 500).send(error);
+    //     }
+    // }
+
+    // public async findVerifierOperators(req: Request, res: Response) {
+    //     try {
+    //         if (!req.params.verifierId) throw new BadRequestError('Missing verifierId in request parmas');
+
+    //         res.send({
+    //             'operators': await this.operatorService.findByVerifier(req.params.verifierId) 
+    //         });
+    //     } catch (error: any) {
+    //         logger.error(error);
+    //         res.status(error.httpCode ?? 500).send(error);
+    //     }
+    // }
+
+    // public async addOperator(req: Request, res: Response) {
+    //     try {
+    //         if (!req.params.verifierId) throw new BadRequestError('Missing verifierId in request parmas');
+    //         if (!req.body.operatorId) throw new BadRequestError('Missing operatorId in request body');
+
+    //         const newOperator = await this.operatorService.addOperatorByVerifier(
+    //             req.body.operatorId,
+    //             req.params.verifierId
+    //         )
+
+    //         if (!newOperator) throw new BadRequestError('Operator existed');
+    //         res.send({ 'newOperator': newOperator });
+    //     } catch (error: any) {
+    //         logger.error(error);
+    //         res.status(error.httpCode ?? 500).send(error);
+    //     }
+    // }
+
+    // public async removeOperator(req: Request, res: Response) {
+    //     try {
+    //         if (!req.params.verifierId) throw new BadRequestErroissuer
+
+    //         if (!operator) throw new BadRequestError('Operator does not exist');
+    //         res.send({ 'operator': operator });
+    //     } catch (error: any) {
+    //         logger.error(error);
+    //         res.status(error.httpCode ?? 500).send(error);
+    //     }
+    // }
 }

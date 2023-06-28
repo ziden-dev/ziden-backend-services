@@ -1,17 +1,13 @@
-import { v4 as uuidV4 } from 'uuid';
-import { schema as zidenSchema } from 'zidenjs';
-
-import Schema, { ISchema, PropertyTypes } from '../models/Schema.js';
-import Context, { IContext } from '../models/Context.js';
-
-
-// import { hashSchema } from '../../utils';
+import Schema, { ISchema } from '../models/Schema.js';
+import { PropertyType } from '../../lib/constants/index.js';
 
 export class SchemaService {
     
-    constructor() { }
+    constructor() {
+        this.findOneById = this.findOneById.bind(this);
+    }
     
-    public async findOne(schemaHash: string): Promise<ISchema | undefined> {
+    public async findOneById(schemaHash: string): Promise<ISchema | undefined> {
         return (await Schema.findById(schemaHash))?.toObject();
     }
 
@@ -25,47 +21,26 @@ export class SchemaService {
         })).map(e => e.toObject());
     }
 
-    public async save(schema: ISchema): Promise<ISchema> {
-        const schemaHash = this.hashSchema(schema);
-        Object.assign(schema, {
-            _id: schemaHash,
-            schemaHash: schemaHash
-        });
-
-        return (await Schema.findByIdAndUpdate(
-            schema._id,
-            schema,
-            {upsert: true, new: true}
-        )).toObject();
+    public async createSchema(schema: ISchema): Promise<ISchema | boolean> {
+        schema._id = schema.hash;
+        if (await this.findOneById(schema._id)) {
+            return false;
+        }
+        return (await Schema.create(schema));
     }
 
-    public hashSchema(schema: ISchema): string {
-        const cleanSchema: ISchema = {
-            'title': schema.title,
-            'properties': schema.properties,
-            'index': schema.index,
-            'value': schema.value,
-            'required': schema.required
-        };
-        
-        return zidenSchema.getSchemaHashFromSchema(cleanSchema);
-    }
-
-    public async findSchemaContext(schemaHash: string): Promise<IContext | undefined> {
-        return (await Context.findById(schemaHash))?.toObject();
-    }
-
-    public async saveContext(context: IContext): Promise<IContext> {
-        context._id = context.schemaHash;
-
-        return (await Context.findByIdAndUpdate(
-            context._id,
-            context,
-            {upsert: true, new: true}
-        )).toObject();
+    public async updateIssuer(schema: ISchema): Promise<ISchema | boolean> {
+        if (await this.findOneById(schema?._id ?? '')) {
+            return (await Schema.findByIdAndUpdate(
+                schema._id,
+                schema,
+                {upsert: true, new: true}
+            ));
+        }
+        return false;
     }
 
     public getSupportedDataTypes(): string[] {
-        return Object.values(PropertyTypes);
+        return Object.values(PropertyType);
     }
 }

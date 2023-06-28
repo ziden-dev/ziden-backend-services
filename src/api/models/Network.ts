@@ -1,23 +1,7 @@
-import { model, Schema } from 'mongoose';
+import { NetworkType } from "../../lib/constants"
 
 export interface INetwork {
-    _id?: string,
-    chainId: string,
+    chainId: number,
     name: string,
-    shortName: string,
-    contractAddresses: {[key: string]: string}
+    type: NetworkType
 }
-
-const NetworkSchema = new Schema<INetwork>({
-    _id: { type: String, required: true },
-    chainId: { type: String, required: true },
-    name: { type: String, required: true },
-    shortName: { type: String, required: true },
-    contractAddresses: { type: Object, of: String, required: false }
-}, {
-    strict: false,
-    strictQuery: false,
-    timestamps: true
-});
-
-export default model<INetwork>('Network', NetworkSchema);

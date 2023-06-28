@@ -1,31 +1,21 @@
-import mongoose, { model, Schema } from 'mongoose';
-
-export enum PropertyTypes {
-    STRING = 'string',
-    INTEGER = 'integer',
-    DOUBLE = 'double',
-    DATE = 'date',
-    DATE_TIME = 'datetime',
-    BOOLEAN = 'boolean'
-}
+import { model, Schema } from 'mongoose';
+import { PropertyType } from '../../lib/constants';
 
 export interface IClaimProperty {
-    title: string,
-    type: PropertyTypes
+    slot: string,
+    type: PropertyType
 }
 
 export interface ISchema {
     _id?: string,
-    schemaHash?: string,
-    title: string,
-    properties: {[key: string]: IClaimProperty}
-    index: string[],
-    value: string[],
-    required: string[]
+    name: string,
+    hash: string,
+    accessUri: string,
+    jsonSchema?: object
 }
 
 const ClaimPropertySchema = new Schema<IClaimProperty>({
-    title: { type: String, required: true },
+    slot: { type: String, required: true },
     type: { type: String, required: true }
 }, {
     strict: false,
@@ -35,12 +25,9 @@ const ClaimPropertySchema = new Schema<IClaimProperty>({
 
 const SchemaSchema = new Schema<ISchema>({
     _id: { type: String, required: true },
-    schemaHash: { type: String, required: true },
-    title: { type: String, required: true },
-    properties: { type: Object, of: ClaimPropertySchema, required: true },
-    index: { type: [String], required: true },
-    value: { type: [String], required: true },
-    required: { type: [String], required: true },
+    name: { type: String, required: true },
+    hash: { type: String, required: true },
+    accessUri: { type: String, required: true }
 }, {
     strict: true,
     strictQuery: false,

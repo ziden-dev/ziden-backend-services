@@ -1,0 +1,274 @@
+[
+    {
+        "anonymous": false,
+        "inputs": [
+            {
+                "indexed": false,
+                "internalType": "uint8",
+                "name": "version",
+                "type": "uint8"
+            }
+        ],
+        "name": "Initialized",
+        "type": "event"
+    },
+    {
+        "anonymous": false,
+        "inputs": [
+            {
+                "indexed": true,
+                "internalType": "address",
+                "name": "previousOwner",
+                "type": "address"
+            },
+            {
+                "indexed": true,
+                "internalType": "address",
+                "name": "newOwner",
+                "type": "address"
+            }
+        ],
+        "name": "OwnershipTransferred",
+        "type": "event"
+    },
+    {
+        "inputs": [
+            {
+                "internalType": "address",
+                "name": "_verifierContractAddress",
+                "type": "address"
+            },
+            {
+                "internalType": "address",
+                "name": "_stateContractAddress",
+                "type": "address"
+            }
+        ],
+        "name": "initialize",
+        "outputs": [],
+        "stateMutability": "nonpayable",
+        "type": "function"
+    },
+    {
+        "inputs": [],
+        "name": "owner",
+        "outputs": [
+            {
+                "internalType": "address",
+                "name": "",
+                "type": "address"
+            }
+        ],
+        "stateMutability": "view",
+        "type": "function"
+    },
+    {
+        "inputs": [],
+        "name": "renounceOwnership",
+        "outputs": [],
+        "stateMutability": "nonpayable",
+        "type": "function"
+    },
+    {
+        "inputs": [],
+        "name": "revocationStateExpirationTime",
+        "outputs": [
+            {
+                "internalType": "uint256",
+                "name": "",
+                "type": "uint256"
+            }
+        ],
+        "stateMutability": "view",
+        "type": "function"
+    },
+    {
+        "inputs": [
+            {
+                "internalType": "uint256",
+                "name": "expirationTime",
+                "type": "uint256"
+            }
+        ],
+        "name": "setRevocationStateExpirationTime",
+        "outputs": [],
+        "stateMutability": "nonpayable",
+        "type": "function"
+    },
+    {
+        "inputs": [],
+        "name": "state",
+        "outputs": [
+            {
+                "internalType": "contract IState",
+                "name": "",
+                "type": "address"
+            }
+        ],
+        "stateMutability": "view",
+        "type": "function"
+    },
+    {
+        "inputs": [
+            {
+                "internalType": "address",
+                "name": "newOwner",
+                "type": "address"
+            }
+        ],
+        "name": "transferOwnership",
+        "outputs": [],
+        "stateMutability": "nonpayable",
+        "type": "function"
+    },
+    {
+        "inputs": [],
+        "name": "verifier",
+        "outputs": [
+            {
+                "internalType": "contract IQueryVerifier",
+                "name": "",
+                "type": "address"
+            }
+        ],
+        "stateMutability": "view",
+        "type": "function"
+    },
+    {
+        "inputs": [
+            {
+                "internalType": "uint256[2]",
+                "name": "a",
+                "type": "uint256[2]"
+            },
+            {
+                "internalType": "uint256[2][2]",
+                "name": "b",
+                "type": "uint256[2][2]"
+            },
+            {
+                "internalType": "uint256[2]",
+                "name": "c",
+                "type": "uint256[2]"
+            },
+            {
+                "internalType": "uint256[12]",
+                "name": "inputs",
+                "type": "uint256[12]"
+            },
+            {
+                "components": [
+                    {
+                        "internalType": "uint256",
+                        "name": "deterministicValue",
+                        "type": "uint256"
+                    },
+                    {
+                        "internalType": "uint256",
+                        "name": "mask",
+                        "type": "uint256"
+                    },
+                    {
+                        "internalType": "uint128",
+                        "name": "claimSchema",
+                        "type": "uint128"
+                    },
+                    {
+                        "internalType": "uint64",
+                        "name": "timestamp",
+                        "type": "uint64"
+                    },
+                    {
+                        "internalType": "uint8",
+                        "name": "slotIndex",
+                        "type": "uint8"
+                    },
+                    {
+                        "internalType": "uint8",
+                        "name": "operator",
+                        "type": "uint8"
+                    }
+                ],
+                "internalType": "struct IValidator.Query",
+                "name": "query",
+                "type": "tuple"
+            }
+        ],
+        "name": "verify",
+        "outputs": [
+            {
+                "internalType": "bool",
+                "name": "r",
+                "type": "bool"
+            }
+        ],
+        "stateMutability": "view",
+        "type": "function"
+    },
+    {
+        "inputs": [
+            {
+                "internalType": "uint256[]",
+                "name": "in_proof",
+                "type": "uint256[]"
+            },
+            {
+                "internalType": "uint256[]",
+                "name": "proof_inputs",
+                "type": "uint256[]"
+            },
+            {
+                "internalType": "uint256",
+                "name": "num_proofs",
+                "type": "uint256"
+            },
+            {
+                "components": [
+                    {
+                        "internalType": "uint256",
+                        "name": "deterministicValue",
+                        "type": "uint256"
+                    },
+                    {
+                        "internalType": "uint256",
+                        "name": "mask",
+                        "type": "uint256"
+                    },
+                    {
+                        "internalType": "uint128",
+                        "name": "claimSchema",
+                        "type": "uint128"
+                    },
+                    {
+                        "internalType": "uint64",
+                        "name": "timestamp",
+                        "type": "uint64"
+                    },
+                    {
+                        "internalType": "uint8",
+                        "name": "slotIndex",
+                        "type": "uint8"
+                    },
+                    {
+                        "internalType": "uint8",
+                        "name": "operator",
+                        "type": "uint8"
+                    }
+                ],
+                "internalType": "struct IValidator.Query",
+                "name": "query",
+                "type": "tuple"
+            }
+        ],
+        "name": "verifyBatch",
+        "outputs": [
+            {
+                "internalType": "bool",
+                "name": "r",
+                "type": "bool"
+            }
+        ],
+        "stateMutability": "view",
+        "type": "function"
+    }
+]

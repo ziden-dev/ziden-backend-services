@@ -1,32 +1,32 @@
-import { Date, model, Schema } from 'mongoose';
+import { model, Schema } from 'mongoose';
 
 export interface ISchemaRegistry {
-    _id?: string,
+    _id: string,
     schemaHash: string,
     issuerId: string,
     description: string,
     expiration: number,
     updatable: boolean,
-    network: string,
+    networkId: string,
     endpointUrl: string,
-    active: boolean,
-    createdAt: Date
+    active: boolean
+
 }
 
-const SchemaRegistrySchema = new Schema<ISchemaRegistry>({
-    _id: { type: String, required: true },
-    schemaHash: { type: String, required: true },
-    issuerId: { type: String, required: true },
-    description: { type: String, required: true },
-    expiration: { type: Number, required: true },
-    updatable: { type: Boolean, required: true },
-    network: { type: String, required: true },
-    endpointUrl: { type: String, required: true },
-    active: { type: Boolean, required: true, default: true }
-}, {
-    strict: true,
-    strictQuery: false,
-    timestamps: true
-});
+// const SchemaRegistrySchema = new Schema<ISchemaRegistry>({
+//     _id: { type: String, required: true },
+//     schemaHash: { type: String, required: true },
+//     issuerId: { type: String, required: true },
+//     description: { type: String, required: true },
+//     expiration: { type: Number, required: true },
+//     updatable: { type: Boolean, required: true },
+//     networkId: { type: String, required: true },
+//     endpointUrl: { type: String, required: true },
+//     active: { type: Boolean, required: true, default: true }
+// }, {
+//     strict: true,
+//     strictQuery: false,
+//     timestamps: true
+// });
 
-export default model<ISchemaRegistry>('SchemaRegistry', SchemaRegistrySchema);
+// export default model<ISchemaRegistry>('SchemaRegistry', SchemaRegistrySchema);
