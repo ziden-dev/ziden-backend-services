@@ -41,7 +41,6 @@ http[s]:<hostname>[:<port>]/api-docs
 
 | Name                              | Description |
 | --------------------------------- | ----------- |
-| **pkg/**                          | VSCode tasks, launch configuration and some other settings |
 | **dist/**                         | Compiled source files will be placed here |
 | **src/**                          | Source files |
 | **src/api/controllers/**          | REST API Controllers |
